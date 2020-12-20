@@ -11,7 +11,7 @@
 
 import * as coreHttp from "@azure/core-http";
 import * as Models from "../artifacts/models";
-import { Context } from "../Context";
+import Context from "../Context";
 
 export default interface IKeyVaultClientHandler {
   setSecret(vaultBaseUrl: string, secretName: string, value: string, options: Models.KeyVaultClientSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse>;
