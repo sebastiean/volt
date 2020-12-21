@@ -127,11 +127,11 @@ export default class Context {
     this.context.handlerResponses = handlerResponses;
   }
 
-  public get contextID(): string | undefined {
+  public get contextId(): string | undefined {
     return this.context.contextID;
   }
 
-  public set contextID(contextID: string | undefined) {
+  public set contextId(contextID: string | undefined) {
     this.context.contextID = contextID;
   }
 
