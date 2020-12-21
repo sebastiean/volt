@@ -11,6 +11,8 @@
   "dependencies": {
     "@azure/core-http": "^1.2.1",
     "express": "^4.17.1",
+    "lokijs": "^1.5.11",
+    "rimraf": "^3.0.2",
     "uri-templates": "^0.2.0",
     "xml2js": "^0.4.19"
   },
