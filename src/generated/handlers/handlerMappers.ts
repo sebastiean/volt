@@ -17,7 +17,7 @@ operationHandlerMapping[Operation.SetSecret] = {
     "value",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "setSecret"
 };
 operationHandlerMapping[Operation.DeleteSecret] = {
@@ -26,7 +26,7 @@ operationHandlerMapping[Operation.DeleteSecret] = {
     "secretName",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "deleteSecret"
 };
 operationHandlerMapping[Operation.UpdateSecret] = {
@@ -36,7 +36,7 @@ operationHandlerMapping[Operation.UpdateSecret] = {
     "secretVersion",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "updateSecret"
 };
 operationHandlerMapping[Operation.GetSecret] = {
@@ -46,7 +46,7 @@ operationHandlerMapping[Operation.GetSecret] = {
     "secretVersion",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "getSecret"
 };
 operationHandlerMapping[Operation.GetSecrets] = {
@@ -54,7 +54,7 @@ operationHandlerMapping[Operation.GetSecrets] = {
     "vaultBaseUrl",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "getSecrets"
 };
 operationHandlerMapping[Operation.GetSecretVersions] = {
@@ -63,7 +63,7 @@ operationHandlerMapping[Operation.GetSecretVersions] = {
     "secretName",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "getSecretVersions"
 };
 operationHandlerMapping[Operation.GetDeletedSecrets] = {
@@ -71,7 +71,7 @@ operationHandlerMapping[Operation.GetDeletedSecrets] = {
     "vaultBaseUrl",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "getDeletedSecrets"
 };
 operationHandlerMapping[Operation.GetDeletedSecret] = {
@@ -80,7 +80,7 @@ operationHandlerMapping[Operation.GetDeletedSecret] = {
     "secretName",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "getDeletedSecret"
 };
 operationHandlerMapping[Operation.RecoverDeletedSecret] = {
@@ -89,7 +89,7 @@ operationHandlerMapping[Operation.RecoverDeletedSecret] = {
     "secretName",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "recoverDeletedSecret"
 };
 operationHandlerMapping[Operation.BackupSecret] = {
@@ -98,7 +98,7 @@ operationHandlerMapping[Operation.BackupSecret] = {
     "secretName",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "backupSecret"
 };
 operationHandlerMapping[Operation.RestoreSecret] = {
@@ -107,7 +107,7 @@ operationHandlerMapping[Operation.RestoreSecret] = {
     "secretBundleBackup",
     "options"
   ],
-  handler: "keyVaultClientHandler",
+  handler: "voltServerSecretsHandler",
   method: "restoreSecret"
 };
 function getHandlerByOperation(operation: Operation): IHandlerPath | undefined {

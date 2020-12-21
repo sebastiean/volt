@@ -13,14 +13,14 @@ import * as coreHttp from "@azure/core-http";
 import * as Models from "../artifacts/models";
 import Context from "../Context";
 
-export default interface IKeyVaultClientHandler {
-  setSecret(vaultBaseUrl: string, secretName: string, value: string, options: Models.KeyVaultClientSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse>;
+export default interface IVoltServerSecretsHandler {
+  setSecret(vaultBaseUrl: string, secretName: string, value: string, options: Models.VoltServerSecretsSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse>;
   deleteSecret(vaultBaseUrl: string, secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.DeleteSecretResponse>;
-  updateSecret(vaultBaseUrl: string, secretName: string, secretVersion: string, options: Models.KeyVaultClientUpdateSecretOptionalParams, context: Context): Promise<Models.UpdateSecretResponse>;
+  updateSecret(vaultBaseUrl: string, secretName: string, secretVersion: string, options: Models.VoltServerSecretsUpdateSecretOptionalParams, context: Context): Promise<Models.UpdateSecretResponse>;
   getSecret(vaultBaseUrl: string, secretName: string, secretVersion: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.GetSecretResponse>;
-  getSecrets(vaultBaseUrl: string, options: Models.KeyVaultClientGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse>;
-  getSecretVersions(vaultBaseUrl: string, secretName: string, options: Models.KeyVaultClientGetSecretVersionsOptionalParams, context: Context): Promise<Models.GetSecretVersionsResponse>;
-  getDeletedSecrets(vaultBaseUrl: string, options: Models.KeyVaultClientGetDeletedSecretsOptionalParams, context: Context): Promise<Models.GetDeletedSecretsResponse>;
+  getSecrets(vaultBaseUrl: string, options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse>;
+  getSecretVersions(vaultBaseUrl: string, secretName: string, options: Models.VoltServerSecretsGetSecretVersionsOptionalParams, context: Context): Promise<Models.GetSecretVersionsResponse>;
+  getDeletedSecrets(vaultBaseUrl: string, options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams, context: Context): Promise<Models.GetDeletedSecretsResponse>;
   getDeletedSecret(vaultBaseUrl: string, secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.GetDeletedSecretResponse>;
   purgeDeletedSecret(vaultBaseUrl: string, secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<coreHttp.RestResponse>;
   recoverDeletedSecret(vaultBaseUrl: string, secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.RecoverDeletedSecretResponse>;

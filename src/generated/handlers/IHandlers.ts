@@ -1,7 +1,7 @@
 // tslint:disable:ordered-imports
-import IKeyVaultClientHandler from "./IKeyVaultClientHandler";
+import IVoltServerSecretsHandler from "./IVoltServerSecretsHandler";
 
 export interface IHandlers {
-  keyVaultClientHandler: IKeyVaultClientHandler;
+  voltServerSecretsHandler: IVoltServerSecretsHandler;
 }
 export default IHandlers;

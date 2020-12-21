@@ -28,26 +28,23 @@ export interface Attributes {
   expires?: Date;
   /**
    * Creation time in UTC.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly created?: Date;
+  created?: Date;
   /**
    * Last updated time in UTC.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly updated?: Date;
+  updated?: Date;
 }
 
 /**
  * The secret management attributes.
  */
-export interface SecretAttributes {
+export interface SecretAttributes extends Attributes {
   /**
    * softDelete data retention days. Value should be >=7 and <=90 when softDelete enabled,
    * otherwise 0.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly recoverableDays?: number;
+  recoverableDays?: number;
   /**
    * Reflects the deletion recovery level currently in effect for secrets in the current vault. If
    * it contains 'Purgeable', the secret can be permanently deleted by a privileged user;
@@ -55,9 +52,8 @@ export interface SecretAttributes {
    * Possible values include: 'Purgeable', 'Recoverable+Purgeable', 'Recoverable',
    * 'Recoverable+ProtectedSubscription', 'CustomizedRecoverable+Purgeable',
    * 'CustomizedRecoverable', 'CustomizedRecoverable+ProtectedSubscription'
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly recoveryLevel?: DeletionRecoveryLevel;
+  recoveryLevel?: DeletionRecoveryLevel;
 }
 
 /**
@@ -87,15 +83,13 @@ export interface SecretBundle {
   /**
    * If this is a secret backing a KV certificate, then this field specifies the corresponding key
    * backing the KV certificate.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly kid?: string;
+  kid?: string;
   /**
    * True if the secret's lifetime is managed by key vault. If this is a secret backing a
    * certificate, then managed will be true.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly managed?: boolean;
+  managed?: boolean;
 }
 
 /**
@@ -121,50 +115,45 @@ export interface SecretItem {
   /**
    * True if the secret's lifetime is managed by key vault. If this is a key backing a certificate,
    * then managed will be true.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly managed?: boolean;
+  managed?: boolean;
 }
 
 /**
  * A Deleted Secret consisting of its previous id, attributes and its tags, as well as information
  * on when it will be purged.
  */
-export interface DeletedSecretBundle {
+export interface DeletedSecretBundle extends SecretBundle {
   /**
    * The url of the recovery object, used to identify and recover the deleted secret.
    */
   recoveryId?: string;
   /**
    * The time when the secret is scheduled to be purged, in UTC
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly scheduledPurgeDate?: Date;
+  scheduledPurgeDate?: Date;
   /**
    * The time when the secret was deleted, in UTC
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly deletedDate?: Date;
+  deletedDate?: Date;
 }
 
 /**
  * The deleted secret item containing metadata about the deleted secret.
  */
-export interface DeletedSecretItem {
+export interface DeletedSecretItem extends SecretItem {
   /**
    * The url of the recovery object, used to identify and recover the deleted secret.
    */
   recoveryId?: string;
   /**
    * The time when the secret is scheduled to be purged, in UTC
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly scheduledPurgeDate?: Date;
+  scheduledPurgeDate?: Date;
   /**
    * The time when the secret was deleted, in UTC
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly deletedDate?: Date;
+  deletedDate?: Date;
 }
 
 /**
@@ -234,14 +223,12 @@ export interface SecretListResult {
   /**
    * A response message containing a list of secrets in the key vault along with a link to the next
    * page of secrets.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly value?: SecretItem[];
+  value?: SecretItem[];
   /**
    * The URL to get the next set of secrets.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly nextLink?: string;
+  nextLink?: string;
 }
 
 /**
@@ -251,14 +238,12 @@ export interface DeletedSecretListResult {
   /**
    * A response message containing a list of the deleted secrets in the vault along with a link to
    * the next page of deleted secrets
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly value?: DeletedSecretItem[];
+  value?: DeletedSecretItem[];
   /**
    * The URL to get the next set of deleted secrets.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly nextLink?: string;
+  nextLink?: string;
 }
 
 /**
@@ -267,9 +252,8 @@ export interface DeletedSecretListResult {
 export interface BackupSecretResult {
   /**
    * The backup blob containing the backed up secret.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly value?: Uint8Array;
+  value?: Uint8Array;
 }
 
 /**
@@ -278,34 +262,26 @@ export interface BackupSecretResult {
 export interface ErrorModel {
   /**
    * The error code.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly code?: string;
+  code?: string;
   /**
    * The error message.
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
    */
-  readonly message?: string;
-  /**
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
-   */
-  readonly innerError?: ErrorModel;
+  message?: string;
+  innerError?: ErrorModel;
 }
 
 /**
  * The key vault error exception.
  */
 export interface KeyVaultError {
-  /**
-   * **NOTE: This property will not be serialized. It can only be populated by the server.**
-   */
-  readonly error?: ErrorModel;
+  error?: ErrorModel;
 }
 
 /**
  * Optional Parameters.
  */
-export interface KeyVaultClientSetSecretOptionalParams {
+export interface VoltServerSecretsSetSecretOptionalParams {
   /**
    * Application specific metadata in the form of key-value pairs.
    */
@@ -323,7 +299,7 @@ export interface KeyVaultClientSetSecretOptionalParams {
 /**
  * Optional Parameters.
  */
-export interface KeyVaultClientUpdateSecretOptionalParams {
+export interface VoltServerSecretsUpdateSecretOptionalParams {
   /**
    * Type of the secret value such as a password.
    */
@@ -341,7 +317,7 @@ export interface KeyVaultClientUpdateSecretOptionalParams {
 /**
  * Optional Parameters.
  */
-export interface KeyVaultClientGetSecretsOptionalParams {
+export interface VoltServerSecretsGetSecretsOptionalParams {
   /**
    * Maximum number of results to return in a page. If not specified, the service will return up to
    * 25 results.
@@ -352,7 +328,7 @@ export interface KeyVaultClientGetSecretsOptionalParams {
 /**
  * Optional Parameters.
  */
-export interface KeyVaultClientGetSecretVersionsOptionalParams {
+export interface VoltServerSecretsGetSecretVersionsOptionalParams {
   /**
    * Maximum number of results to return in a page. If not specified, the service will return up to
    * 25 results.
@@ -363,7 +339,7 @@ export interface KeyVaultClientGetSecretVersionsOptionalParams {
 /**
  * Optional Parameters.
  */
-export interface KeyVaultClientGetDeletedSecretsOptionalParams {
+export interface VoltServerSecretsGetDeletedSecretsOptionalParams {
   /**
    * Maximum number of results to return in a page. If not specified the service will return up to
    * 25 results.

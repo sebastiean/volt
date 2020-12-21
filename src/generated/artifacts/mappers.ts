@@ -34,14 +34,12 @@ export const Attributes: coreHttp.CompositeMapper = {
         }
       },
       created: {
-        readOnly: true,
         serializedName: "created",
         type: {
           name: "UnixTime"
         }
       },
       updated: {
-        readOnly: true,
         serializedName: "updated",
         type: {
           name: "UnixTime"
@@ -59,7 +57,6 @@ export const SecretAttributes: coreHttp.CompositeMapper = {
     modelProperties: {
       ...Attributes.type.modelProperties,
       recoverableDays: {
-        readOnly: true,
         serializedName: "recoverableDays",
         type: {
           name: "Number"
@@ -67,7 +64,6 @@ export const SecretAttributes: coreHttp.CompositeMapper = {
       },
       recoveryLevel: {
         nullable: false,
-        readOnly: true,
         serializedName: "recoveryLevel",
         type: {
           name: "String"
@@ -120,14 +116,12 @@ export const SecretBundle: coreHttp.CompositeMapper = {
         }
       },
       kid: {
-        readOnly: true,
         serializedName: "kid",
         type: {
           name: "String"
         }
       },
       managed: {
-        readOnly: true,
         serializedName: "managed",
         type: {
           name: "Boolean"
@@ -174,7 +168,6 @@ export const SecretItem: coreHttp.CompositeMapper = {
         }
       },
       managed: {
-        readOnly: true,
         serializedName: "managed",
         type: {
           name: "Boolean"
@@ -198,14 +191,12 @@ export const DeletedSecretBundle: coreHttp.CompositeMapper = {
         }
       },
       scheduledPurgeDate: {
-        readOnly: true,
         serializedName: "scheduledPurgeDate",
         type: {
           name: "UnixTime"
         }
       },
       deletedDate: {
-        readOnly: true,
         serializedName: "deletedDate",
         type: {
           name: "UnixTime"
@@ -229,14 +220,12 @@ export const DeletedSecretItem: coreHttp.CompositeMapper = {
         }
       },
       scheduledPurgeDate: {
-        readOnly: true,
         serializedName: "scheduledPurgeDate",
         type: {
           name: "UnixTime"
         }
       },
       deletedDate: {
-        readOnly: true,
         serializedName: "deletedDate",
         type: {
           name: "UnixTime"
@@ -361,7 +350,6 @@ export const SecretListResult: coreHttp.CompositeMapper = {
     className: "SecretListResult",
     modelProperties: {
       value: {
-        readOnly: true,
         serializedName: "value",
         type: {
           name: "Sequence",
@@ -374,7 +362,6 @@ export const SecretListResult: coreHttp.CompositeMapper = {
         }
       },
       nextLink: {
-        readOnly: true,
         serializedName: "nextLink",
         type: {
           name: "String"
@@ -391,7 +378,6 @@ export const DeletedSecretListResult: coreHttp.CompositeMapper = {
     className: "DeletedSecretListResult",
     modelProperties: {
       value: {
-        readOnly: true,
         serializedName: "value",
         type: {
           name: "Sequence",
@@ -404,7 +390,6 @@ export const DeletedSecretListResult: coreHttp.CompositeMapper = {
         }
       },
       nextLink: {
-        readOnly: true,
         serializedName: "nextLink",
         type: {
           name: "String"
@@ -421,7 +406,6 @@ export const BackupSecretResult: coreHttp.CompositeMapper = {
     className: "BackupSecretResult",
     modelProperties: {
       value: {
-        readOnly: true,
         serializedName: "value",
         type: {
           name: "Base64Url"
@@ -438,21 +422,18 @@ export const ErrorModel: coreHttp.CompositeMapper = {
     className: "ErrorModel",
     modelProperties: {
       code: {
-        readOnly: true,
         serializedName: "code",
         type: {
           name: "String"
         }
       },
       message: {
-        readOnly: true,
         serializedName: "message",
         type: {
           name: "String"
         }
       },
       innerError: {
-        readOnly: true,
         serializedName: "innererror",
         type: {
           name: "Composite",
@@ -470,7 +451,6 @@ export const KeyVaultError: coreHttp.CompositeMapper = {
     className: "KeyVaultError",
     modelProperties: {
       error: {
-        readOnly: true,
         serializedName: "error",
         type: {
           name: "Composite",
