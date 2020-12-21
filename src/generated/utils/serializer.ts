@@ -1,10 +1,10 @@
-import * as msRest from "@azure/ms-rest-js";
+import * as coreHttp from "@azure/core-http";
 
 import * as Mappers from "../artifacts/mappers";
 import Context, { IHandlerParameters } from "../Context";
 import IRequest from "../IRequest";
 import IResponse from "../IResponse";
-import ILogger from "./ILogger";
+import ILogger from "../../ILogger";
 import { parseXML, stringifyXML } from "./xml";
 
 export declare type ParameterPath =
@@ -17,7 +17,7 @@ export declare type ParameterPath =
 export async function deserialize(
   context: Context,
   req: IRequest,
-  spec: msRest.OperationSpec,
+  spec: coreHttp.OperationSpec,
   logger: ILogger
 ): Promise<IHandlerParameters> {
   const parameters: IHandlerParameters = {};
@@ -68,7 +68,7 @@ export async function deserialize(
 
     const headerCollectionPrefix:
       | string
-      | undefined = (headerParameter.mapper as msRest.DictionaryMapper)
+      | undefined = (headerParameter.mapper as coreHttp.DictionaryMapper)
       .headerCollectionPrefix;
     if (headerCollectionPrefix) {
       const dictionary: any = {};
@@ -83,7 +83,7 @@ export async function deserialize(
           dictionary[
             headerKey.substring(headerCollectionPrefix.length)
           ] = spec.serializer.serialize(
-            (headerParameter.mapper as msRest.DictionaryMapper).type.value,
+            (headerParameter.mapper as coreHttp.DictionaryMapper).type.value,
             headers[headerKey],
             headerKey
           );
@@ -152,7 +152,7 @@ export async function deserialize(
     let valueToDeserialize: any = parsedBody;
     if (
       spec.isXML &&
-      bodyParameter.mapper.type.name === msRest.MapperType.Sequence
+      bodyParameter.mapper.type.name === coreHttp.MapperType.Sequence
     ) {
       valueToDeserialize =
         typeof valueToDeserialize === "object"
@@ -219,7 +219,7 @@ function setParametersValue(
 export async function serialize(
   context: Context,
   res: IResponse,
-  spec: msRest.OperationSpec,
+  spec: coreHttp.OperationSpec,
   handlerResponse: any,
   logger: ILogger
 ): Promise<void> {
@@ -234,7 +234,7 @@ export async function serialize(
   }
 
   // Serialize headers
-  const headerSerializer = new msRest.Serializer(Mappers);
+  const headerSerializer = new coreHttp.Serializer(Mappers);
   const headersMapper = responseSpec.headersMapper;
   if (headersMapper && headersMapper.type.name === "Composite") {
     const mappersForAllHeaders = headersMapper.type.modelProperties || {};
@@ -251,7 +251,7 @@ export async function serialize(
         );
 
         // Handle collection of headers starting with same prefix, such as x-ms-meta prefix
-        const headerCollectionPrefix = (headerMapper as msRest.DictionaryMapper)
+        const headerCollectionPrefix = (headerMapper as coreHttp.DictionaryMapper)
           .headerCollectionPrefix;
         if (
           headerCollectionPrefix !== undefined &&

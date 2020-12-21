@@ -5,7 +5,7 @@ import OperationMismatchError from "../errors/OperationMismatchError";
 import getHandlerByOperation from "../handlers/handlerMappers";
 import IHandlers from "../handlers/IHandlers";
 import { NextFunction } from "../MiddlewareFactory";
-import ILogger from "../utils/ILogger";
+import ILogger from "../../ILogger";
 
 /**
  * Auto generated. HandlerMiddlewareFactory will accept handlers and create handler middleware.

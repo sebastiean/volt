@@ -74,7 +74,7 @@ export default class LokiSecretsMetadataStore
       });
     }
 
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       this.db.saveDatabase(err => {
         if (err) {
           reject(err);

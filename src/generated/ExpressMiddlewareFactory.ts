@@ -11,7 +11,7 @@ import errorMiddleware from "./middleware/error.middleware";
 import HandlerMiddlewareFactory from "./middleware/HandlerMiddlewareFactory";
 import serializerMiddleware from "./middleware/serializer.middleware";
 import MiddlewareFactory from "./MiddlewareFactory";
-import ILogger from "./utils/ILogger";
+import ILogger from "../ILogger";
 
 /**
  * ExpressMiddlewareFactory will generate Express compatible middleware according to swagger definitions.

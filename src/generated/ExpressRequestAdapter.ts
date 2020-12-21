@@ -48,7 +48,8 @@ export default class ExpressRequestAdapter implements IRequest {
   }
 
   public getQuery(key: string): string | undefined {
-    return this.req.query[key];
+    // TODO: check if the cast causes issues
+    return this.req.query[key] as string;
   }
 
   public getProtocol(): string {

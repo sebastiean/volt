@@ -1,5 +1,5 @@
 import express from "express";
-import * as morgan from "morgan";
+import morgan = require("morgan");
 
 import IRequestListenerFactory from "./IRequestListenerFactory";
 import logger from "./Logger";

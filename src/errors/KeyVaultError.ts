@@ -11,6 +11,7 @@ export default class KeyVaultError extends MiddlewareError {
   public readonly keyVaultErrorCode: string;
   public readonly keyVaultErrorMessage: string;
   public readonly keyVaultRequestID: string;
+  public readonly keyVaultStatusMessage?: string;
 
   /**
    * Creates an instance of KeyVaultError.
@@ -19,27 +20,31 @@ export default class KeyVaultError extends MiddlewareError {
    * @param {string} keyVaultErrorCode Azure Key Vault error code, will be in response body
    * @param {string} keyVaultErrorMessage Azure Key Vault error message
    * @param {string} keyVaultRequestID Azure Key Vault server request ID
+   * @param {string} [keyVaultStatusMessage] Azure Key Vault HTTP status message
    * @memberof KeyVaultError
    */
   constructor(
     statusCode: number,
     keyVaultErrorCode: string,
     keyVaultErrorMessage: string,
-    keyVaultRequestID: string
+    keyVaultRequestID: string,
+    keyVaultStatusMessage?: string,
   ) {
     const body: any = {
       code: keyVaultErrorCode,
       message: keyVaultErrorMessage
     };
 
+    const jsonBody = JSON.stringify({ error: body });
+
     super(
       statusCode,
       keyVaultErrorMessage,
-      keyVaultErrorMessage,
+      keyVaultStatusMessage,
       {
         "x-ms-request-id": keyVaultRequestID
       },
-      body,
+      jsonBody,
       "application/json"
     );
 
@@ -47,5 +52,6 @@ export default class KeyVaultError extends MiddlewareError {
     this.keyVaultErrorCode = keyVaultErrorCode;
     this.keyVaultErrorMessage = keyVaultErrorMessage;
     this.keyVaultRequestID = keyVaultRequestID;
+    this.keyVaultStatusMessage = keyVaultStatusMessage;
   }
 }

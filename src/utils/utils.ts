@@ -1,4 +1,4 @@
-import * as rimraf from "rimraf";
+import rimraf = require("rimraf");
 import { promisify } from "util";
 
 // LokiFsStructuredAdapter

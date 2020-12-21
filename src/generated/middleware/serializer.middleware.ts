@@ -4,7 +4,7 @@ import Context from "../Context";
 import OperationMismatchError from "../errors/OperationMismatchError";
 import IResponse from "../IResponse";
 import { NextFunction } from "../MiddlewareFactory";
-import ILogger from "../utils/ILogger";
+import ILogger from "../../ILogger";
 import { serialize } from "../utils/serializer";
 
 /**

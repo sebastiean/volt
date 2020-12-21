@@ -3,7 +3,7 @@ import { RequestOptionsBase, RestResponse } from "@azure/core-http";
 import * as Models from "../generated/artifacts/models";
 import Context from "../generated/Context";
 import IVoltServerSecretsHandler from "../generated/handlers/IVoltServerSecretsHandler";
-import ILogger from "../generated/utils/ILogger";
+import ILogger from "../ILogger";
 import NotImplementedError from "../errors/NotImplementedError";
 import KeyVaultErrorFactory from "../errors/KeyVaultErrorFactory";
 import ISecretsMetadataStore from "../persistence/ISecretsMetadataStore";

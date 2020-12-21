@@ -5,7 +5,7 @@ import DeserializationError from "../errors/DeserializationError";
 import OperationMismatchError from "../errors/OperationMismatchError";
 import IRequest from "../IRequest";
 import { NextFunction } from "../MiddlewareFactory";
-import ILogger from "../utils/ILogger";
+import ILogger from "../../ILogger";
 import { deserialize } from "../utils/serializer";
 
 /**

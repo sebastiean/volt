@@ -6,7 +6,7 @@ import Context from "../Context";
 import UnsupportedRequestError from "../errors/UnsupportedRequestError";
 import IRequest from "../IRequest";
 import { NextFunction } from "../MiddlewareFactory";
-import ILogger from "../utils/ILogger";
+import ILogger from "../../ILogger";
 import { isURITemplateMatch } from "../utils/utils";
 
 /**
