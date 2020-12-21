@@ -6,4 +6,5 @@ export const DEFAULT_DEBUG_LOG_PATH = "./debug.log";
 export const DEFAULT_ENABLE_DEBUG_LOG = true;
 export const DEFAULT_ACCESS_LOG_PATH = "./access.log";
 export const DEFAULT_ENABLE_ACCESS_LOG = true;
+export const DEFAULT_CONTEXT_PATH = "volt_secrets_context";
 export const LOGGER_CONFIGS = {};
