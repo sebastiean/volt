@@ -1,4 +1,4 @@
-import ILogger from "../generated/utils/ILogger";
+import ILogger from "../ILogger";
 import ISecretsMetadataStore from "../persistence/ISecretsMetadataStore";
 
 /**
