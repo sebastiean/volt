@@ -20,15 +20,15 @@ export interface ISecretsMetadataStore
    *
    * @param {Context} context
    * @param {string} secretName
-   * @param {Models.SecretSetParameters} parameters
-   * @returns {Promise<Models.SetSecretResponse>}
+   * @param {Models.SecretBundle} secretBundle
+   * @returns {Promise<Models.SecretBundle>}
    * @memberof ISecretsMetadataStore
    */
   setSecret(
     context: Context,
     secretName: string,
-    parameters: Models.SecretSetParameters
-  ): Promise<Models.SetSecretResponse>;
+    secretBundle: Models.SecretBundle
+  ): Promise<Models.SecretBundle>;
 
   /**
    * Delete secret.
@@ -49,7 +49,7 @@ export interface ISecretsMetadataStore
    * @param {Context} context
    * @param {string} secretName
    * @param {string} secretVersion
-   * @param {Models.KeyVaultClientUpdateSecretOptionalParams} parameters
+   * @param {Models.VoltServerSecretsUpdateSecretOptionalParams} parameters
    * @returns {Promise<Models.UpdateSecretResponse>}
    * @memberof ISecretsMetadataStore
    */
@@ -57,7 +57,7 @@ export interface ISecretsMetadataStore
     context: Context,
     secretName: string,
     secretVersion: string,
-    parameters: Models.KeyVaultClientUpdateSecretOptionalParams
+    parameters: Models.VoltServerSecretsUpdateSecretOptionalParams
   ): Promise<Models.UpdateSecretResponse>;
 
   /**
@@ -79,13 +79,13 @@ export interface ISecretsMetadataStore
    * Get secrets.
    *
    * @param {Context} context
-   * @param {Models.KeyVaultClientGetSecretsOptionalParams} parameters
+   * @param {Models.VoltServerSecretsGetSecretsOptionalParams} parameters
    * @returns {Promise<Models.GetSecretsResponse>}
    * @memberof ISecretsMetadataStore
    */
   getSecrets(
     context: Context,
-    parameters: Models.KeyVaultClientGetSecretsOptionalParams
+    parameters: Models.VoltServerSecretsGetSecretsOptionalParams
   ): Promise<Models.GetSecretsResponse>;  
   
   /**
@@ -99,7 +99,7 @@ export interface ISecretsMetadataStore
   getSecretVersions(
     context: Context,
     secretName: string,
-    parameters: Models.KeyVaultClientGetSecretVersionsOptionalParams
+    parameters: Models.VoltServerSecretsGetSecretVersionsOptionalParams
   ): Promise<Models.GetSecretVersionsResponse>;
   
   // TODO: implement the following methods
