@@ -12,7 +12,6 @@ const operationHandlerMapping: {[key: number]: IHandlerPath} = {};
 
 operationHandlerMapping[Operation.SetSecret] = {
   arguments: [
-    "vaultBaseUrl",
     "secretName",
     "value",
     "options"
@@ -22,7 +21,6 @@ operationHandlerMapping[Operation.SetSecret] = {
 };
 operationHandlerMapping[Operation.DeleteSecret] = {
   arguments: [
-    "vaultBaseUrl",
     "secretName",
     "options"
   ],
@@ -31,7 +29,6 @@ operationHandlerMapping[Operation.DeleteSecret] = {
 };
 operationHandlerMapping[Operation.UpdateSecret] = {
   arguments: [
-    "vaultBaseUrl",
     "secretName",
     "secretVersion",
     "options"
@@ -41,7 +38,6 @@ operationHandlerMapping[Operation.UpdateSecret] = {
 };
 operationHandlerMapping[Operation.GetSecret] = {
   arguments: [
-    "vaultBaseUrl",
     "secretName",
     "secretVersion",
     "options"
@@ -51,7 +47,6 @@ operationHandlerMapping[Operation.GetSecret] = {
 };
 operationHandlerMapping[Operation.GetSecrets] = {
   arguments: [
-    "vaultBaseUrl",
     "options"
   ],
   handler: "voltServerSecretsHandler",
@@ -59,7 +54,6 @@ operationHandlerMapping[Operation.GetSecrets] = {
 };
 operationHandlerMapping[Operation.GetSecretVersions] = {
   arguments: [
-    "vaultBaseUrl",
     "secretName",
     "options"
   ],
@@ -68,7 +62,6 @@ operationHandlerMapping[Operation.GetSecretVersions] = {
 };
 operationHandlerMapping[Operation.GetDeletedSecrets] = {
   arguments: [
-    "vaultBaseUrl",
     "options"
   ],
   handler: "voltServerSecretsHandler",
@@ -76,7 +69,6 @@ operationHandlerMapping[Operation.GetDeletedSecrets] = {
 };
 operationHandlerMapping[Operation.GetDeletedSecret] = {
   arguments: [
-    "vaultBaseUrl",
     "secretName",
     "options"
   ],
@@ -85,7 +77,6 @@ operationHandlerMapping[Operation.GetDeletedSecret] = {
 };
 operationHandlerMapping[Operation.RecoverDeletedSecret] = {
   arguments: [
-    "vaultBaseUrl",
     "secretName",
     "options"
   ],
@@ -94,7 +85,6 @@ operationHandlerMapping[Operation.RecoverDeletedSecret] = {
 };
 operationHandlerMapping[Operation.BackupSecret] = {
   arguments: [
-    "vaultBaseUrl",
     "secretName",
     "options"
   ],
@@ -103,7 +93,6 @@ operationHandlerMapping[Operation.BackupSecret] = {
 };
 operationHandlerMapping[Operation.RestoreSecret] = {
   arguments: [
-    "vaultBaseUrl",
     "secretBundleBackup",
     "options"
   ],
