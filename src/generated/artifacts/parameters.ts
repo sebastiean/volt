@@ -39,7 +39,7 @@ export const maxresults: coreHttp.OperationQueryParameter = {
     }
   }
 };
-export const secretName0: coreHttp.OperationURLParameter = {
+export const secretName: coreHttp.OperationURLParameter = {
   parameterPath: "secretName",
   mapper: {
     required: true,
@@ -52,21 +52,14 @@ export const secretName0: coreHttp.OperationURLParameter = {
     }
   }
 };
-export const secretName1: coreHttp.OperationURLParameter = {
-  parameterPath: "secretName",
-  mapper: {
-    required: true,
-    serializedName: "secret-name",
-    type: {
-      name: "String"
-    }
-  }
-};
 export const secretVersion: coreHttp.OperationURLParameter = {
   parameterPath: "secretVersion",
   mapper: {
     required: true,
     serializedName: "secret-version",
+    constraints: {
+      Pattern: /^[a-f0-9]{32}$/
+    },
     type: {
       name: "String"
     }

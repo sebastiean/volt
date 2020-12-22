@@ -22,7 +22,7 @@ const setSecretOperationSpec: coreHttp.OperationSpec = {
   path: "secrets/{secret-name}",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName0
+    Parameters.secretName
   ],
   queryParameters: [
     Parameters.apiVersion
@@ -64,7 +64,7 @@ const deleteSecretOperationSpec: coreHttp.OperationSpec = {
   path: "secrets/{secret-name}",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName1
+    Parameters.secretName
   ],
   queryParameters: [
     Parameters.apiVersion
@@ -85,7 +85,7 @@ const updateSecretOperationSpec: coreHttp.OperationSpec = {
   path: "secrets/{secret-name}/{secret-version}",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName1,
+    Parameters.secretName,
     Parameters.secretVersion
   ],
   queryParameters: [
@@ -127,7 +127,7 @@ const getSecretOperationSpec: coreHttp.OperationSpec = {
   path: "secrets/{secret-name}/{secret-version}",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName1,
+    Parameters.secretName,
     Parameters.secretVersion
   ],
   queryParameters: [
@@ -170,7 +170,7 @@ const getSecretVersionsOperationSpec: coreHttp.OperationSpec = {
   path: "secrets/{secret-name}/versions",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName1
+    Parameters.secretName
   ],
   queryParameters: [
     Parameters.maxresults,
@@ -213,7 +213,7 @@ const getDeletedSecretOperationSpec: coreHttp.OperationSpec = {
   path: "deletedsecrets/{secret-name}",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName1
+    Parameters.secretName
   ],
   queryParameters: [
     Parameters.apiVersion
@@ -234,7 +234,7 @@ const purgeDeletedSecretOperationSpec: coreHttp.OperationSpec = {
   path: "deletedsecrets/{secret-name}",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName1
+    Parameters.secretName
   ],
   queryParameters: [
     Parameters.apiVersion
@@ -253,7 +253,7 @@ const recoverDeletedSecretOperationSpec: coreHttp.OperationSpec = {
   path: "deletedsecrets/{secret-name}/recover",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName1
+    Parameters.secretName
   ],
   queryParameters: [
     Parameters.apiVersion
@@ -274,7 +274,7 @@ const backupSecretOperationSpec: coreHttp.OperationSpec = {
   path: "secrets/{secret-name}/backup",
   urlParameters: [
     Parameters.vaultBaseUrl,
-    Parameters.secretName1
+    Parameters.secretName
   ],
   queryParameters: [
     Parameters.apiVersion
