@@ -22,4 +22,16 @@ export default class KeyVaultErrorFactory {
       contextID
     );
   }
+
+  public static getBadParameter(
+    contextID: string = DefaultID,
+    message: string
+  ): KeyVaultError {
+    return new KeyVaultError(
+      400,
+      "BadParameter",
+      message,
+      contextID
+    );
+  }
 }

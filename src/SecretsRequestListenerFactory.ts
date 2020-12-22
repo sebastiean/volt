@@ -10,6 +10,7 @@ import MiddlewareFactory from "./generated/MiddlewareFactory";
 import SecretsHandler from "./handlers/SecretsHandler";
 import ISecretsMetadataStore from "./persistence/ISecretsMetadataStore";
 import { DEFAULT_CONTEXT_PATH } from "./utils/constants";
+import createSecretsContextMiddleware from './middleware/secretsContext.middleware';
 
 /**
  * Default RequestListenerFactory based on express framework.
@@ -29,7 +30,7 @@ export default class SecretsRequestListenerFactory
     private readonly accessLogWriteStream?: NodeJS.WritableStream,
     private readonly loose?: boolean,
     private readonly skipApiVersionCheck?: boolean
-  ) {}
+  ) { }
 
   public createRequestListener(): RequestListener {
     const app = express().disable("x-powered-by");
@@ -57,6 +58,9 @@ export default class SecretsRequestListenerFactory
     if (this.enableAccessLog) {
       app.use(morgan("common", { stream: this.accessLogWriteStream }));
     }
+
+    // Manually created middleware to deserialize feature related context which swagger doesn"t know
+    app.use(createSecretsContextMiddleware(this.skipApiVersionCheck));
 
     // Dispatch incoming HTTP request to specific operation
     app.use(middlewareFactory.createDispatchMiddleware());
