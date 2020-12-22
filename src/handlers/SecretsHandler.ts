@@ -24,40 +24,40 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   ) {
     super(metadataStore, logger);
   }
-  setSecret(vaultBaseUrl: string, secretName: string, value: string, options: Models.VoltServerSecretsSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse> {
+  setSecret(secretName: string, value: string, options: Models.VoltServerSecretsSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse> {
     throw new NotImplementedError();
   }
-  deleteSecret(vaultBaseUrl: string, secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.DeleteSecretResponse> {
+  deleteSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.DeleteSecretResponse> {
     throw new NotImplementedError();
   }
-  updateSecret(vaultBaseUrl: string, secretName: string, secretVersion: string, options: Models.VoltServerSecretsUpdateSecretOptionalParams, context: Context): Promise<Models.UpdateSecretResponse> {
+  updateSecret(secretName: string, secretVersion: string, options: Models.VoltServerSecretsUpdateSecretOptionalParams, context: Context): Promise<Models.UpdateSecretResponse> {
     throw new NotImplementedError();
   }
-  getSecret(vaultBaseUrl: string, secretName: string, secretVersion: string, options: RequestOptionsBase, context: Context): Promise<Models.GetSecretResponse> {
+  getSecret(secretName: string, secretVersion: string, options: RequestOptionsBase, context: Context): Promise<Models.GetSecretResponse> {
     throw new NotImplementedError();
   }
-  getSecrets(vaultBaseUrl: string, options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse> {
+  getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse> {
     throw new NotImplementedError();
   }
-  getSecretVersions(vaultBaseUrl: string, secretName: string, options: Models.VoltServerSecretsGetSecretVersionsOptionalParams, context: Context): Promise<Models.GetSecretVersionsResponse> {
+  getSecretVersions(secretName: string, options: Models.VoltServerSecretsGetSecretVersionsOptionalParams, context: Context): Promise<Models.GetSecretVersionsResponse> {
     throw new NotImplementedError();
   }
-  getDeletedSecrets(vaultBaseUrl: string, options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams, context: Context): Promise<Models.GetDeletedSecretsResponse> {
+  getDeletedSecrets(options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams, context: Context): Promise<Models.GetDeletedSecretsResponse> {
     throw new NotImplementedError();
   }
-  getDeletedSecret(vaultBaseUrl: string, secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.GetDeletedSecretResponse> {
+  getDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.GetDeletedSecretResponse> {
     throw new NotImplementedError();
   }
-  purgeDeletedSecret(vaultBaseUrl: string, secretName: string, options: RequestOptionsBase, context: Context): Promise<RestResponse> {
+  purgeDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<RestResponse> {
     throw new NotImplementedError();
   }
-  recoverDeletedSecret(vaultBaseUrl: string, secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.RecoverDeletedSecretResponse> {
+  recoverDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.RecoverDeletedSecretResponse> {
     throw new NotImplementedError();
   }
-  backupSecret(vaultBaseUrl: string, secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.BackupSecretResponse> {
+  backupSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.BackupSecretResponse> {
     throw new NotImplementedError();
   }
-  restoreSecret(vaultBaseUrl: string, secretBundleBackup: Uint8Array, options: RequestOptionsBase, context: Context): Promise<Models.RestoreSecretResponse> {
+  restoreSecret(secretBundleBackup: Uint8Array, options: RequestOptionsBase, context: Context): Promise<Models.RestoreSecretResponse> {
     throw new NotImplementedError();
   }
 }
