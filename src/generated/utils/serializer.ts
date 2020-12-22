@@ -6,13 +6,14 @@ import IRequest from "../IRequest";
 import IResponse from "../IResponse";
 import ILogger from "../../ILogger";
 import { parseXML, stringifyXML } from "./xml";
+import { pathParameterRegExp } from "./utils";
 
 export declare type ParameterPath =
   | string
   | string[]
   | {
-      [propertyName: string]: ParameterPath;
-    };
+    [propertyName: string]: ParameterPath;
+  };
 
 export async function deserialize(
   context: Context,
@@ -21,6 +22,46 @@ export async function deserialize(
   logger: ILogger
 ): Promise<IHandlerParameters> {
   const parameters: IHandlerParameters = {};
+
+  const decodedPath = decodeURIComponent(req.getPath());
+  const normalizedPath = decodedPath.startsWith("/")
+    ? decodedPath.substr(1)
+    : decodedPath; // Remove starting "/"
+  // Deserialize url parameters
+  const specPath = spec.path as string;
+
+  let urlParamNames: string[] = [];
+  const pathPattern = specPath.replace(pathParameterRegExp, (match, paramName) => {
+    urlParamNames.push(paramName);
+    return "([^\/]+)";
+  });
+
+  const values = new RegExp(pathPattern + "\/?$", "i").exec(normalizedPath);
+
+  for (const [index, urlParameter] of spec.urlParameters?.entries() || []) {
+    if (!urlParameter.mapper.serializedName) {
+      throw new TypeError(
+        `UrlParameter mapper doesn't include valid "serializedName"`
+      );
+    }
+
+    const urlKey = urlParameter.mapper.serializedName;
+
+    const urlValueOriginal = values![index] || undefined;
+
+    const urlValue = spec.serializer.deserialize(
+      urlParameter.mapper,
+      urlValueOriginal,
+      urlKey
+    );
+
+    // TODO: Currently validation is only in serialize method,
+    // remove when adding validateConstraints to deserialize()
+    // TODO: Make serialize return ServerError according to different validations?
+    spec.serializer.serialize(urlParameter.mapper, urlValue);
+
+    setParametersValue(parameters, urlParameter.parameterPath, urlValue);
+  }
 
   // Deserialize query parameters
   for (const queryParameter of spec.queryParameters || []) {
@@ -69,7 +110,7 @@ export async function deserialize(
     const headerCollectionPrefix:
       | string
       | undefined = (headerParameter.mapper as coreHttp.DictionaryMapper)
-      .headerCollectionPrefix;
+        .headerCollectionPrefix;
     if (headerCollectionPrefix) {
       const dictionary: any = {};
       const headers = req.getHeaders();
@@ -212,7 +253,14 @@ function setParametersValue(
     const lastPropertyName = parameterPath[parameterPath.length - 1];
     leafParent[lastPropertyName] = parameterValue;
   } else {
-    throw new TypeError(`parameterPath is not string or string[]`);
+    for (let [key, value] of Object.entries(parameterPath)) {
+      if (typeof value === "string") {
+        const retrievedValue = parameterValue[key] as string || undefined;
+        setParametersValue(parameters, key, retrievedValue);
+      } else {
+        setParametersValue(parameters, value, undefined);
+      }
+    }
   }
 }
 

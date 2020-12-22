@@ -1,5 +1,10 @@
 import URITemplate from "uri-templates";
 
+/**
+ * Regular Expression that matches path parameters.
+ */
+export const pathParameterRegExp = /\{([^/}]+)}/g;
+
 export function isURITemplateMatch(url: string, template: string): boolean {
   const uriTemplate = URITemplate(template);
   // TODO: Fixing $ parsing issue such as $logs container cannot work in strict mode issue
