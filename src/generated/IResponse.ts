@@ -13,4 +13,6 @@ export default interface IResponse {
   headersSent(): boolean;
   setContentType(value: string | undefined): IResponse;
   getBodyStream(): NodeJS.WritableStream;
+  send(body: any): IResponse;
+  json(body: any): IResponse;
 }

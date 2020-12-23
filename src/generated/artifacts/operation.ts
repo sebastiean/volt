@@ -9,6 +9,7 @@
 export enum Operation {
   SetSecret,
   DeleteSecret,
+  GetSecretLatestVersion,
   UpdateSecret,
   GetSecret,
   GetSecrets,

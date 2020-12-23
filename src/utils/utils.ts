@@ -19,3 +19,24 @@ export function checkApiVersion(
     throw KeyVaultErrorFactory.getBadParameter(requestId, message);
   }
 }
+
+export function getTimestampInSeconds(date?: Date): Number {
+  if (!date) {
+    date = new Date();
+  }
+
+  return Math.floor((date).getTime() / 1000);
+}
+
+export function buildKeyvaultIdentifier(
+  vaultBaseUrl: string,
+  secretName: string,
+  secretVersion: string,
+  collection: string = "secrets"
+): string {
+  const url = vaultBaseUrl.endsWith("/")
+    ? vaultBaseUrl.substr(0, vaultBaseUrl.length - 2)
+    : vaultBaseUrl; // Remove last "/"
+
+  return [url, collection, secretName, secretVersion].join("/");
+}

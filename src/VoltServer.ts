@@ -29,12 +29,12 @@ const AFTER_CLOSE_MESSAGE = `Volt Secrets service successfully closed`;
  */
 export default class VoltServer extends ServerBase implements ICleaner {
   private readonly metadataStore: ISecretsMetadataStore;
-/**
-   * Creates an instance of Server.
-   *
-   * @param {SecretsConfiguration} configuration
-   * @memberof Server
-   */
+  /**
+     * Creates an instance of Server.
+     *
+     * @param {SecretsConfiguration} configuration
+     * @memberof Server
+     */
   constructor(configuration?: SecretsConfiguration) {
     if (configuration === undefined) {
       configuration = new SecretsConfiguration();
@@ -71,7 +71,10 @@ export default class VoltServer extends ServerBase implements ICleaner {
       configuration.enableAccessLog, // Access log includes every handled HTTP request
       configuration.accessLogWriteStream,
       configuration.loose,
-      configuration.skipApiVersionCheck
+      configuration.skipApiVersionCheck,
+      configuration.getHttpServerAddress(),
+      configuration.getRecoveryLevel(),
+      configuration.recoverableDays
     );
 
     super(host, port, httpServer, requestListenerFactory, configuration);

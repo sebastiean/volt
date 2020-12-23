@@ -3,6 +3,13 @@ import IDataStore from "../IDataStore";
 import * as Models from "../generated/artifacts/models";
 import Context from "../generated/Context";
 
+interface ISecretAdditionalProperties {
+  secretName: string;
+  secretVersion: string;
+}
+
+export type SecretModel = ISecretAdditionalProperties & Models.SecretBundle;
+
 /**
  * Persistency layer metadata storage interface.
  *
@@ -13,22 +20,20 @@ import Context from "../generated/Context";
  */
 export interface ISecretsMetadataStore
   extends IDataStore,
-    ICleaner {
+  ICleaner {
 
   /**
    * Set secret.
    *
    * @param {Context} context
-   * @param {string} secretName
-   * @param {Models.SecretBundle} secretBundle
-   * @returns {Promise<Models.SecretBundle>}
+   * @param {SecretModel} secret
+   * @returns {Promise<SecretModel>}
    * @memberof ISecretsMetadataStore
    */
   setSecret(
     context: Context,
-    secretName: string,
-    secretBundle: Models.SecretBundle
-  ): Promise<Models.SecretBundle>;
+    secret: SecretModel
+  ): Promise<SecretModel>;
 
   /**
    * Delete secret.
@@ -42,7 +47,7 @@ export interface ISecretsMetadataStore
     context: Context,
     secretName: string
   ): Promise<Models.DeleteSecretResponse>;
-  
+
   /**
    * Update secret.
    *
@@ -55,25 +60,23 @@ export interface ISecretsMetadataStore
    */
   updateSecret(
     context: Context,
-    secretName: string,
-    secretVersion: string,
-    parameters: Models.VoltServerSecretsUpdateSecretOptionalParams
-  ): Promise<Models.UpdateSecretResponse>;
+    model: SecretModel
+  ): Promise<SecretModel>;
 
   /**
-   * Get secret.
+   * Get secret. If version not provided, get the latest version.
    *
    * @param {Context} context
    * @param {string} secretName
-   * @param {string} secretVersion
+   * @param {string} [secretVersion]
    * @returns {Promise<Models.GetSecretResponse>}
    * @memberof ISecretsMetadataStore
    */
   getSecret(
     context: Context,
     secretName: string,
-    secretVersion: string
-  ): Promise<Models.GetSecretResponse>;
+    secretVersion?: string
+  ): Promise<SecretModel>;
 
   /**
    * Get secrets.
@@ -86,8 +89,8 @@ export interface ISecretsMetadataStore
   getSecrets(
     context: Context,
     parameters: Models.VoltServerSecretsGetSecretsOptionalParams
-  ): Promise<Models.GetSecretsResponse>;  
-  
+  ): Promise<Models.GetSecretsResponse>;
+
   /**
    * Get secret versions.
    *
@@ -101,7 +104,7 @@ export interface ISecretsMetadataStore
     secretName: string,
     parameters: Models.VoltServerSecretsGetSecretVersionsOptionalParams
   ): Promise<Models.GetSecretVersionsResponse>;
-  
+
   // TODO: implement the following methods
   // /**
   //  * Get seleted secrets.
@@ -113,7 +116,7 @@ export interface ISecretsMetadataStore
   // getDeletedSecrets(
   //   context: Context,
   // ): Promise<void>;
-  
+
   // /**
   //  * Get deleted secret.
   //  *
@@ -124,7 +127,7 @@ export interface ISecretsMetadataStore
   // getDeletedSecret(
   //   context: Context,
   // ): Promise<void>;
-  
+
   // /**
   //  * Recover deleted secret.
   //  *
@@ -135,7 +138,7 @@ export interface ISecretsMetadataStore
   // recoverDeletedSecret(
   //   context: Context,
   // ): Promise<void>;
-  
+
   // /**
   //  * Backup secret.
   //  *
@@ -146,7 +149,7 @@ export interface ISecretsMetadataStore
   // backupSecret(
   //   context: Context,
   // ): Promise<void>;
-  
+
   // /**
   //  * Restore secret.
   //  *

@@ -7,6 +7,7 @@ import IResponse from "../IResponse";
 import ILogger from "../../ILogger";
 import { parseXML, stringifyXML } from "./xml";
 import { pathParameterRegExp } from "./utils";
+import { json } from 'express';
 
 export declare type ParameterPath =
   | string
@@ -254,11 +255,11 @@ function setParametersValue(
     leafParent[lastPropertyName] = parameterValue;
   } else {
     for (let [key, value] of Object.entries(parameterPath)) {
+      const retrievedValue = parameterValue[key] as string || undefined;
       if (typeof value === "string") {
-        const retrievedValue = parameterValue[key] as string || undefined;
         setParametersValue(parameters, key, retrievedValue);
       } else {
-        setParametersValue(parameters, value, undefined);
+        setParametersValue(parameters, value, retrievedValue);
       }
     }
   }
@@ -330,6 +331,39 @@ export async function serialize(
         }
       }
     }
+  }
+
+  // Serialize JSON bodies
+  if (
+    !spec.isXML &&
+    responseSpec.bodyMapper &&
+    responseSpec.bodyMapper.type.name !== "Stream"
+  ) {
+    let body = spec.serializer.serialize(
+      responseSpec.bodyMapper!,
+      handlerResponse
+    );
+
+    // When root element is sequence type, should wrap with because serialize() doesn't do that
+    if (responseSpec.bodyMapper!.type.name === "Sequence") {
+      const sequenceElementName = responseSpec.bodyMapper!.serializedName;
+      if (sequenceElementName !== undefined) {
+        const newBody = {} as any;
+        newBody[sequenceElementName] = body;
+        body = newBody;
+      }
+    }
+
+    const jsonBody = JSON.stringify(body);
+    res.setContentType(`application/json`);
+
+    // TODO: Should send response in a serializer?
+    res.getBodyStream().write(jsonBody);
+    logger.debug(
+      `Serializer: Raw response body string is ${jsonBody}`,
+      context.contextId
+    );
+    logger.info(`Serializer: Start returning stream body.`, context.contextId);
   }
 
   // Serialize XML bodies

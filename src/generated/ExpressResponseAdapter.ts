@@ -4,7 +4,7 @@ import { OutgoingHttpHeaders } from "http";
 import IResponse from "./IResponse";
 
 export default class ExpressResponseAdapter implements IResponse {
-  public constructor(private readonly res: Response) {}
+  public constructor(private readonly res: Response) { }
 
   public setStatusCode(code: number): IResponse {
     this.res.status(code);
@@ -58,5 +58,15 @@ export default class ExpressResponseAdapter implements IResponse {
 
   public getBodyStream(): NodeJS.WritableStream {
     return this.res;
+  }
+
+  public send(body: any): IResponse {
+    this.res.send(body);
+    return this;
+  }
+
+  public json(body: any): IResponse {
+    this.res.json(body);
+    return this;
   }
 }

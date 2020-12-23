@@ -378,6 +378,16 @@ export type DeleteSecretResponse = DeletedSecretBundle & {
 };
 
 /**
+ * Contains response data for the getSecretLatestVersion operation.
+ */
+export type GetSecretLatestVersionResponse = SecretBundle & {
+  /**
+   * The response status code.
+   */
+  statusCode: 200;
+};
+
+/**
  * Contains response data for the updateSecret operation.
  */
 export type UpdateSecretResponse = SecretBundle & {

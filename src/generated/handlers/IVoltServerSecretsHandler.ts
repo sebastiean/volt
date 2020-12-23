@@ -16,6 +16,7 @@ import Context from "../Context";
 export default interface IVoltServerSecretsHandler {
   setSecret(secretName: string, value: string, options: Models.VoltServerSecretsSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse>;
   deleteSecret(secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.DeleteSecretResponse>;
+  getSecretLatestVersion(secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.GetSecretLatestVersionResponse>;
   updateSecret(secretName: string, secretVersion: string, options: Models.VoltServerSecretsUpdateSecretOptionalParams, context: Context): Promise<Models.UpdateSecretResponse>;
   getSecret(secretName: string, secretVersion: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.GetSecretResponse>;
   getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse>;

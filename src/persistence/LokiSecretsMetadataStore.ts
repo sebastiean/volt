@@ -4,7 +4,8 @@ import Loki from "lokijs";
 import { rimrafAsync } from "../utils/utils";
 import * as Models from "../generated/artifacts/models";
 import Context from "../generated/Context";
-import ISecretsMetadataStore from "./ISecretsMetadataStore";
+import ISecretsMetadataStore, { SecretModel } from "./ISecretsMetadataStore";
+import KeyVaultErrorFactory from '../errors/KeyVaultErrorFactory';
 
 /**
  * This is a metadata source implementation for secrets based on loki DB.
@@ -127,39 +128,82 @@ export default class LokiSecretsMetadataStore
    * Set secret item in persistency layer. Will create new version if secret exists.
    *
    * @param {Context} context
-   * @param {string} secretName
-   * @param {Models.SecretBundle} secretBundle
-   * @returns {Promise<Models.SecretBundle>}
+   * @param {SecretModel} secret
+   * @returns {Promise<SecretModel>}
    * @memberof LokiSecretsMetadataStore
    */
-  public async setSecret(context: Context, secretName: string, secretBundle: Models.SecretBundle): Promise<Models.SecretBundle> {
+  public async setSecret(context: Context, secret: SecretModel): Promise<SecretModel> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
     const secretDoc = coll.findOne({
-      secretName
+      secretName: secret.secretName
     });
 
     // validateParameters(context, parameters, secretDoc);
 
     if (secretDoc) {
-      let secretVersions = secretDoc.versions;
-      secretVersions.push(secretBundle);
+      secretDoc.versions.push(secret);
+      return coll.update(secretDoc);
     }
-    return coll.update(secretDoc);
+
+    return coll.insert({
+      secretName: secret.secretName,
+      versions: [secret]
+    });
   }
 
-  deleteSecret(context: Context, secretName: string): Promise<Models.DeleteSecretResponse> {
+  public async deleteSecret(context: Context, secretName: string): Promise<Models.DeleteSecretResponse> {
     throw new Error("Method not implemented.");
   }
-  updateSecret(context: Context, secretName: string, secretVersion: string, parameters: Models.VoltServerSecretsUpdateSecretOptionalParams): Promise<Models.UpdateSecretResponse> {
+
+  public async updateSecret(context: Context, secret: SecretModel): Promise<SecretModel> {
+    const coll = this.db.getCollection(this.SECRETS_COLLECTION);
+    const secretDoc = coll.findOne({
+      secretName: secret.secretName
+    });
+
+    if (!secretDoc) {
+      throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secret.secretName);
+    }
+
+    let found = undefined;
+
+    for (let i = 0; i < secretDoc.versions.length; i++) {
+      if (secretDoc.versions[i].secretVersion = secret.secretVersion) {
+        found = i;
+      }
+    }
+
+    if (!found) {
+      throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secret.secretName, secret.secretVersion);
+    }
+
+    secretDoc.versions[found] = { ...secretDoc.versions[found], ...secret };
+    coll.update(secretDoc);
+
+    return secretDoc.versions[found];
+  }
+
+  public async getSecret(context: Context, secretName: string, secretVersion: string): Promise<SecretModel> {
+    const coll = this.db.getCollection(this.SECRETS_COLLECTION);
+
+    const secretDoc = coll.findOne({
+      secretName
+    });
+
+    if (!secretDoc) {
+      throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName);
+    }
+
+
+
+    return {} as SecretModel;
+  }
+
+  public async getSecrets(context: Context, parameters: Models.VoltServerSecretsGetSecretsOptionalParams): Promise<Models.GetSecretsResponse> {
     throw new Error("Method not implemented.");
   }
-  getSecret(context: Context, secretName: string, secretVersion: string): Promise<Models.GetSecretResponse> {
-    throw new Error("Method not implemented.");
-  }
-  getSecrets(context: Context, parameters: Models.VoltServerSecretsGetSecretsOptionalParams): Promise<Models.GetSecretsResponse> {
-    throw new Error("Method not implemented.");
-  }
-  getSecretVersions(context: Context, secretName: string, parameters: Models.VoltServerSecretsGetSecretVersionsOptionalParams): Promise<Models.GetSecretVersionsResponse> {
+
+  public async getSecretVersions(context: Context, secretName: string, parameters: Models.VoltServerSecretsGetSecretVersionsOptionalParams): Promise<Models.GetSecretVersionsResponse> {
     throw new Error("Method not implemented.");
   }
 }

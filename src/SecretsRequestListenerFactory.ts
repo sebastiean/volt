@@ -11,6 +11,7 @@ import SecretsHandler from "./handlers/SecretsHandler";
 import ISecretsMetadataStore from "./persistence/ISecretsMetadataStore";
 import { DEFAULT_CONTEXT_PATH } from "./utils/constants";
 import createSecretsContextMiddleware from './middleware/secretsContext.middleware';
+import { DeletionRecoveryLevel } from './generated/artifacts/models';
 
 /**
  * Default RequestListenerFactory based on express framework.
@@ -29,7 +30,10 @@ export default class SecretsRequestListenerFactory
     private readonly enableAccessLog: boolean,
     private readonly accessLogWriteStream?: NodeJS.WritableStream,
     private readonly loose?: boolean,
-    private readonly skipApiVersionCheck?: boolean
+    private readonly skipApiVersionCheck?: boolean,
+    private readonly httpServerAddress?: string,
+    private readonly recoveryLevel?: DeletionRecoveryLevel,
+    private readonly recoverableDays?: number
   ) { }
 
   public createRequestListener(): RequestListener {
@@ -45,7 +49,10 @@ export default class SecretsRequestListenerFactory
     const handlers: IHandlers = {
       voltServerSecretsHandler: new SecretsHandler(
         this.metadataStore,
-        logger
+        logger,
+        this.httpServerAddress,
+        this.recoveryLevel,
+        this.recoverableDays
       )
     };
 
@@ -59,7 +66,7 @@ export default class SecretsRequestListenerFactory
       app.use(morgan("common", { stream: this.accessLogWriteStream }));
     }
 
-    // Manually created middleware to deserialize feature related context which swagger doesn"t know
+    // Manually created middleware to deserialize feature related context which swagger doesn't know
     app.use(createSecretsContextMiddleware(this.skipApiVersionCheck));
 
     // Dispatch incoming HTTP request to specific operation
