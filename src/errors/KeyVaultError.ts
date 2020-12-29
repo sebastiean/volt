@@ -1,57 +1,45 @@
 import MiddlewareError from "../generated/errors/MiddlewareError";
 
 /**
- * Represents an Azure Key Vault Server Error.
+ * Represents an Azure Key Vault Error exception.
  *
  * @export
  * @class KeyVaultError
  * @extends {MiddlewareError}
  */
-export default class KeyVaultError extends MiddlewareError {
+export default class KeyVaultError {
   public readonly keyVaultErrorCode: string;
-  public readonly keyVaultErrorMessage: string;
-  public readonly keyVaultRequestID: string;
-  public readonly keyVaultStatusMessage?: string;
+  public readonly keyVaultErrorMessage?: string;
+  public readonly innerError?: KeyVaultError;
 
   /**
    * Creates an instance of KeyVaultError.
    *
-   * @param {number} statusCode HTTP response status code
    * @param {string} keyVaultErrorCode Azure Key Vault error code, will be in response body
-   * @param {string} keyVaultErrorMessage Azure Key Vault error message
-   * @param {string} keyVaultRequestID Azure Key Vault server request ID
-   * @param {string} [keyVaultStatusMessage] Azure Key Vault HTTP status message
+   * @param {string} [keyVaultErrorMessage] Azure Key Vault error message
+   * @param {KeyVaultError} [innerError] The Key Vault Server error.
    * @memberof KeyVaultError
    */
   constructor(
-    statusCode: number,
     keyVaultErrorCode: string,
-    keyVaultErrorMessage: string,
-    keyVaultRequestID: string,
-    keyVaultStatusMessage?: string,
+    keyVaultErrorMessage?: string,
+    innerError?: KeyVaultError,
   ) {
-    const body: any = {
-      code: keyVaultErrorCode,
-      message: keyVaultErrorMessage
-    };
-
-    const jsonBody = JSON.stringify({ error: body });
-
-    super(
-      statusCode,
-      keyVaultErrorMessage,
-      keyVaultStatusMessage,
-      {
-        "x-ms-request-id": keyVaultRequestID
-      },
-      jsonBody,
-      "application/json"
-    );
-
-    this.name = "KeyVaultError";
     this.keyVaultErrorCode = keyVaultErrorCode;
     this.keyVaultErrorMessage = keyVaultErrorMessage;
-    this.keyVaultRequestID = keyVaultRequestID;
-    this.keyVaultStatusMessage = keyVaultStatusMessage;
+    this.innerError = innerError;
+  }
+
+  public getBody(): any {
+    let body: any = {
+      code: this.keyVaultErrorCode,
+      message: this.keyVaultErrorMessage
+    };
+
+    if (this.innerError) {
+      body = { ...body, innererror: this.innerError.getBody() };
+    }
+
+    return body;
   }
 }

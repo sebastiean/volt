@@ -1,4 +1,5 @@
 import KeyVaultError from "./KeyVaultError";
+import ServerError from "./ServerError";
 
 const DefaultID: string = "DefaultKeyVaultRequestID";
 
@@ -13,25 +14,45 @@ export default class KeyVaultErrorFactory {
     contextID: string = DefaultID,
     secretName: string,
     secretVersion?: string
-  ): KeyVaultError {
+  ): ServerError {
     const nameId = secretVersion ? `${secretName}/${secretVersion}` : secretName;
-    return new KeyVaultError(
+    return new ServerError(
       404,
-      "SecretNotFound",
-      `A secret with (name/id) ${nameId} was not found in this key vault. If you recently deleted this secret you may be able to recover it using the correct recovery command. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182`,
-      contextID
+      contextID,
+      new KeyVaultError(
+        "SecretNotFound",
+        `A secret with (name/id) ${nameId} was not found in this key vault. If you recently deleted this secret you may be able to recover it using the correct recovery command. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182`,
+      )
     );
   }
 
   public static getBadParameter(
     contextID: string = DefaultID,
     message: string
-  ): KeyVaultError {
-    return new KeyVaultError(
+  ): ServerError {
+    return new ServerError(
       400,
-      "BadParameter",
-      message,
-      contextID
+      contextID,
+      new KeyVaultError(
+        "BadParameter",
+        message
+      )
+    );
+  }
+
+  public static getDisabledSecret(
+    contextID: string = DefaultID
+  ): ServerError {
+    return new ServerError(
+      403,
+      contextID,
+      new KeyVaultError(
+        "Forbidden",
+        "Operation get is not allowed on a disabled secret.",
+        new KeyVaultError(
+          "SecretDisabled"
+        )
+      )
     );
   }
 }
