@@ -143,10 +143,16 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
 
     const response: Models.GetSecretResponse = {
       statusCode: 200,
-      id: `/secrets/${secret.secretName}/${secret.secretVersion}`,
+      id: secret.id,
+      value: secret.value,
       contentType: secret.contentType,
-      attributes: secret.attributes,
-      tags: secret.tags
+      attributes: {
+        enabled: secret.attributes!.enabled,
+        created: secret.attributes!.created,
+        updated: secret.attributes!.updated,
+        recoveryLevel: this.recoveryLevel,
+        recoverableDays: this.recoverableDays,
+      }
     };
 
     return response;
@@ -158,7 +164,21 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       secretName,
     );
 
-    return {} as Models.GetSecretLatestVersionResponse;
+    const response: Models.GetSecretLatestVersionResponse = {
+      statusCode: 200,
+      id: secret.id,
+      value: secret.value,
+      contentType: secret.contentType,
+      attributes: {
+        enabled: secret.attributes!.enabled,
+        created: secret.attributes!.created,
+        updated: secret.attributes!.updated,
+        recoveryLevel: this.recoveryLevel,
+        recoverableDays: this.recoverableDays,
+      }
+    };
+
+    return response;
   }
 
   getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse> {

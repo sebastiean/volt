@@ -168,12 +168,13 @@ export default class LokiSecretsMetadataStore
     let found = undefined;
 
     for (let i = 0; i < secretDoc.versions.length; i++) {
-      if (secretDoc.versions[i].secretVersion = secret.secretVersion) {
+      if (secretDoc.versions[i].secretVersion === secret.secretVersion) {
         found = i;
+        break;
       }
     }
 
-    if (!found) {
+    if (found === undefined) {
       throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secret.secretName, secret.secretVersion);
     }
 
@@ -183,9 +184,8 @@ export default class LokiSecretsMetadataStore
     return secretDoc.versions[found];
   }
 
-  public async getSecret(context: Context, secretName: string, secretVersion: string): Promise<SecretModel> {
+  public async getSecret(context: Context, secretName: string, secretVersion?: string): Promise<SecretModel> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
-
     const secretDoc = coll.findOne({
       secretName
     });
@@ -194,9 +194,33 @@ export default class LokiSecretsMetadataStore
       throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName);
     }
 
+    // If we have been provided a version, search for it.
+    if (secretVersion) {
+      for (let i = 0; i < secretDoc.versions.length; i++) {
+        if (secretDoc.versions[i].secretVersion = secretVersion) {
+          if (secretDoc.versions[i].attributes.enabled === false) {
+            throw KeyVaultErrorFactory.getDisabledSecret(context.contextId);
+          }
 
+          return secretDoc.versions[i] as SecretModel;
+        }
+      }
 
-    return {} as SecretModel;
+      throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName, secretVersion);
+    }
+
+    // Otherwise, get the latest by creation date
+    const sortedVersions = secretDoc.versions.slice().sort((a: any, b: any) => {
+      return new Date(b.attributes.created).getTime() - new Date(a.attributes.created).getTime();
+    });
+
+    for (const sorted of sortedVersions) {
+      if (sorted.attributes.enabled === true) {
+        return sorted as SecretModel;
+      }
+    }
+
+    throw KeyVaultErrorFactory.getDisabledSecret(context.contextId);
   }
 
   public async getSecrets(context: Context, parameters: Models.VoltServerSecretsGetSecretsOptionalParams): Promise<Models.GetSecretsResponse> {
