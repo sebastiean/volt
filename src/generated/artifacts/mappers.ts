@@ -362,6 +362,7 @@ export const SecretListResult: coreHttp.CompositeMapper = {
         }
       },
       nextLink: {
+        nullable: true,
         serializedName: "nextLink",
         type: {
           name: "String"
@@ -390,6 +391,7 @@ export const DeletedSecretListResult: coreHttp.CompositeMapper = {
         }
       },
       nextLink: {
+        nullable: true,
         serializedName: "nextLink",
         type: {
           name: "String"

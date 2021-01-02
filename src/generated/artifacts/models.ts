@@ -228,7 +228,7 @@ export interface SecretListResult {
   /**
    * The URL to get the next set of secrets.
    */
-  nextLink?: string;
+  nextLink?: string | null;
 }
 
 /**
@@ -243,7 +243,7 @@ export interface DeletedSecretListResult {
   /**
    * The URL to get the next set of deleted secrets.
    */
-  nextLink?: string;
+  nextLink?: string | null;
 }
 
 /**
