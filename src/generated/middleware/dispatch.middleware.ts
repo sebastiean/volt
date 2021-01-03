@@ -7,7 +7,7 @@ import UnsupportedRequestError from "../errors/UnsupportedRequestError";
 import IRequest from "../IRequest";
 import { NextFunction } from "../MiddlewareFactory";
 import ILogger from "../../ILogger";
-import { isURITemplateMatch } from "../utils/utils";
+import { isURITemplateMatch, numberOfPathKeyWords } from "../utils/utils";
 
 /**
  * Dispatch Middleware will try to find out which operation of current HTTP request belongs to,
@@ -111,6 +111,15 @@ function isRequestAgainstOperation(
     return [false, metConditionsNum++];
   }
 
+  // Count number of path keyword matches
+  const numberKeywordMatches = numberOfPathKeyWords(
+    // Use dispatch path with priority
+    dispatchPathPattern !== undefined ? dispatchPathPattern : req.getPath(),
+    path
+  );
+
+  metConditionsNum = metConditionsNum + numberKeywordMatches;
+
   // Validate required queryParameters
   for (const queryParameter of spec.queryParameters || []) {
     if (queryParameter.mapper.required) {
@@ -163,7 +172,7 @@ function isRequestAgainstOperation(
       if (
         headerParameter.mapper.isConstant &&
         `${headerParameter.mapper.defaultValue || ""}`.toLowerCase() !==
-          headerValue.toLowerCase()
+        headerValue.toLowerCase()
       ) {
         return [false, metConditionsNum];
       }

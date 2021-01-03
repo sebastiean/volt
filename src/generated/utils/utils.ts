@@ -23,3 +23,23 @@ export function isURITemplateMatch(url: string, template: string): boolean {
   }
   return true;
 }
+
+export function numberOfPathKeyWords(path: string, template: string): number {
+  let count = 0;
+
+  const templateParts = template.split("/").slice(1); // Remove beginning slash "/"
+  const pathParts = path.split("/").slice(1);
+
+  for (let i = 0; i < templateParts.length; i++) {
+    // If it is a path parameter surrounded by "{" then skip
+    if (templateParts[i].match(pathParameterRegExp)) {
+      continue;
+    }
+
+    if (pathParts[i] === templateParts[i]) {
+      count++;
+    }
+  }
+
+  return count;
+}
