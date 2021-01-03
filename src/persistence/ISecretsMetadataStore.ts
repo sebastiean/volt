@@ -82,14 +82,16 @@ export interface ISecretsMetadataStore
    * Get secrets.
    *
    * @param {Context} context
-   * @param {Models.VoltServerSecretsGetSecretsOptionalParams} parameters
-   * @returns {Promise<Models.GetSecretsResponse>}
+   * @param {number} maxResults
+   * @param {string} marker
+   * @returns {Promise<[SecretModel[], string | undefined]>}
    * @memberof ISecretsMetadataStore
    */
   getSecrets(
     context: Context,
-    parameters: Models.VoltServerSecretsGetSecretsOptionalParams
-  ): Promise<Models.GetSecretsResponse>;
+    maxResults: number,
+    marker: string
+  ): Promise<[SecretModel[], string | undefined]>;
 
   /**
    * Get secret versions.

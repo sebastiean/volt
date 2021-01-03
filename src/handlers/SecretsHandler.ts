@@ -11,7 +11,11 @@ import ISecretsMetadataStore from "../persistence/ISecretsMetadataStore";
 import BaseHandler from "./BaseHandler";
 import SecretsContext from '../context/SecretsContext';
 import { SecretModel } from "../persistence/ISecretsMetadataStore";
-import { getTimestampInSeconds, buildKeyvaultIdentifier } from "../utils/utils";
+import { buildKeyvaultIdentifier, parseNextMarker, buildNextMarker, buildSkipToken } from "../utils/utils";
+import {
+  DEFAULT_GET_SECRETS_MAX_RESULTS,
+  DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS
+} from "../utils/constants";
 
 /**
  * SecretsHandler handles Azure Storage Blob related requests.
@@ -181,12 +185,62 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
     return response;
   }
 
-  getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse> {
-    throw new NotImplementedError();
+  public async getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse> {
+
+    const secretsContext = new SecretsContext(context);
+
+    let marker = "";
+    if (secretsContext.nextMarker) {
+      marker = parseNextMarker(secretsContext.nextMarker);
+    }
+
+    if (options.maxresults === undefined) {
+      options.maxresults = DEFAULT_GET_SECRETS_MAX_RESULTS;
+    } else if (options.maxresults > DEFAULT_GET_SECRETS_MAX_RESULTS) {
+      throw KeyVaultErrorFactory.getBadParameter(context.contextId, "invalid maxresults");
+    }
+
+    const [secrets, nextMarker] = await this.metadataStore.getSecrets(
+      context,
+      options.maxresults,
+      marker
+    );
+
+    let nextLink = null;
+    if (nextMarker !== undefined) {
+      const $skiptoken = buildSkipToken(buildNextMarker(nextMarker));
+      nextLink = `${this.httpServerAddress}/secrets?api-version=${context.context.apiVersion}&$skiptoken=${$skiptoken}`
+
+      if (options.maxresults < DEFAULT_GET_SECRETS_MAX_RESULTS) {
+        nextLink += `&maxresults=${options.maxresults}`;
+      }
+    }
+
+    const response: Models.GetSecretsResponse = {
+      statusCode: 200,
+      value: secrets.map(secret => {
+        return {
+          id: secret.id,
+          contentType: secret.contentType,
+          attributes: {
+            enabled: secret.attributes!.enabled,
+            created: secret.attributes!.created,
+            updated: secret.attributes!.updated,
+            recoveryLevel: this.recoveryLevel,
+            recoverableDays: this.recoverableDays,
+          }
+        };
+      }),
+      nextLink
+    };
+
+    return response;
   }
+
   getSecretVersions(secretName: string, options: Models.VoltServerSecretsGetSecretVersionsOptionalParams, context: Context): Promise<Models.GetSecretVersionsResponse> {
     throw new NotImplementedError();
   }
+
   getDeletedSecrets(options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams, context: Context): Promise<Models.GetDeletedSecretsResponse> {
     throw new NotImplementedError();
   }

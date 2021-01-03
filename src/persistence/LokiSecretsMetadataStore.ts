@@ -124,6 +124,12 @@ export default class LokiSecretsMetadataStore
     throw new Error(`Cannot clean LokiSecretsMetadataStore, it's not closed.`);
   }
 
+  private sortVersionsByDate(versions: any[]): any[] {
+    return versions.slice().sort((a: any, b: any) => {
+      return new Date(b.attributes.created).getTime() - new Date(a.attributes.created).getTime();
+    });
+  }
+
   /**
    * Set secret item in persistency layer. Will create new version if secret exists.
    *
@@ -210,9 +216,7 @@ export default class LokiSecretsMetadataStore
     }
 
     // Otherwise, get the latest by creation date
-    const sortedVersions = secretDoc.versions.slice().sort((a: any, b: any) => {
-      return new Date(b.attributes.created).getTime() - new Date(a.attributes.created).getTime();
-    });
+    const sortedVersions = this.sortVersionsByDate(secretDoc.versions);
 
     for (const sorted of sortedVersions) {
       if (sorted.attributes.enabled === true) {
@@ -223,8 +227,58 @@ export default class LokiSecretsMetadataStore
     throw KeyVaultErrorFactory.getDisabledSecret(context.contextId);
   }
 
-  public async getSecrets(context: Context, parameters: Models.VoltServerSecretsGetSecretsOptionalParams): Promise<Models.GetSecretsResponse> {
-    throw new Error("Method not implemented.");
+  public async getSecrets(context: Context, maxResults: number, marker: string = ""): Promise<[SecretModel[], string | undefined]> {
+    const coll = this.db.getCollection(this.SECRETS_COLLECTION);
+
+    if (marker !== "") {
+      const subId = marker.split("!")[1];
+      const parts = subId.split("/");
+      marker = parts[parts.length - 1].toLowerCase();
+    }
+
+    const docs = await coll
+      .chain()
+      .where(obj => {
+        return obj.secretName >= marker!;
+      })
+      .simplesort("secretName")
+      .limit(maxResults + 1)
+      .data();
+
+    if (docs.length <= maxResults) {
+      return [
+        docs.map(doc => {
+          const sortedVersions = this.sortVersionsByDate(doc.versions);
+          for (const sorted of sortedVersions) {
+            if (sorted.attributes.enabled === true) {
+              return sorted as SecretModel;
+            }
+          }
+          return sortedVersions[0];
+        }),
+        undefined
+      ];
+    } else {
+      const markerIndex = docs.length - 1;
+      const marker = `secret/${docs[markerIndex].secretName}`;
+      const paddedIndex = String(markerIndex).padStart(6, '0');
+      const nextMarker = [paddedIndex, marker, "000028", "9999-12-31T23:59:59.9999999Z", ""].join("!");
+
+      docs.pop();
+
+      return [
+        docs.map(doc => {
+          const sortedVersions = this.sortVersionsByDate(doc.versions);
+          for (const sorted of sortedVersions) {
+            if (sorted.attributes.enabled === true) {
+              return sorted as SecretModel;
+            }
+          }
+          return sortedVersions[0];
+        }),
+        nextMarker
+      ];
+    }
   }
 
   public async getSecretVersions(context: Context, secretName: string, parameters: Models.VoltServerSecretsGetSecretVersionsOptionalParams): Promise<Models.GetSecretVersionsResponse> {

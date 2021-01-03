@@ -9,7 +9,7 @@ import {
   LatestStableAPIVersion,
   ValidAPIVersions
 } from "../utils/constants";
-import { checkApiVersion } from "../utils/utils";
+import { checkApiVersion, decodeSkipToken, SkipToken } from "../utils/utils";
 import KeyVaultErrorFactory from '../errors/KeyVaultErrorFactory';
 
 export default function createSecretsContextMiddleware(
@@ -35,9 +35,10 @@ export function secretsContextMiddleware(
   skipApiVersionCheck?: boolean
 ): void {
   const requestID = uuid();
+  const apiVersion = req.query[ParameterConstants.API_VERSION] as string;
+  const $skipToken = req.query[ParameterConstants.SKIP_TOKEN] as string;
 
   if (!skipApiVersionCheck) {
-    const apiVersion = req.query[ParameterConstants.API_VERSION] as string;
     if (apiVersion == undefined) {
       const handlerError = KeyVaultErrorFactory.getBadParameter(
         `${ParameterConstants.API_VERSION} must be specified`,
@@ -54,10 +55,20 @@ export function secretsContextMiddleware(
     checkApiVersion(apiVersion, ValidAPIVersions, LatestStableAPIVersion, requestID);
   }
 
-  const secretsContext = new SecretsContext(res.locals, DEFAULT_CONTEXT_PATH);
-  secretsContext.startTime = new Date();
+  let nextMarker = undefined;
 
+  // Decode $skiptoken query parameter. Used for fetching next results in paginated responses.
+  if ($skipToken !== undefined) {
+    const decodedSkipToken: SkipToken = decodeSkipToken($skipToken);
+    nextMarker = decodedSkipToken.NextMarker;
+  }
+
+  const secretsContext = new SecretsContext(res.locals, DEFAULT_CONTEXT_PATH);
+
+  secretsContext.apiVersion = apiVersion;
+  secretsContext.startTime = new Date();
   secretsContext.xMsRequestID = requestID;
+  secretsContext.nextMarker = nextMarker;
 
   logger.info(
     `SecretsContextMiddleware: RequestMethod=${req.method} RequestURL=${req.protocol

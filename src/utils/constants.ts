@@ -8,6 +8,8 @@ export const DEFAULT_ACCESS_LOG_PATH = "./access.log";
 export const DEFAULT_ENABLE_ACCESS_LOG = true;
 export const DEFAULT_CONTEXT_PATH = "volt_secrets_context";
 export const LOGGER_CONFIGS = {};
+export const DEFAULT_GET_SECRETS_MAX_RESULTS = 25; // Maximum number of results to return in a page.
+export const DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS = 25; // Maximum number of results to return in a page.
 
 export const HeaderConstants = {
   AUTHORIZATION: "authorization",
@@ -46,7 +48,8 @@ export const HeaderConstants = {
 };
 
 export const ParameterConstants = {
-  API_VERSION: "api-version"
+  API_VERSION: "api-version",
+  SKIP_TOKEN: "$skiptoken"
 };
 
 export const LatestStableAPIVersion = "7.1";
