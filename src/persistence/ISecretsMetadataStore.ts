@@ -98,14 +98,17 @@ export interface ISecretsMetadataStore
    *
    * @param {Context} context
    * @param {string} secretName
-   * @returns {Promise<Models.GetSecretVersionsResponse>}
+   * @param {number} maxResults
+   * @param {string} marker
+   * @returns {Promise<[SecretModel[], string | undefined]>}
    * @memberof ISecretsMetadataStore
    */
   getSecretVersions(
     context: Context,
     secretName: string,
-    parameters: Models.VoltServerSecretsGetSecretVersionsOptionalParams
-  ): Promise<Models.GetSecretVersionsResponse>;
+    maxResults: number,
+    marker: string
+  ): Promise<[SecretModel[], string | undefined]>;
 
   // TODO: implement the following methods
   // /**

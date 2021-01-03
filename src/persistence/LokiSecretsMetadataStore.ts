@@ -130,6 +130,25 @@ export default class LokiSecretsMetadataStore
     });
   }
 
+  private sortVersionsByVersion(versions: any[]): any[] {
+    return versions.slice().sort((a: any, b: any) => {
+      return a.secretVersion > b.secretVersion ? 1 : -1;
+    });
+  }
+
+  private binarySearchVersions(arr: any[], x: string, start: number, end: number): number {
+    if (x === "") return -1;
+    if (start > end) return -1;
+    let mid = Math.floor((start + end) / 2);
+    if (arr[mid].secretVersion === x) return mid;
+    if (arr[mid].secretVersion > x) {
+      return this.binarySearchVersions(arr, x, start, mid - 1);
+    }
+    else {
+      return this.binarySearchVersions(arr, x, mid + 1, end);
+    }
+  }
+
   /**
    * Set secret item in persistency layer. Will create new version if secret exists.
    *
@@ -281,7 +300,47 @@ export default class LokiSecretsMetadataStore
     }
   }
 
-  public async getSecretVersions(context: Context, secretName: string, parameters: Models.VoltServerSecretsGetSecretVersionsOptionalParams): Promise<Models.GetSecretVersionsResponse> {
-    throw new Error("Method not implemented.");
+  public async getSecretVersions(context: Context, secretName: string, maxResults: number, marker: string = ""): Promise<[SecretModel[], string | undefined]> {
+    const coll = this.db.getCollection(this.SECRETS_COLLECTION);
+    const secretDoc = coll.findOne({
+      secretName
+    });
+
+    if (!secretDoc) {
+      throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName);
+    }
+
+    if (marker !== "") {
+      const subId = marker.split("!")[1];
+      const parts = subId.split("/");
+      marker = parts[parts.length - 1].toLowerCase();
+    }
+
+    const sortedVersions = this.sortVersionsByVersion(secretDoc.versions);
+
+    let index = this.binarySearchVersions(sortedVersions, marker, 0, sortedVersions.length - 1);
+
+    if (index === -1) {
+      index = 0;
+    }
+
+    let max = index + maxResults;
+
+    if (sortedVersions.length < max) {
+      max = sortedVersions.length;
+    }
+
+    const slicedVersions = sortedVersions.slice(index, max);
+
+    if (sortedVersions.length < (index + maxResults)) {
+      return [slicedVersions, undefined];
+    } else {
+      const markerIndex = max;
+      const marker = `secret/${secretName}/${sortedVersions[markerIndex].secretVersion}`;
+      const paddedIndex = String(markerIndex).padStart(6, '0');
+      const nextMarker = [paddedIndex, marker, "000028", "9999-12-31T23:59:59.9999999Z", ""].join("!");
+
+      return [slicedVersions, nextMarker];
+    }
   }
 }
