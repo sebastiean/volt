@@ -7,6 +7,7 @@ import IRequest from "../IRequest";
 import { NextFunction } from "../MiddlewareFactory";
 import ILogger from "../../ILogger";
 import { deserialize } from "../utils/serializer";
+import KeyVaultErrorFactory from '../../errors/KeyVaultErrorFactory';
 
 /**
  * Deserializer Middleware. Deserialize incoming HTTP request into models.
@@ -40,8 +41,7 @@ export default function deserializerMiddleware(
 
   if (Specifications[context.operation] === undefined) {
     logger.warn(
-      `DeserializerMiddleware: Cannot find deserializer for operation ${
-        Operation[context.operation]
+      `DeserializerMiddleware: Cannot find deserializer for operation ${Operation[context.operation]
       }`
     );
   }

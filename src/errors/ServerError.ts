@@ -1,5 +1,6 @@
 import MiddlewareError from "../generated/errors/MiddlewareError";
 import KeyVaultError from "./KeyVaultError";
+import { OutgoingHttpHeaders } from "http";
 
 /**
  * Represents an Azure Key Vault Server Error.
@@ -13,6 +14,7 @@ export default class ServerError extends MiddlewareError {
   public readonly requestID: string;
   public readonly error: KeyVaultError;
   public readonly statusMessage?: string;
+  public readonly headers?: OutgoingHttpHeaders;
 
   /**
    * Creates an instance of KeyVaultError.
@@ -27,7 +29,8 @@ export default class ServerError extends MiddlewareError {
     statusCode: number,
     requestID: string,
     error: KeyVaultError,
-    statusMessage?: string,
+    headers?: OutgoingHttpHeaders,
+    statusMessage?: string
   ) {
 
     const body: any = {
@@ -40,9 +43,7 @@ export default class ServerError extends MiddlewareError {
       statusCode,
       error.keyVaultErrorMessage || "",
       statusMessage,
-      {
-        "x-ms-request-id": requestID
-      },
+      headers,
       jsonBody,
       "application/json"
     );

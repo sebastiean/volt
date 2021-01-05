@@ -1,6 +1,8 @@
+import { OutgoingHttpHeaders } from 'http';
 import rimraf = require("rimraf");
 import { promisify } from "util";
 import KeyVaultErrorFactory from '../errors/KeyVaultErrorFactory';
+import { HeaderConstants, HeaderValueConstants } from "./constants";
 
 // LokiFsStructuredAdapter
 // tslint:disable-next-line:no-var-requires
@@ -116,4 +118,12 @@ export function buildSkipToken(
   const json = JSON.stringify(skipToken);
 
   return Buffer.from(json).toString('base64');
+}
+
+export function getDefaultHeaders(): OutgoingHttpHeaders {
+  return {
+    [HeaderConstants.X_MS_KEYVAULT_SERVICE_VERSION]: HeaderValueConstants[HeaderConstants.X_MS_KEYVAULT_SERVICE_VERSION],
+    [HeaderConstants.X_MS_KEYVAULT_REGION]: HeaderValueConstants[HeaderConstants.X_MS_KEYVAULT_REGION],
+    [HeaderConstants.X_MS_KEYVAULT_NETWORK_INFO]: HeaderValueConstants[HeaderConstants.X_MS_KEYVAULT_NETWORK_INFO],
+  };
 }

@@ -4,6 +4,8 @@ import IRequest from "../IRequest";
 import IResponse from "../IResponse";
 import { NextFunction } from "../MiddlewareFactory";
 import ILogger from "../../ILogger";
+import { getDefaultHeaders } from "../../utils/utils";
+import { OutgoingHttpHeaders } from 'http';
 
 /**
  * ErrorMiddleware handles following 2 kinds of errors thrown from previous middleware or handlers:
@@ -48,10 +50,8 @@ export default function errorMiddleware(
     );
 
     logger.error(
-      `ErrorMiddleware: ErrorName=${err.name} ErrorMessage=${
-        err.message
-      }  ErrorHTTPStatusCode=${err.statusCode} ErrorHTTPStatusMessage=${
-        err.statusMessage
+      `ErrorMiddleware: ErrorName=${err.name} ErrorMessage=${err.message
+      }  ErrorHTTPStatusCode=${err.statusCode} ErrorHTTPStatusMessage=${err.statusMessage
       } ErrorHTTPHeaders=${JSON.stringify(
         err.headers
       )} ErrorHTTPBody=${JSON.stringify(err.body)} ErrorStack=${JSON.stringify(
@@ -74,20 +74,23 @@ export default function errorMiddleware(
       res.setStatusMessage(err.statusMessage);
     }
 
-    if (err.headers) {
-      for (const key in err.headers) {
-        if (err.headers.hasOwnProperty(key)) {
-          const value = err.headers[key];
-          if (value) {
-            logger.error(
-              `ErrorMiddleware: Set HTTP Header: ${key}=${value}`,
-              context.contextId
-            );
-            res.setHeader(key, value);
-          }
+    const headers = { ...err.headers! as OutgoingHttpHeaders, ...getDefaultHeaders() };
+
+    for (const key in headers) {
+      if (headers.hasOwnProperty(key)) {
+        const value = headers[key];
+        if (value) {
+          logger.error(
+            `ErrorMiddleware: Set HTTP Header: ${key}=${value}`,
+            context.contextId
+          );
+          res.setHeader(key, value);
         }
       }
     }
+
+    // Always set request id header too
+    res.setHeader("x-ms-request-id", context.contextId);
 
     if (err.contentType && req.getMethod() !== "HEAD") {
       logger.error(
@@ -110,8 +113,7 @@ export default function errorMiddleware(
       context.contextId
     );
     logger.error(
-      `ErrorMiddleware: ErrorName=${err.name} ErrorMessage=${
-        err.message
+      `ErrorMiddleware: ErrorName=${err.name} ErrorMessage=${err.message
       } ErrorStack=${JSON.stringify(err.stack)}`,
       context.contextId
     );

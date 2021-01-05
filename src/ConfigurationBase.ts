@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { DeletionRecoveryLevel } from './generated/artifacts/models';
+import { OAuthLevel } from './models';
 
 export enum CertOptions {
   Default,
@@ -20,6 +21,7 @@ export default abstract class ConfigurationBase {
     public readonly cert: string = "",
     public readonly key: string = "",
     public readonly pwd: string = "",
+    public readonly oauth?: string,
     public readonly recoverableDays: number = 90,
     public readonly softDelete: boolean = true, // soft-delete enable by default https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-change
     public readonly purgeProtection: boolean = false,
@@ -52,6 +54,16 @@ export default abstract class ConfigurationBase {
       default:
         return null;
     }
+  }
+
+  public getOAuthLevel(): undefined | OAuthLevel {
+    if (this.oauth) {
+      if (this.oauth.toLowerCase() === "basic") {
+        return OAuthLevel.BASIC;
+      }
+    }
+
+    return;
   }
 
   public getRecoveryLevel(): DeletionRecoveryLevel {

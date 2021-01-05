@@ -35,6 +35,10 @@ export const HeaderConstants = {
   X_MS_DATE: "x-ms-date",
   SERVER: "Server",
   X_MS_VERSION: "x-ms-version",
+  X_MS_REQUEST_ID: "x-ms-request-id",
+  X_MS_KEYVAULT_SERVICE_VERSION: "x-ms-keyvault-service-version",
+  X_MS_KEYVAULT_REGION: "x-ms-keyvault-region",
+  X_MS_KEYVAULT_NETWORK_INFO: "x-ms-keyvault-network-info",
   ORIGIN: "origin",
   VARY: "Vary",
   ACCESS_CONTROL_EXPOSE_HEADERS: "Access-Control-Expose-Headers",
@@ -44,7 +48,15 @@ export const HeaderConstants = {
   ACCESS_CONTROL_ALLOW_HEADERS: "Access-Control-Allow-Headers",
   ACCESS_CONTROL_MAX_AGE: "Access-Control-Max-Age",
   ACCESS_CONTROL_REQUEST_METHOD: "access-control-request-method",
-  ACCESS_CONTROL_REQUEST_HEADERS: "access-control-request-headers"
+  ACCESS_CONTROL_REQUEST_HEADERS: "access-control-request-headers",
+  WWW_AUTHENTICATE: "WWW-Authenticate",
+};
+
+export const HeaderValueConstants = {
+  [HeaderConstants.WWW_AUTHENTICATE]: "Bearer authorization=\"https://login.windows.net/ab1f708d-50f6-404c-a006-d71b2ac7a606\", resource=\"https://vault.azure.net\"",
+  [HeaderConstants.X_MS_KEYVAULT_SERVICE_VERSION]: "1.2.99.0",
+  [HeaderConstants.X_MS_KEYVAULT_REGION]: "westeurope",
+  [HeaderConstants.X_MS_KEYVAULT_NETWORK_INFO]: "conn_type=Ipv4;addr=127.0.0.1;act_addr_fam=InterNetwork;"
 };
 
 export const ParameterConstants = {
@@ -57,8 +69,33 @@ export const LatestStableAPIVersion = "7.1";
 export const ValidAPIVersions = [
   "7.3-preview",
   "7.2-preview",
+  "7.2",
   "7.1",
   "7.0",
   "2016-10-01",
   "2015-06-01"
+];
+
+// Validate audience, accept following audience patterns
+// https://vault.azure.net
+// https://vault.azure.net/
+export const VALID_KEY_VAULT_AUDIENCES = [
+  /^https:\/\/vault\.azure\.net[\/]?$/,
+];
+
+export const BEARER_TOKEN_PREFIX = "Bearer";
+export const HTTPS = "https";
+
+// Validate issuer
+// Only check prefix and bypass AAD tenant ID match
+// BlackForest: https://sts.microsoftonline.de/
+// Fairfax: https://sts.windows.net/
+// Mooncake: https://sts.chinacloudapi.cn/
+// Production: https://sts.windows.net/
+// Test: https://sts.windows-ppe.net/
+export const VALID_ISSUE_PREFIXES = [
+  "https://sts.windows.net/",
+  "https://sts.microsoftonline.de/",
+  "https://sts.chinacloudapi.cn/",
+  "https://sts.windows-ppe.net"
 ];

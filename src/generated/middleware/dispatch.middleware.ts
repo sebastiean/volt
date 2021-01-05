@@ -95,6 +95,9 @@ function isRequestAgainstOperation(
     return [false, metConditionsNum++];
   }
 
+  // Strip trailing slash from request url
+  const reqPath = req.getPath().endsWith("/") ? req.getPath().substring(0, req.getPath().length - 1) : req.getPath();
+
   // Validate URL path
   const path = spec.path
     ? spec.path.startsWith("/")
@@ -104,7 +107,7 @@ function isRequestAgainstOperation(
   if (
     !isURITemplateMatch(
       // Use dispatch path with priority
-      dispatchPathPattern !== undefined ? dispatchPathPattern : req.getPath(),
+      dispatchPathPattern !== undefined ? dispatchPathPattern : reqPath,
       path
     )
   ) {
@@ -114,7 +117,7 @@ function isRequestAgainstOperation(
   // Count number of path keyword matches
   const numberKeywordMatches = numberOfPathKeyWords(
     // Use dispatch path with priority
-    dispatchPathPattern !== undefined ? dispatchPathPattern : req.getPath(),
+    dispatchPathPattern !== undefined ? dispatchPathPattern : reqPath,
     path
   );
 

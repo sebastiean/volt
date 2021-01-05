@@ -1,7 +1,12 @@
 import KeyVaultError from "./KeyVaultError";
 import ServerError from "./ServerError";
+import { HeaderConstants, HeaderValueConstants } from "../utils/constants";
+import { OutgoingHttpHeaders } from 'http';
 
 const DefaultID: string = "DefaultKeyVaultRequestID";
+const DefaultWWWAuthenticateHeader: OutgoingHttpHeaders = {
+  [HeaderConstants.WWW_AUTHENTICATE]: HeaderValueConstants[HeaderConstants.WWW_AUTHENTICATE]
+};
 
 /**
  * A factory class maintains all Azure Key Vault service errors.
@@ -53,6 +58,49 @@ export default class KeyVaultErrorFactory {
           "SecretDisabled"
         )
       )
+    );
+  }
+
+  public static getUnauthorized(
+    contextID: string = DefaultID
+  ): ServerError {
+    return new ServerError(
+      401,
+      contextID,
+      new KeyVaultError(
+        "Unauthorized",
+        "Request is missing a Bearer or PoP token.",
+      ),
+      DefaultWWWAuthenticateHeader
+    );
+  }
+
+  public static getAuthenticationFailure(
+    contextID: string = DefaultID,
+    message?: string
+  ): ServerError {
+    return new ServerError(
+      401,
+      contextID,
+      new KeyVaultError(
+        "Unauthorized",
+        message
+      ),
+      DefaultWWWAuthenticateHeader
+    );
+  }
+
+  public static getTokenValidationFailure(
+    contextID: string = DefaultID
+  ): ServerError {
+    return new ServerError(
+      401,
+      contextID,
+      new KeyVaultError(
+        "Unauthorized",
+        "Error validating token: IDX10501"
+      ),
+      DefaultWWWAuthenticateHeader
     );
   }
 }

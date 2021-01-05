@@ -50,11 +50,12 @@ async function main() {
     env.skipApiVersionCheck(),
     env.cert(),
     env.key(),
-    env.pwd()
+    env.pwd(),
+    env.oauth()
   );
 
   // Create server instance
-  const secretsServer =  new VoltServer(config);
+  const secretsServer = new VoltServer(config);
 
   // Start server
   console.log(

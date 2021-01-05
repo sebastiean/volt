@@ -12,6 +12,10 @@ import ISecretsMetadataStore from "./persistence/ISecretsMetadataStore";
 import { DEFAULT_CONTEXT_PATH } from "./utils/constants";
 import createSecretsContextMiddleware from './middleware/secretsContext.middleware';
 import { DeletionRecoveryLevel } from './generated/artifacts/models';
+import AuthenticationMiddlewareFactory from './middleware/AuthenticationMiddlewareFactory';
+import IAuthenticator from './authentication/IAuthenticator';
+import OAuthAuthenticator from './authentication/OAuthAuthenticator';
+import { OAuthLevel } from './models';
 
 /**
  * Default RequestListenerFactory based on express framework.
@@ -31,6 +35,7 @@ export default class SecretsRequestListenerFactory
     private readonly accessLogWriteStream?: NodeJS.WritableStream,
     private readonly loose?: boolean,
     private readonly skipApiVersionCheck?: boolean,
+    private readonly oauth?: OAuthLevel,
     private readonly httpServerAddress?: string,
     private readonly recoveryLevel?: DeletionRecoveryLevel,
     private readonly recoverableDays?: number
@@ -71,6 +76,27 @@ export default class SecretsRequestListenerFactory
 
     // Dispatch incoming HTTP request to specific operation
     app.use(middlewareFactory.createDispatchMiddleware());
+
+    // AuthN middleware, like shared key auth or SAS auth
+    const authenticationMiddlewareFactory = new AuthenticationMiddlewareFactory(
+      logger
+    );
+    const authenticators: IAuthenticator[] = [];
+
+    if (this.oauth !== undefined) {
+      authenticators.push(
+        new OAuthAuthenticator(this.oauth, logger)
+      );
+    }
+
+    // Only add authentication middleware if we have authenticators
+    if (authenticators.length > 0) {
+      app.use(
+        authenticationMiddlewareFactory.createAuthenticationMiddleware(
+          authenticators
+        )
+      );
+    }
 
     // Generated, will do basic validation defined in swagger
     app.use(middlewareFactory.createDeserializerMiddleware());

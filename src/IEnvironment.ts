@@ -9,4 +9,5 @@ export default interface IEnvironment {
   key(): string | undefined;
   pwd(): string | undefined;
   debug(): Promise<string | boolean | undefined>;
+  oauth(): string | undefined;
 }

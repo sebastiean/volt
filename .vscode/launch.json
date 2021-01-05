@@ -20,6 +20,29 @@
       ],
       "env": {},
       "outputCapture": "std"
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Volt Secrets Service - Loki, HTTPS, OAuth",
+      "cwd": "${workspaceFolder}",
+      "runtimeArgs": [
+        "-r",
+        "ts-node/register"
+      ],
+      "args": [
+        "${workspaceFolder}/src/main.ts",
+        "--cert",
+        "${workspaceFolder}/tests/server.pem",
+        "--key",
+        "${workspaceFolder}/tests/server-key.pem",
+        "-d",
+        "debug.log",
+        "--oauth",
+        "basic",
+      ],
+      "env": {},
+      "outputCapture": "std"
+    },
   ]
 }

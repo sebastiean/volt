@@ -32,7 +32,8 @@ export default class SecretsConfiguration extends ConfigurationBase {
     skipApiVersionCheck: boolean = false,
     cert: string = "",
     key: string = "",
-    pwd: string = ""
+    pwd: string = "",
+    oauth?: string
   ) {
     super(
       host,
@@ -45,7 +46,8 @@ export default class SecretsConfiguration extends ConfigurationBase {
       skipApiVersionCheck,
       cert,
       key,
-      pwd
+      pwd,
+      oauth
     );
   }
 }
