@@ -19,6 +19,14 @@ operationHandlerMapping[Operation.SetSecret] = {
   handler: "voltServerSecretsHandler",
   method: "setSecret"
 };
+operationHandlerMapping[Operation.UpdateSecretLatestVersion] = {
+  arguments: [
+    "secretName",
+    "options"
+  ],
+  handler: "voltServerSecretsHandler",
+  method: "updateSecretLatestVersion"
+};
 operationHandlerMapping[Operation.DeleteSecret] = {
   arguments: [
     "secretName",

@@ -59,6 +59,47 @@ const setSecretOperationSpec: coreHttp.OperationSpec = {
   serializer
 };
 
+const updateSecretLatestVersionOperationSpec: coreHttp.OperationSpec = {
+  httpMethod: "PATCH",
+  path: "secrets/{secret-name}",
+  urlParameters: [
+    Parameters.vaultBaseUrl,
+    Parameters.secretName
+  ],
+  queryParameters: [
+    Parameters.apiVersion
+  ],
+  requestBody: {
+    parameterPath: {
+      contentType: [
+        "options",
+        "contentType"
+      ],
+      secretAttributes: [
+        "options",
+        "secretAttributes"
+      ],
+      tags: [
+        "options",
+        "tags"
+      ]
+    },
+    mapper: {
+      ...Mappers.SecretUpdateParameters,
+      required: true
+    }
+  },
+  responses: {
+    200: {
+      bodyMapper: Mappers.SecretBundle
+    },
+    default: {
+      bodyMapper: Mappers.KeyVaultError
+    }
+  },
+  serializer
+};
+
 const deleteSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "DELETE",
   path: "secrets/{secret-name}",
@@ -342,6 +383,7 @@ const restoreSecretOperationSpec: coreHttp.OperationSpec = {
 
 const Specifications: { [key: number]: coreHttp.OperationSpec } = {};
 Specifications[Operation.SetSecret] = setSecretOperationSpec;
+Specifications[Operation.UpdateSecretLatestVersion] = updateSecretLatestVersionOperationSpec;
 Specifications[Operation.DeleteSecret] = deleteSecretOperationSpec;
 Specifications[Operation.GetSecretLatestVersion] = getSecretLatestVersionOperationSpec;
 Specifications[Operation.UpdateSecret] = updateSecretOperationSpec;

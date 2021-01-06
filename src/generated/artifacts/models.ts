@@ -299,6 +299,24 @@ export interface VoltServerSecretsSetSecretOptionalParams {
 /**
  * Optional Parameters.
  */
+export interface VoltServerSecretsUpdateSecretLatestVersionOptionalParams {
+  /**
+   * Type of the secret value such as a password.
+   */
+  contentType?: string;
+  /**
+   * The secret management attributes.
+   */
+  secretAttributes?: SecretAttributes;
+  /**
+   * Application specific metadata in the form of key-value pairs.
+   */
+  tags?: { [propertyName: string]: string };
+}
+
+/**
+ * Optional Parameters.
+ */
 export interface VoltServerSecretsUpdateSecretOptionalParams {
   /**
    * Type of the secret value such as a password.
@@ -361,6 +379,16 @@ export type DeletionRecoveryLevel = 'Purgeable' | 'Recoverable+Purgeable' | 'Rec
  * Contains response data for the setSecret operation.
  */
 export type SetSecretResponse = SecretBundle & {
+  /**
+   * The response status code.
+   */
+  statusCode: 200;
+};
+
+/**
+ * Contains response data for the updateSecretLatestVersion operation.
+ */
+export type UpdateSecretLatestVersionResponse = SecretBundle & {
   /**
    * The response status code.
    */
