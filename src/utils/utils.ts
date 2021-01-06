@@ -48,6 +48,25 @@ export function buildKeyvaultIdentifier(
   return [url, collection, secretName, secretVersion].join("/");
 }
 
+export function buildRecoveryIdentifier(
+  vaultBaseUrl: string,
+  secretName: string,
+  collection: string = "deletedsecrets"
+): string {
+  const url = vaultBaseUrl.endsWith("/")
+    ? vaultBaseUrl.substr(0, vaultBaseUrl.length - 2)
+    : vaultBaseUrl; // Remove last "/"
+
+  return [url, collection, secretName].join("/");
+}
+
+export function getScheduledPurgeDate(
+  deletedDate: Date,
+  recoverableDays: number
+): Date {
+  return new Date(deletedDate.getTime() + (recoverableDays * 24 * 60 * 60 * 1000));
+}
+
 export function decodeSkipToken(
   $skiptoken: string
 ): SkipToken {

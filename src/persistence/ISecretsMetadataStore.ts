@@ -9,6 +9,7 @@ interface ISecretAdditionalProperties {
 }
 
 export type SecretModel = ISecretAdditionalProperties & Models.SecretBundle;
+export type DeletedSecretModel = ISecretAdditionalProperties & Models.DeletedSecretBundle;
 
 /**
  * Persistency layer metadata storage interface.
@@ -39,14 +40,14 @@ export interface ISecretsMetadataStore
    * Delete secret.
    *
    * @param {Context} context
-   * @param {string} secretName
-   * @returns {Promise<Models.DeleteSecretResponse>}
+   * @param {DeletedSecretModel} secret
+   * @returns {Promise<DeletedSecretModel>}
    * @memberof ISecretsMetadataStore
    */
   deleteSecret(
     context: Context,
-    secretName: string
-  ): Promise<Models.DeleteSecretResponse>;
+    secret: DeletedSecretModel
+  ): Promise<DeletedSecretModel>;
 
   /**
    * Update secret.
@@ -122,16 +123,18 @@ export interface ISecretsMetadataStore
   //   context: Context,
   // ): Promise<void>;
 
-  // /**
-  //  * Get deleted secret.
-  //  *
-  //  * @param {Context} context
-  //  * @returns {Promise<void>}
-  //  * @memberof ISecretsMetadataStore
-  //  */
-  // getDeletedSecret(
-  //   context: Context,
-  // ): Promise<void>;
+  /**
+   * Get deleted secret.
+   *
+   * @param {Context} context
+   * @param {string} secretName
+   * @returns {Promise<DeletedSecretModel>}
+   * @memberof ISecretsMetadataStore
+   */
+  getDeletedSecret(
+    context: Context,
+    secretName: string
+  ): Promise<DeletedSecretModel>;
 
   // /**
   //  * Recover deleted secret.

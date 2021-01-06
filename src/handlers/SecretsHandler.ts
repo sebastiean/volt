@@ -10,8 +10,15 @@ import KeyVaultErrorFactory from "../errors/KeyVaultErrorFactory";
 import ISecretsMetadataStore from "../persistence/ISecretsMetadataStore";
 import BaseHandler from "./BaseHandler";
 import SecretsContext from '../context/SecretsContext';
-import { SecretModel } from "../persistence/ISecretsMetadataStore";
-import { buildKeyvaultIdentifier, parseNextMarker, buildNextMarker, buildSkipToken } from "../utils/utils";
+import { SecretModel, DeletedSecretModel } from "../persistence/ISecretsMetadataStore";
+import {
+  buildKeyvaultIdentifier,
+  buildRecoveryIdentifier,
+  getScheduledPurgeDate,
+  parseNextMarker,
+  buildNextMarker,
+  buildSkipToken
+} from "../utils/utils";
 import {
   DEFAULT_GET_SECRETS_MAX_RESULTS,
   DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS
@@ -46,6 +53,8 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   public async setSecret(secretName: string, value: string, options: Models.VoltServerSecretsSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse> {
     const secretsCtx = new SecretsContext(context);
     const date = context.startTime!;
+
+    await this.checkSecretIsDeleted(secretName, context);
 
     const secretVersion = md5(`${secretName}-${date.valueOf()}-${context.contextId}`);
 
@@ -87,12 +96,51 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
     return response;
   }
 
-  deleteSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.DeleteSecretResponse> {
-    throw new NotImplementedError();
+  public async deleteSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.DeleteSecretResponse> {
+    const deletedDate = context.startTime!;
+
+    const secret = await this.metadataStore.getSecret(
+      context,
+      secretName
+    );
+
+    const scheduledPurgeDate = getScheduledPurgeDate(deletedDate, this.recoverableDays);
+    const recoveryId = buildRecoveryIdentifier(this.httpServerAddress, secretName);
+
+    const deletedSecret: DeletedSecretModel = { ...secret, scheduledPurgeDate, deletedDate, recoveryId };
+
+    await this.metadataStore.deleteSecret(
+      context,
+      deletedSecret
+    );
+
+    const response: Models.DeleteSecretResponse = {
+      statusCode: 200,
+      id: deletedSecret.id,
+      contentType: deletedSecret.contentType,
+      recoveryId: deletedSecret.recoveryId,
+      deletedDate: deletedSecret.deletedDate,
+      scheduledPurgeDate: deletedSecret.scheduledPurgeDate,
+      attributes: {
+        enabled: deletedSecret.attributes!.enabled,
+        created: deletedSecret.attributes!.created,
+        updated: deletedSecret.attributes!.updated,
+        recoveryLevel: this.recoveryLevel,
+        recoverableDays: this.recoverableDays,
+      }
+    };
+
+    return response;
+  }
+
+  public async updateSecretLatestVersion(secretName: string, options: Models.VoltServerSecretsUpdateSecretLatestVersionOptionalParams, context: Context): Promise<Models.UpdateSecretLatestVersionResponse> {
+    return await this.updateSecret(secretName, "", options, context);
   }
 
   public async updateSecret(secretName: string, secretVersion: string, options: Models.VoltServerSecretsUpdateSecretOptionalParams, context: Context): Promise<Models.UpdateSecretResponse> {
     const date = context.startTime!;
+
+    await this.checkSecretIsDeleted(secretName, context);
 
     let attributes = options.secretAttributes;
 
@@ -124,7 +172,6 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
 
     const response: Models.SetSecretResponse = {
       statusCode: 200,
-      value: result.value,
       id: result.id,
       contentType: result.contentType,
       attributes: {
@@ -138,6 +185,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
 
     return response;
   }
+
   public async getSecret(secretName: string, secretVersion: string, options: RequestOptionsBase, context: Context): Promise<Models.GetSecretResponse> {
     const secret = await this.metadataStore.getSecret(
       context,
@@ -163,26 +211,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   }
 
   public async getSecretLatestVersion(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.GetSecretLatestVersionResponse> {
-    const secret = await this.metadataStore.getSecret(
-      context,
-      secretName,
-    );
-
-    const response: Models.GetSecretLatestVersionResponse = {
-      statusCode: 200,
-      id: secret.id,
-      value: secret.value,
-      contentType: secret.contentType,
-      attributes: {
-        enabled: secret.attributes!.enabled,
-        created: secret.attributes!.created,
-        updated: secret.attributes!.updated,
-        recoveryLevel: this.recoveryLevel,
-        recoverableDays: this.recoverableDays,
-      }
-    };
-
-    return response;
+    return await this.getSecret(secretName, "", options, context);
   }
 
   public async getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse> {
@@ -291,9 +320,32 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   getDeletedSecrets(options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams, context: Context): Promise<Models.GetDeletedSecretsResponse> {
     throw new NotImplementedError();
   }
-  getDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.GetDeletedSecretResponse> {
-    throw new NotImplementedError();
+
+  public async getDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.GetDeletedSecretResponse> {
+    const deletedSecret = await this.metadataStore.getDeletedSecret(
+      context,
+      secretName,
+    );
+
+    const response: Models.DeleteSecretResponse = {
+      statusCode: 200,
+      id: deletedSecret.id,
+      contentType: deletedSecret.contentType,
+      recoveryId: deletedSecret.recoveryId,
+      deletedDate: deletedSecret.deletedDate,
+      scheduledPurgeDate: deletedSecret.scheduledPurgeDate,
+      attributes: {
+        enabled: deletedSecret.attributes!.enabled,
+        created: deletedSecret.attributes!.created,
+        updated: deletedSecret.attributes!.updated,
+        recoveryLevel: this.recoveryLevel,
+        recoverableDays: this.recoverableDays,
+      }
+    };
+
+    return response;
   }
+
   purgeDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<RestResponse> {
     throw new NotImplementedError();
   }
@@ -305,5 +357,23 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   }
   restoreSecret(secretBundleBackup: Uint8Array, options: RequestOptionsBase, context: Context): Promise<Models.RestoreSecretResponse> {
     throw new NotImplementedError();
+  }
+
+  private async checkSecretIsDeleted(secretName: string, context: Context): Promise<void> {
+    let deleted;
+
+    try {
+      deleted = await this.metadataStore.getDeletedSecret(
+        context,
+        secretName,
+      );
+    } catch (err) {
+      // do nothing, this is expected if the secret is not deleted
+    }
+
+    if (deleted) {
+      // if secret exists but is deleted, throw error
+      throw KeyVaultErrorFactory.getSecretIsDeletedButRecoverable(context.contextId, secretName);
+    }
   }
 }

@@ -61,6 +61,35 @@ export default class KeyVaultErrorFactory {
     );
   }
 
+  public static getSecretIsDeletedButRecoverable(
+    contextID: string = DefaultID,
+    secretName: string
+  ): ServerError {
+    return new ServerError(
+      409,
+      contextID,
+      new KeyVaultError(
+        "Conflict",
+        `Secret ${secretName} is currently in a deleted but recoverable state, and its name cannot be reused; in this state, the secret can only be recovered or purged.`,
+        new KeyVaultError(
+          "ObjectIsDeletedButRecoverable"
+        )
+      )
+    );
+  }
+
+  // Purge forbidden
+  // 403
+  // {
+  //   "error": {
+  //       "code": "Forbidden",
+  //       "message": "The user, group or application 'appid=;oid=;numgroups=23;iss=https://sts.windows.net/[tenant]/' does not have secrets purge permission on key vault '[vault name];location=westeurope'. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125287",
+  //       "innererror": {
+  //           "code": "ForbiddenByPolicy"
+  //       }
+  //   }
+  // }
+
   public static getUnauthorized(
     contextID: string = DefaultID
   ): ServerError {
@@ -91,14 +120,15 @@ export default class KeyVaultErrorFactory {
   }
 
   public static getTokenValidationFailure(
-    contextID: string = DefaultID
+    contextID: string = DefaultID,
+    code: string = "IDX10501"
   ): ServerError {
     return new ServerError(
       401,
       contextID,
       new KeyVaultError(
         "Unauthorized",
-        "Error validating token: IDX10501"
+        `Error validating token: ${code}`
       ),
       DefaultWWWAuthenticateHeader
     );

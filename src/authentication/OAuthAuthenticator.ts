@@ -134,7 +134,8 @@ export default class OAuthAuthenticator implements IAuthenticator {
 
     if (now > exp) {
       throw KeyVaultErrorFactory.getTokenValidationFailure(
-        context.contextId
+        context.contextId,
+        "IDX10223"
       );
     }
 

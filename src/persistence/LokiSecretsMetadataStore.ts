@@ -4,7 +4,7 @@ import Loki from "lokijs";
 import { rimrafAsync } from "../utils/utils";
 import * as Models from "../generated/artifacts/models";
 import Context from "../generated/Context";
-import ISecretsMetadataStore, { SecretModel } from "./ISecretsMetadataStore";
+import ISecretsMetadataStore, { DeletedSecretModel, SecretModel } from "./ISecretsMetadataStore";
 import KeyVaultErrorFactory from '../errors/KeyVaultErrorFactory';
 
 /**
@@ -28,6 +28,7 @@ export default class LokiSecretsMetadataStore
   private closed: boolean = true;
 
   private readonly SECRETS_COLLECTION = "$SECRETS_COLLECTION$";
+  private readonly DELETEDSECRETS_COLLECTION = "$DELETEDSECRETS_COLLECTION$";
 
   public constructor(public readonly lokiDBPath: string) {
     this.db = new Loki(lokiDBPath, {
@@ -68,6 +69,17 @@ export default class LokiSecretsMetadataStore
     let secretsColl = this.db.getCollection(this.SECRETS_COLLECTION);
     if (secretsColl === null) {
       secretsColl = this.db.addCollection(this.SECRETS_COLLECTION, {
+        unique: ["secretName"],
+        // Optimization for indexing and searching
+        // https://rawgit.com/techfort/LokiJS/master/jsdoc/tutorial-Indexing%20and%20Query%20performance.html
+        indices: ["secretName"]
+      });
+    }
+
+    // Create deletedsecrets collection if not exists
+    let deletedSecretsColl = this.db.getCollection(this.DELETEDSECRETS_COLLECTION);
+    if (deletedSecretsColl === null) {
+      deletedSecretsColl = this.db.addCollection(this.DELETEDSECRETS_COLLECTION, {
         unique: ["secretName"],
         // Optimization for indexing and searching
         // https://rawgit.com/techfort/LokiJS/master/jsdoc/tutorial-Indexing%20and%20Query%20performance.html
@@ -176,8 +188,24 @@ export default class LokiSecretsMetadataStore
     });
   }
 
-  public async deleteSecret(context: Context, secretName: string): Promise<Models.DeleteSecretResponse> {
-    throw new Error("Method not implemented.");
+  public async deleteSecret(context: Context, secret: DeletedSecretModel): Promise<DeletedSecretModel> {
+    const secretsColl = this.db.getCollection(this.SECRETS_COLLECTION);
+    const secretDoc = secretsColl.findOne({
+      secretName: secret.secretName
+    });
+
+    if (!secretDoc) {
+      throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secret.secretName);
+    }
+
+    secretsColl.remove(secretDoc);
+
+    const deletedColl = this.db.getCollection(this.DELETEDSECRETS_COLLECTION);
+
+    return deletedColl.insert({
+      ...secret,
+      versions: secretDoc.versions
+    });
   }
 
   public async updateSecret(context: Context, secret: SecretModel): Promise<SecretModel> {
@@ -191,6 +219,12 @@ export default class LokiSecretsMetadataStore
     }
 
     let found = undefined;
+
+    // If we don't have a version, update the latest version
+    if (secret.secretVersion === "") {
+      const sortedVersions = this.sortVersionsByDate(secretDoc.versions);
+      secret.secretVersion = sortedVersions[0].secretVersion;
+    }
 
     for (let i = 0; i < secretDoc.versions.length; i++) {
       if (secretDoc.versions[i].secretVersion === secret.secretVersion) {
@@ -220,7 +254,7 @@ export default class LokiSecretsMetadataStore
     }
 
     // If we have been provided a version, search for it.
-    if (secretVersion) {
+    if (secretVersion && secretVersion !== "") {
       for (let i = 0; i < secretDoc.versions.length; i++) {
         if (secretDoc.versions[i].secretVersion = secretVersion) {
           if (secretDoc.versions[i].attributes.enabled === false) {
@@ -342,5 +376,18 @@ export default class LokiSecretsMetadataStore
 
       return [slicedVersions, nextMarker];
     }
+  }
+
+  public async getDeletedSecret(context: Context, secretName: string): Promise<DeletedSecretModel> {
+    const coll = this.db.getCollection(this.DELETEDSECRETS_COLLECTION);
+    const deletedSecretDoc = coll.findOne({
+      secretName
+    });
+
+    if (!deletedSecretDoc) {
+      throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName);
+    }
+
+    return deletedSecretDoc;
   }
 }
