@@ -38,7 +38,8 @@ export default class SecretsRequestListenerFactory
     private readonly oauth?: OAuthLevel,
     private readonly httpServerAddress?: string,
     private readonly recoveryLevel?: DeletionRecoveryLevel,
-    private readonly recoverableDays?: number
+    private readonly recoverableDays?: number,
+    private readonly disableSoftDelete?: boolean
   ) { }
 
   public createRequestListener(): RequestListener {
@@ -57,7 +58,8 @@ export default class SecretsRequestListenerFactory
         logger,
         this.httpServerAddress,
         this.recoveryLevel,
-        this.recoverableDays
+        this.recoverableDays,
+        this.disableSoftDelete
       )
     };
 

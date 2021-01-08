@@ -33,7 +33,11 @@ export default class SecretsConfiguration extends ConfigurationBase {
     cert: string = "",
     key: string = "",
     pwd: string = "",
-    oauth?: string
+    oauth?: string,
+    recoverableDays: number = 90,
+    disableSoftDelete: boolean = false, // soft-delete enable by default https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-change
+    purgeProtection: boolean = false,
+    protectedSubscription: boolean = false
   ) {
     super(
       host,
@@ -47,7 +51,11 @@ export default class SecretsConfiguration extends ConfigurationBase {
       cert,
       key,
       pwd,
-      oauth
+      oauth,
+      recoverableDays,
+      disableSoftDelete,
+      purgeProtection,
+      protectedSubscription
     );
   }
 }

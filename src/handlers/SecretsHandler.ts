@@ -15,10 +15,13 @@ import {
   buildKeyvaultIdentifier,
   buildRecoveryIdentifier,
   getScheduledPurgeDate,
+} from "../utils/utils";
+import {
   parseNextMarker,
   buildNextMarker,
-  buildSkipToken
-} from "../utils/utils";
+  buildSkipToken,
+  PaginationMarker
+} from "../utils/pagination";
 import {
   DEFAULT_GET_SECRETS_MAX_RESULTS,
   DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS
@@ -36,18 +39,21 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   private httpServerAddress: string;
   private recoveryLevel: Models.DeletionRecoveryLevel;
   private recoverableDays: number;
+  private disableSoftDelete: boolean;
 
   constructor(
     metadataStore: ISecretsMetadataStore,
     logger: ILogger,
     httpServerAddress?: string,
     recoveryLevel?: Models.DeletionRecoveryLevel,
-    recoverableDays?: number
+    recoverableDays?: number,
+    disableSoftDelete?: boolean
   ) {
     super(metadataStore, logger);
     this.httpServerAddress = httpServerAddress!;
     this.recoveryLevel = recoveryLevel!;
     this.recoverableDays = recoverableDays!;
+    this.disableSoftDelete = disableSoftDelete!;
   }
 
   public async setSecret(secretName: string, value: string, options: Models.VoltServerSecretsSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse> {
@@ -111,7 +117,8 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
 
     await this.metadataStore.deleteSecret(
       context,
-      deletedSecret
+      deletedSecret,
+      this.disableSoftDelete
     );
 
     const response: Models.DeleteSecretResponse = {
@@ -217,7 +224,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   public async getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse> {
     const secretsContext = new SecretsContext(context);
 
-    let marker = "";
+    let marker: PaginationMarker | undefined;
     if (secretsContext.nextMarker) {
       marker = parseNextMarker(secretsContext.nextMarker);
     }
@@ -268,14 +275,14 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   public async getSecretVersions(secretName: string, options: Models.VoltServerSecretsGetSecretVersionsOptionalParams, context: Context): Promise<Models.GetSecretVersionsResponse> {
     const secretsContext = new SecretsContext(context);
 
-    let marker = "";
+    let marker: PaginationMarker | undefined;
     if (secretsContext.nextMarker) {
       marker = parseNextMarker(secretsContext.nextMarker);
     }
 
     if (options.maxresults === undefined) {
-      options.maxresults = DEFAULT_GET_SECRETS_MAX_RESULTS;
-    } else if (options.maxresults > DEFAULT_GET_SECRETS_MAX_RESULTS) {
+      options.maxresults = DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS;
+    } else if (options.maxresults > DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS) {
       throw KeyVaultErrorFactory.getBadParameter(context.contextId, "invalid maxresults");
     }
 
@@ -291,7 +298,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       const $skiptoken = buildSkipToken(buildNextMarker(nextMarker));
       nextLink = `${this.httpServerAddress}/secrets/${secretName}/versions?api-version=${context.context.apiVersion}&$skiptoken=${$skiptoken}`
 
-      if (options.maxresults < DEFAULT_GET_SECRETS_MAX_RESULTS) {
+      if (options.maxresults < DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS) {
         nextLink += `&maxresults=${options.maxresults}`;
       }
     }

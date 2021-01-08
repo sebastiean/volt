@@ -75,7 +75,8 @@ export default class VoltServer extends ServerBase implements ICleaner {
       configuration.getOAuthLevel(),
       configuration.getHttpServerAddress(),
       configuration.getRecoveryLevel(),
-      configuration.recoverableDays
+      configuration.recoverableDays,
+      configuration.disableSoftDelete
     );
 
     super(host, port, httpServer, requestListenerFactory, configuration);

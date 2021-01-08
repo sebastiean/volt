@@ -47,7 +47,25 @@ if (!(args as any).config.name) {
       ["d", "debug"],
       "Optional. Enable debug log by providing a valid local file path as log destination"
     )
-    .option(["", "pwd"], "Optional. Password for .pfx file");
+    .option(["", "pwd"], "Optional. Password for .pfx file")
+    .option(
+      ["", "recoverableDays"],
+      "Optional. Number of calendar days deleted vault objects remain recoverable. Should be between 7 and 90. Default is 90",
+      90,
+      (value) => parseInt(value)
+    )
+    .option(
+      ["", "purgeProtection"],
+      "Optional. If enabled, deleted vault objects cannot be purged during the retention period"
+    )
+    .option(
+      ["", "disableSoftDelete"],
+      "Optional. Allows instant permanent deletion of key vault objects."
+    )
+    .option(
+      ["", "protectedSubscription"],
+      "Optional. If enabled, behaves as if part of a subscription that cannot be cancelled"
+    );
 
   (args as any).config.name = "volt-secrets";
 }
@@ -123,5 +141,39 @@ export default class Environment implements IEnvironment {
     }
 
     // By default disable debug log
+  }
+
+  public recoverableDays(): number {
+    if (this.flags.recoverableDays < 7 || this.flags.recoverableDays > 90) {
+      throw RangeError(
+        `Must provide a value between 7 and 90 for parameter --recoverableDays`
+      );
+    }
+
+    return this.flags.recoverableDays;
+  }
+
+  public purgeProtection(): boolean {
+    if (this.flags.purgeProtection !== undefined) {
+      return true;
+    }
+    // default is false which will disable purge protection
+    return false;
+  }
+
+  public protectedSubscription(): boolean {
+    if (this.flags.protectedSubscription !== undefined) {
+      return true;
+    }
+    // default is false
+    return false;
+  }
+
+  public disableSoftDelete(): boolean {
+    if (this.flags.disableSoftDelete !== undefined) {
+      return true;
+    }
+    // default is false which allows recovery of deleted key vault objects 
+    return false;
   }
 }

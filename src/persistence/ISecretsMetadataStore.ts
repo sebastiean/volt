@@ -2,6 +2,7 @@ import ICleaner from "../ICleaner";
 import IDataStore from "../IDataStore";
 import * as Models from "../generated/artifacts/models";
 import Context from "../generated/Context";
+import { PaginationMarker } from '../utils/pagination';
 
 interface ISecretAdditionalProperties {
   secretName: string;
@@ -41,12 +42,14 @@ export interface ISecretsMetadataStore
    *
    * @param {Context} context
    * @param {DeletedSecretModel} secret
+   * @param {boolean} disableSoftDelete
    * @returns {Promise<DeletedSecretModel>}
    * @memberof ISecretsMetadataStore
    */
   deleteSecret(
     context: Context,
-    secret: DeletedSecretModel
+    secret: DeletedSecretModel,
+    disableSoftDelete: boolean
   ): Promise<DeletedSecretModel>;
 
   /**
@@ -84,15 +87,15 @@ export interface ISecretsMetadataStore
    *
    * @param {Context} context
    * @param {number} maxResults
-   * @param {string} marker
-   * @returns {Promise<[SecretModel[], string | undefined]>}
+   * @param {PaginationMarker} [marker]
+   * @returns {Promise<[SecretModel[], PaginationMarker?]>}
    * @memberof ISecretsMetadataStore
    */
   getSecrets(
     context: Context,
     maxResults: number,
-    marker: string
-  ): Promise<[SecretModel[], string | undefined]>;
+    marker?: PaginationMarker
+  ): Promise<[SecretModel[], PaginationMarker?]>;
 
   /**
    * Get secret versions.
@@ -108,8 +111,8 @@ export interface ISecretsMetadataStore
     context: Context,
     secretName: string,
     maxResults: number,
-    marker: string
-  ): Promise<[SecretModel[], string | undefined]>;
+    marker?: PaginationMarker
+  ): Promise<[SecretModel[], PaginationMarker?]>;
 
   // TODO: implement the following methods
   // /**

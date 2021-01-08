@@ -5,7 +5,8 @@ import { rimrafAsync } from "../utils/utils";
 import * as Models from "../generated/artifacts/models";
 import Context from "../generated/Context";
 import ISecretsMetadataStore, { DeletedSecretModel, SecretModel } from "./ISecretsMetadataStore";
-import KeyVaultErrorFactory from '../errors/KeyVaultErrorFactory';
+import KeyVaultErrorFactory from "../errors/KeyVaultErrorFactory";
+import { PaginationMarker } from "../utils/pagination";
 
 /**
  * This is a metadata source implementation for secrets based on loki DB.
@@ -148,19 +149,6 @@ export default class LokiSecretsMetadataStore
     });
   }
 
-  private binarySearchVersions(arr: any[], x: string, start: number, end: number): number {
-    if (x === "") return -1;
-    if (start > end) return -1;
-    let mid = Math.floor((start + end) / 2);
-    if (arr[mid].secretVersion === x) return mid;
-    if (arr[mid].secretVersion > x) {
-      return this.binarySearchVersions(arr, x, start, mid - 1);
-    }
-    else {
-      return this.binarySearchVersions(arr, x, mid + 1, end);
-    }
-  }
-
   /**
    * Set secret item in persistency layer. Will create new version if secret exists.
    *
@@ -188,7 +176,7 @@ export default class LokiSecretsMetadataStore
     });
   }
 
-  public async deleteSecret(context: Context, secret: DeletedSecretModel): Promise<DeletedSecretModel> {
+  public async deleteSecret(context: Context, secret: DeletedSecretModel, disableSoftDelete: boolean): Promise<DeletedSecretModel> {
     const secretsColl = this.db.getCollection(this.SECRETS_COLLECTION);
     const secretDoc = secretsColl.findOne({
       secretName: secret.secretName
@@ -198,14 +186,18 @@ export default class LokiSecretsMetadataStore
       throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secret.secretName);
     }
 
+    // Add to deletedsecrets as long as soft-delete is enabled
+    if (disableSoftDelete === false) {
+      const deletedColl = this.db.getCollection(this.DELETEDSECRETS_COLLECTION);
+      deletedColl.insert({
+        ...secret,
+        versions: secretDoc.versions
+      });
+    }
+
     secretsColl.remove(secretDoc);
 
-    const deletedColl = this.db.getCollection(this.DELETEDSECRETS_COLLECTION);
-
-    return deletedColl.insert({
-      ...secret,
-      versions: secretDoc.versions
-    });
+    return secret;
   }
 
   public async updateSecret(context: Context, secret: SecretModel): Promise<SecretModel> {
@@ -280,19 +272,14 @@ export default class LokiSecretsMetadataStore
     throw KeyVaultErrorFactory.getDisabledSecret(context.contextId);
   }
 
-  public async getSecrets(context: Context, maxResults: number, marker: string = ""): Promise<[SecretModel[], string | undefined]> {
+  public async getSecrets(context: Context, maxResults: number, marker?: PaginationMarker): Promise<[SecretModel[], PaginationMarker?]> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
-
-    if (marker !== "") {
-      const subId = marker.split("!")[1];
-      const parts = subId.split("/");
-      marker = parts[parts.length - 1].toLowerCase();
-    }
+    const nextItem = marker!.itemIdentifier.name || "";
 
     const docs = await coll
       .chain()
       .where(obj => {
-        return obj.secretName >= marker!;
+        return obj.secretName >= nextItem
       })
       .simplesort("secretName")
       .limit(maxResults + 1)
@@ -312,10 +299,14 @@ export default class LokiSecretsMetadataStore
         undefined
       ];
     } else {
-      const markerIndex = docs.length - 1;
-      const marker = `secret/${docs[markerIndex].secretName}`;
-      const paddedIndex = String(markerIndex).padStart(6, '0');
-      const nextMarker = [paddedIndex, marker, "000028", "9999-12-31T23:59:59.9999999Z", ""].join("!");
+      const nextIndex = docs.length - 1;
+      const nextPaginationMarker: PaginationMarker = {
+        index: nextIndex,
+        itemIdentifier: {
+          collection: "secret",
+          name: docs[nextIndex].secretName
+        }
+      };
 
       docs.pop();
 
@@ -329,12 +320,12 @@ export default class LokiSecretsMetadataStore
           }
           return sortedVersions[0];
         }),
-        nextMarker
+        nextPaginationMarker
       ];
     }
   }
 
-  public async getSecretVersions(context: Context, secretName: string, maxResults: number, marker: string = ""): Promise<[SecretModel[], string | undefined]> {
+  public async getSecretVersions(context: Context, secretName: string, maxResults: number, marker?: PaginationMarker): Promise<[SecretModel[], PaginationMarker?]> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
     const secretDoc = coll.findOne({
       secretName
@@ -344,37 +335,33 @@ export default class LokiSecretsMetadataStore
       throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName);
     }
 
-    if (marker !== "") {
-      const subId = marker.split("!")[1];
-      const parts = subId.split("/");
-      marker = parts[parts.length - 1].toLowerCase();
-    }
+    const version = marker ? marker.itemIdentifier.version! : "";
 
     const sortedVersions = this.sortVersionsByVersion(secretDoc.versions);
 
-    let index = this.binarySearchVersions(sortedVersions, marker, 0, sortedVersions.length - 1);
+    let index = sortedVersions.findIndex(obj => obj.secretVersion >= version);
 
     if (index === -1) {
       index = 0;
     }
 
-    let max = index + maxResults;
+    let nextIndex = index + maxResults;
 
-    if (sortedVersions.length < max) {
-      max = sortedVersions.length;
-    }
+    const slicedVersions = sortedVersions.slice(index, nextIndex);
 
-    const slicedVersions = sortedVersions.slice(index, max);
-
-    if (sortedVersions.length < (index + maxResults)) {
-      return [slicedVersions, undefined];
+    if (sortedVersions.length < nextIndex) {
+      return [sortedVersions, undefined];
     } else {
-      const markerIndex = max;
-      const marker = `secret/${secretName}/${sortedVersions[markerIndex].secretVersion}`;
-      const paddedIndex = String(markerIndex).padStart(6, '0');
-      const nextMarker = [paddedIndex, marker, "000028", "9999-12-31T23:59:59.9999999Z", ""].join("!");
+      const nextPaginationMarker: PaginationMarker = {
+        index: nextIndex,
+        itemIdentifier: {
+          collection: "secret",
+          name: secretDoc.secretName,
+          version: sortedVersions[nextIndex].secretVersion
+        }
+      };
 
-      return [slicedVersions, nextMarker];
+      return [slicedVersions, nextPaginationMarker];
     }
   }
 

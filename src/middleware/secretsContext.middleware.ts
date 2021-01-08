@@ -9,7 +9,8 @@ import {
   LatestStableAPIVersion,
   ValidAPIVersions
 } from "../utils/constants";
-import { checkApiVersion, decodeSkipToken, SkipToken } from "../utils/utils";
+import { checkApiVersion } from "../utils/utils";
+import { decodeSkipToken, SkipToken } from "../utils/pagination";
 import KeyVaultErrorFactory from '../errors/KeyVaultErrorFactory';
 
 export default function createSecretsContextMiddleware(
@@ -59,8 +60,15 @@ export function secretsContextMiddleware(
 
   // Decode $skiptoken query parameter. Used for fetching next results in paginated responses.
   if ($skipToken !== undefined) {
-    const decodedSkipToken: SkipToken = decodeSkipToken($skipToken);
-    nextMarker = decodedSkipToken.NextMarker;
+    try {
+      const decodedSkipToken: SkipToken = decodeSkipToken($skipToken);
+      nextMarker = decodedSkipToken.NextMarker;
+    } catch (err) {
+      logger.warn(
+        `SecretsContextMiddleware: Failed to decode $skiptoken '${$skipToken}' Error: ${err.message}`,
+        requestID
+      );
+    }
   }
 
   const secretsContext = new SecretsContext(res.locals, DEFAULT_CONTEXT_PATH);

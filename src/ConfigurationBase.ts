@@ -23,7 +23,7 @@ export default abstract class ConfigurationBase {
     public readonly pwd: string = "",
     public readonly oauth?: string,
     public readonly recoverableDays: number = 90,
-    public readonly softDelete: boolean = true, // soft-delete enable by default https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-change
+    public readonly disableSoftDelete: boolean = false, // soft-delete enable by default https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-change
     public readonly purgeProtection: boolean = false,
     public readonly protectedSubscription: boolean = false
   ) { }

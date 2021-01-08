@@ -8,6 +8,7 @@ import SecretsConfiguration from "./SecretsConfiguration";
 import IEnvironment from "./IEnvironment";
 import Environment from "./Environment";
 import { DEFAULT_SECRETS_LOKI_DB_PATH } from "./utils/constants";
+import * as Logger from './Logger';
 
 const accessAsync = promisify(access);
 
@@ -51,11 +52,17 @@ async function main() {
     env.cert(),
     env.key(),
     env.pwd(),
-    env.oauth()
+    env.oauth(),
+    env.recoverableDays(),
+    env.disableSoftDelete(),
+    env.purgeProtection(),
+    env.protectedSubscription()
   );
 
   // Create server instance
   const secretsServer = new VoltServer(config);
+
+  Logger.configLogger(config.enableDebugLog, config.debugLogFilePath);
 
   // Start server
   console.log(

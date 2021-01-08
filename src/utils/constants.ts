@@ -10,6 +10,8 @@ export const DEFAULT_CONTEXT_PATH = "volt_secrets_context";
 export const LOGGER_CONFIGS = {};
 export const DEFAULT_GET_SECRETS_MAX_RESULTS = 25; // Maximum number of results to return in a page.
 export const DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS = 25; // Maximum number of results to return in a page.
+export const DEFAULT_NEXT_MARKER_ID = "000028"; // Appears to be the same in every next marker.
+export const DEFAULT_NEXT_MARKER_DATE = "9999-12-31T23:59:59.9999999Z"; // Appears to be the same in every next marker.
 
 export const HeaderConstants = {
   AUTHORIZATION: "authorization",
