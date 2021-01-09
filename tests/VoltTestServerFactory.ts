@@ -6,7 +6,11 @@ export default class VoltTestServerFactory {
     loose: boolean = false,
     skipApiVersionCheck: boolean = false,
     https: boolean = false,
-    oauth?: string
+    oauth?: string,
+    recoverableDays: number = 90,
+    disableSoftDelete: boolean = false,
+    purgeProtection: boolean = false,
+    protectedSubscription: boolean = false
   ): VoltServer {
     const port = 13300;
     const host = "127.0.0.1";
@@ -28,8 +32,13 @@ export default class VoltTestServerFactory {
       cert,
       key,
       undefined,
-      oauth
+      oauth,
+      recoverableDays,
+      disableSoftDelete,
+      purgeProtection,
+      protectedSubscription
     );
+
     return new VoltServer(config);
   }
 }
