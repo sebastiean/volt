@@ -36,7 +36,6 @@ export default class SecretsRequestListenerFactory
     private readonly loose?: boolean,
     private readonly skipApiVersionCheck?: boolean,
     private readonly oauth?: OAuthLevel,
-    private readonly httpServerAddress?: string,
     private readonly recoveryLevel?: DeletionRecoveryLevel,
     private readonly recoverableDays?: number,
     private readonly disableSoftDelete?: boolean
@@ -56,7 +55,6 @@ export default class SecretsRequestListenerFactory
       voltServerSecretsHandler: new SecretsHandler(
         this.metadataStore,
         logger,
-        this.httpServerAddress,
         this.recoveryLevel,
         this.recoverableDays,
         this.disableSoftDelete
