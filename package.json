@@ -9,7 +9,8 @@
   "scripts": {
     "test": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 mocha -r ts-node/register --no-timeouts --grep \"@loki\" --recursive tests/**/*.test.ts tests/**/**/*.test.ts --exit",
     "build": "tsc",
-    "docker:build": "cross-var docker build --no-cache --rm -f \"Dockerfile\" -t sebastiean/volt:$npm_package_version . && cross-var docker tag sebastiean/volt:$npm_package_version sebastiean/volt:latest"
+    "docker:build": "cross-var docker build --no-cache --rm -f \"Dockerfile\" -t sebastiean/volt:$npm_package_version . && cross-var docker tag sebastiean/volt:$npm_package_version sebastiean/volt:latest",
+    "docker:push": "cross-var docker push sebastiean/volt:$npm_package_version"
   },
   "author": "",
   "license": "ISC",
