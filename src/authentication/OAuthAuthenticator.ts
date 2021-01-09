@@ -12,6 +12,8 @@ import Context from "../generated/Context";
 import IRequest from "../generated/IRequest";
 import { HeaderConstants, VALID_KEY_VAULT_AUDIENCES } from "../utils/constants";
 import IAuthenticator from "./IAuthenticator";
+import ServerError from '../errors/ServerError';
+import KeyVaultError from '../errors/KeyVaultError';
 
 export default class OAuthAuthenticator implements IAuthenticator {
   public constructor(
@@ -31,11 +33,19 @@ export default class OAuthAuthenticator implements IAuthenticator {
     );
 
     if (req.getProtocol().toLowerCase() !== HTTPS) {
+      const message = "Request is not using HTTPS protocol. Volt Server will not respond. Please enable HTTPS to use OAuth.";
       this.logger.error(
-        `OAuthAuthenticator:validate() Request is not using HTTPS protocol. Volt Server will not respond. Please enable HTTPS to use OAuth.`,
+        `OAuthAuthenticator:validate() ${message}`,
         secretsContext.contextId
       );
-      process.exit();
+      throw new ServerError(
+        503,
+        secretsContext.contextId!,
+        new KeyVaultError(
+          "VoltError",
+          message
+        )
+      );
     }
 
     const authHeaderValue = req.getHeader(HeaderConstants.AUTHORIZATION);
