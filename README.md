@@ -317,4 +317,4 @@ Project Link: [https://github.com/sebastiean/volt](https://github.com/sebastiean
 [issues-shield]: https://img.shields.io/github/issues/sebastiean/volt.svg
 [issues-url]: https://github.com/sebastiean/volt/issues
 [license-shield]: https://img.shields.io/github/license/sebastiean/volt.svg
-[license-url]: https://github.com/sebastiean/volt/blob/master/LICENSE
+[license-url]: https://github.com/sebastiean/volt/blob/main/LICENSE
