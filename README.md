@@ -109,7 +109,7 @@ docker run -p 8888:8888 -v ~/volt:/data sebastiean/volt volt -l --secretsPort 88
 
 ### SDK
 
-To use Volt with the Azure Key Vault SDKs, you <u>must</u> enable [HTTPS](#certificate-options-https) and [OAuth](#oauth-options).
+To use Volt with the Azure Key Vault SDKs, you <ins>must</ins> enable [HTTPS](#certificate-options-https) and [OAuth](#oauth-options).
 
 ```bash
 volt --oauth basic --cert certname.pem --key certname-key.pem
@@ -132,20 +132,19 @@ const client = new SecretClient(url, credential);
 
 #### Standard options
 
-| Option (with example)       	| Example                 	| Description                                                                                                                                                           	|
+| Option                      	| Example                 	| Description                                                                                                                                                           	|
 |-----------------------------	|-------------------------	|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
 | --secretsHost <host>        	| --secretsHost 127.0.0.1 	| Listening host. By default Volt secrets will listen on 127.0.0.1<br>Use 0.0.0.0 to accept requests from remote addresses (unsafe).                                    	|
 | ---secretsPort <port>       	| --secretsPort 8888      	| Listening port. By default, Volt will listen on port 13000 for secrets. <br>Customize the listening port per your requirements.                                       	|
 | -s<br>---silent             	|                         	| Disable access logs. By default Volt will display access logs in the console.                                                                                         	|
 | -d <path><br>--debug <path> 	| -d ./debug.log          	| Debug log includes detailed information on every request and exception stack traces.<br>Enable it by providing a valid local file path for the debug log destination. 	|
 | -L<br>--loose               	|                         	| By default Volt will apply strict mode. Strict mode will block unsupported request headers or parameters.<br>Disable it by enabling loose mode.                       	|
-|                             	|                         	|                                                                                                                                                                       	|
 
 #### Certificate options (HTTPS)
 
 Please see [HTTPS Setup](#https-setup) section for help with creating self-signed certificates to use with Volt.
 
-| Option (with example) 	| Example                	| Description                                                                                                       	|
+| Option                	| Example                	| Description                                                                                                       	|
 |-----------------------	|------------------------	|-------------------------------------------------------------------------------------------------------------------	|
 | --cert                	| --cert path/server.pem 	| By default Volt will listen on HTTP protocol.<br>Provide a PEM or PFX certificate file path to enable HTTPS mode. 	|
 | --key                 	| --key path/key.pem     	| When --cert is provided for a PEM file, must provide corresponding --key.                                         	|
@@ -162,13 +161,13 @@ Currently, Volt supports following OAuth authentication levels:
 **Basic**
 
 In basic level, `--oauth basic`, Volt will do basic authentication, such as validating incoming bearer token, checking issuer, audience, expiry.   
-<u>Volt will NOT verify the token signature or permission</u>.
+<ins>Volt will NOT verify the token signature or permission</ins>.
 
 #### Key Vault specific options
 
 These options can be used to change the [soft-delete](https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview) behaviour of Volt. Please see the linked official documentation to understand this feature.
 
-| Option (with example)   	| Example              	| Description                                                                                                                   	|
+| Option                  	| Example              	| Description                                                                                                                   	|
 |-------------------------	|----------------------	|-------------------------------------------------------------------------------------------------------------------------------	|
 | --disableSoftDelete     	|                      	| Disable the soft-delete feature entirely.<br>See https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-change  	|
 | --recoverableDays       	| --recoverableDays 10 	| Number of calendar days deleted vault objects remain in a recoverable state.<br>Should be between 7 and 90.<br>Default is 90. 	|
