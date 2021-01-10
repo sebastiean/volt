@@ -58,7 +58,7 @@ Volt is inspired by and heavily based on [Azurite](https://github.com/Azure/Azur
   - [Get Secrets](https://docs.microsoft.com/rest/api/keyvault/GetSecrets)
   - [Delete Secret](https://docs.microsoft.com/rest/api/keyvault/DeleteSecret)
   - [Get Deleted Secret](https://docs.microsoft.com/rest/api/keyvault/GetDeletedSecret)
-  - [Get Deleted Secrets](https://docs.microsoft.com/rest/api/keyvault/GetDeletedSecrets)
+  - ~~[Get Deleted Secrets](https://docs.microsoft.com/rest/api/keyvault/GetDeletedSecrets)~~ *Not yet supported
   - ~~[Backup Secret](https://docs.microsoft.com/rest/api/keyvault/BackupSecret)~~ *Not yet supported
   - ~~[Purge Deleted Secret](https://docs.microsoft.com/rest/api/keyvault/PurgeDeletedSecret)~~ *Not yet supported
   - ~~[Recover Deleted Secret](https://docs.microsoft.com/rest/api/keyvault/RecoverDeletedSecret)~~ *Not yet supported
