@@ -193,7 +193,7 @@ You have a few options to generate PEM certificate and key files. We'll show you
 **Generate Certificate and Key with mkcert**
 
 1. Install mkcert: https://github.com/FiloSottile/mkcert#installation.
-2. Run the following commands to install the Root CA and generate a cert for Azurite.
+2. Run the following commands to install the Root CA and generate a cert for Volt.
 
 ```bash
 mkcert -install
@@ -234,7 +234,7 @@ Execute the following command to generate a cert and key with [OpenSSL](https://
 openssl req -newkey rsa:2048 -x509 -nodes -keyout key.pem -new -out cert.pem -sha256 -days 365 -addext "subjectAltName=IP:127.0.0.1" -subj "/C=CO/ST=ST/L=LO/O=OR/OU=OU/CN=CN"
 ```
 
-The `-subj` values are required, but do not have to be valid. The `subjectAltName` must contain the Azurite IP address.
+The `-subj` values are required, but do not have to be valid. The `subjectAltName` must contain the Volt IP address.
 
 **Add Certificate to Trusted Root Store**
 
