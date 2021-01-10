@@ -56,7 +56,7 @@ if (!(args as any).config.name) {
     )
     .option(
       ["", "purgeProtection"],
-      "Optional. If enabled, deleted vault objects cannot be purged during the retention period"
+      "Optional. If enabled, deleted vault objects cannot be purged during the retention period."
     )
     .option(
       ["", "disableSoftDelete"],
@@ -64,7 +64,7 @@ if (!(args as any).config.name) {
     )
     .option(
       ["", "protectedSubscription"],
-      "Optional. If enabled, behaves as if part of a subscription that cannot be cancelled"
+      "Optional. If enabled, behaves as if part of a subscription that cannot be cancelled."
     );
 
   (args as any).config.name = "volt-secrets";
