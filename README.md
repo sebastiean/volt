@@ -21,6 +21,7 @@
   </p>
 </p>
 
+> 🚨 This project is in **alpha** status. This means that bugs are extremely likely and no assurances are made about  compatability with the Key Vault REST API.
 
 <details open="open">
   <summary>Table of Contents</summary>
