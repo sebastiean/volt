@@ -308,7 +308,7 @@ Project Link: [https://github.com/sebastiean/volt](https://github.com/sebastiean
 
 ## Acknowledgements
 * [Azurite](https://github.com/Azure/Azurite)
-* Logo design by [ch.iordanis](https://iordanisch.github.io/ch.iordanis)
+* Logo design by [ch.iordanis](https://iordanisch.github.io/ch.iordanis) :star_struck:
 
 
 
