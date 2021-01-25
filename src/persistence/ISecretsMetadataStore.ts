@@ -5,12 +5,14 @@ import Context from "../generated/Context";
 import { PaginationMarker } from '../utils/pagination';
 
 interface ISecretAdditionalProperties {
-  secretName: string;
-  secretVersion: string;
+  name: string;
+  version: string;
 }
 
 export type SecretModel = ISecretAdditionalProperties & Models.SecretBundle;
 export type DeletedSecretModel = ISecretAdditionalProperties & Models.DeletedSecretBundle;
+
+export type DeleteSecretProperties = Omit<Models.DeletedSecretBundle, keyof Models.SecretBundle>;
 
 /**
  * Persistency layer metadata storage interface.
@@ -23,6 +25,26 @@ export type DeletedSecretModel = ISecretAdditionalProperties & Models.DeletedSec
 export interface ISecretsMetadataStore
   extends IDataStore,
   ICleaner {
+
+  /**
+   * Helper function to check whether secret exists.
+   *
+   * @param {Context} context
+   * @param {string} secretName
+   * @returns {Promise<boolean>}
+   * @memberof ISecretsMetadataStore
+   */
+  secretExists(context: Context, secretName: string): Promise<boolean>;
+
+  /**
+   * Helper function to check whether deletedsecret exists.
+   *
+   * @param {Context} context
+   * @param {string} secretName
+   * @returns {Promise<boolean>}
+   * @memberof ISecretsMetadataStore
+   */
+  deletedSecretExists(context: Context, secretName: string): Promise<boolean>;
 
   /**
    * Set secret.
@@ -48,7 +70,8 @@ export interface ISecretsMetadataStore
    */
   deleteSecret(
     context: Context,
-    secret: DeletedSecretModel,
+    secretName: string,
+    properties: DeleteSecretProperties,
     disableSoftDelete: boolean
   ): Promise<DeletedSecretModel>;
 

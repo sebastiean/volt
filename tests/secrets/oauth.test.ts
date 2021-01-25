@@ -32,6 +32,10 @@ describe("Secrets OAuth Basic", () => {
     await server.clean();
   });
 
+  afterEach(async () => {
+    await server.clear();
+  });
+
   it(`Should work with set secret @loki`, async () => {
     const token = generateJWTToken(
       new Date("2019/01/01"),

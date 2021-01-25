@@ -39,6 +39,6 @@ export default class VoltTestServerFactory {
       protectedSubscription
     );
 
-    return new VoltServer(config);
+    return new VoltServer(config, true);
   }
 }

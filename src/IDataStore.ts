@@ -36,4 +36,12 @@ export default interface IDataStore {
    * @memberof IDataStore
    */
   isClosed(): boolean;
+
+  /**
+   * Data store clear. Used when running tests to start from a fresh db.
+   *
+   * @returns {Promise<void>}
+   * @memberof IDataStore
+   */
+  clear(): Promise<void>;
 }

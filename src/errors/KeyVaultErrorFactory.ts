@@ -31,6 +31,20 @@ export default class KeyVaultErrorFactory {
     );
   }
 
+  public static getDeletedSecretNotFound(
+    contextID: string = DefaultID,
+    secretName: string
+  ): ServerError {
+    return new ServerError(
+      404,
+      contextID,
+      new KeyVaultError(
+        "SecretNotFound",
+        `Deleted Secret not found: ${secretName}`,
+      )
+    );
+  }
+
   public static getBadParameter(
     contextID: string = DefaultID,
     message: string

@@ -59,7 +59,9 @@ export function getScheduledPurgeDate(
   deletedDate: Date,
   recoverableDays: number
 ): Date {
-  return new Date(deletedDate.getTime() + (recoverableDays * 24 * 60 * 60 * 1000));
+  const scheduledPurgeDate = new Date(deletedDate);
+  scheduledPurgeDate.setDate(scheduledPurgeDate.getDate() + recoverableDays);
+  return scheduledPurgeDate;
 }
 
 export function getDefaultHeaders(): OutgoingHttpHeaders {

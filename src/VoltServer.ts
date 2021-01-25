@@ -29,13 +29,15 @@ const AFTER_CLOSE_MESSAGE = `Volt Secrets service successfully closed`;
  */
 export default class VoltServer extends ServerBase implements ICleaner {
   private readonly metadataStore: ISecretsMetadataStore;
+  private readonly runningTests: boolean;
+
   /**
      * Creates an instance of Server.
      *
      * @param {SecretsConfiguration} configuration
      * @memberof Server
      */
-  constructor(configuration?: SecretsConfiguration) {
+  constructor(configuration?: SecretsConfiguration, runningTests: boolean = false) {
     if (configuration === undefined) {
       configuration = new SecretsConfiguration();
     }
@@ -59,7 +61,8 @@ export default class VoltServer extends ServerBase implements ICleaner {
     // creating a new XXXDataStore class implementing ISecretsMetadataStore interface
     // and replace the default LokiSecretsMetadataStore
     const metadataStore: ISecretsMetadataStore = new LokiSecretsMetadataStore(
-      configuration.metadataDBPath
+      configuration.metadataDBPath,
+      runningTests
       // logger
     );
 
@@ -81,6 +84,7 @@ export default class VoltServer extends ServerBase implements ICleaner {
     super(host, port, httpServer, requestListenerFactory, configuration);
 
     this.metadataStore = metadataStore;
+    this.runningTests = runningTests;
   }
 
   /**
@@ -99,6 +103,22 @@ export default class VoltServer extends ServerBase implements ICleaner {
       return;
     }
     throw Error(`Cannot clean up secrets server in status ${this.getStatus()}.`);
+  }
+
+  /**
+   * Clear secrets db. Used when running tests.
+   *
+   * @returns {Promise<void>}
+   * @memberof VoltServer
+   */
+  public async clear(): Promise<void> {
+    if (this.runningTests === false) {
+      throw Error(`Cannot clean up secrets server when not running tests.`);
+    }
+
+    if (this.metadataStore !== undefined) {
+      await this.metadataStore.clear();
+    }
   }
 
   protected async beforeStart(): Promise<void> {

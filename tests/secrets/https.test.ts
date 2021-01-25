@@ -30,6 +30,10 @@ describe("Secrets HTTPS (OAuth)", () => {
     await server.clean();
   });
 
+  afterEach(async () => {
+    await server.clear();
+  });
+
   it(`Should work using HTTPS endpoint @loki`, async () => {
     const token = generateJWTToken(
       new Date("2019/01/01"),
