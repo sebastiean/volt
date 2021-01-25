@@ -7,7 +7,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/sebastiean/volt">
-    <img src="images/logo.jpg" alt="Logo">
+    <img src="images/logo.jpg" alt="Logo" width="100">
   </a>
 
   <!-- <h3 align="center">Volt</h3> -->
@@ -308,6 +308,7 @@ Project Link: [https://github.com/sebastiean/volt](https://github.com/sebastiean
 
 ## Acknowledgements
 * [Azurite](https://github.com/Azure/Azurite)
+* Logo design by [ch.iordanis](https://iordanisch.github.io/ch.iordanis)
 
 
 
