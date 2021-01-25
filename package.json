@@ -1,6 +1,6 @@
 {
   "name": "volt",
-  "version": "0.0.1-alpha1",
+  "version": "0.0.1-alpha2",
   "description": "Open source Azure Key Vault API compatible server",
   "main": "./dist/main.js",
   "bin": {
