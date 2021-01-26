@@ -105,6 +105,7 @@ docker run -p 13000:13000 -v ~/volt:/data sebastiean/volt
 docker run -p 8888:8888 -v ~/volt:/data sebastiean/volt volt -l --secretsPort 8888 --secretsHost 0.0.0.0 --loose --skipApiVersionCheck --cert ./localhost.cert --key ./localhost.key --oauth basic 
 ```
 
+> When running via Docker with HTTPS enabled, you must use `--secretsHost 0.0.0.0` to correctly bind to the correct hostname.
 
 ## Usage
 
