@@ -51,14 +51,15 @@ Each [Key Vault REST API](https://docs.microsoft.com/en-us/rest/api/keyvault/) s
 
 Within the `/generated` sub-folder, exists some auto-generated code. However - at this time, not all the code within this folder is actually auto-generated. The code within `/artifacts` and `/handlers` is generated and should not require any manual changes.
 
-### Debugging
+### Debugging :ant:
 
 We have provided some predefined Visual Studio Code (VSCode) debugging configurations. This makes it easy to debug in Visual Studio Code.   
 Please follow the official [debugging guide](https://code.visualstudio.com/docs/editor/debugging) if you are unsure how to enable debugging in VSCode.
 
 #### Debugging tests
 
-There is a predefined VSCode debugging configuration that will enable debugging and run the tests. This is extremely useful when encountering issues whilst adding new tests. Select the `Mocha Tests` debugging configuration in VSCode.
+There is a predefined VSCode debugging configuration that will enable debugging and run the tests. This is extremely useful when encountering issues whilst adding new tests.   
+Select the `Mocha Tests` debugging configuration in VSCode.
 
 ### AutoRest generated code
 
@@ -128,7 +129,7 @@ This section guides you through submitting a feature suggestion for Volt, includ
 
 #### How do I submit a (good) feature suggestion?
 
-Featurecement suggestions are tracked as [GitHub issues](https://guides.github.com/features/issues/). [Create an issue](https://github.com/sebastiean/volt/issues/new) and provide the following information:
+Feature suggestions are tracked as [GitHub issues](https://guides.github.com/features/issues/). [Create an issue](https://github.com/sebastiean/volt/issues/new) and provide the following information:
 
 * **Use a clear and descriptive title** for the issue to identify the suggestion.
 * **Provide a step-by-step description of the suggested feature** in as many details as possible.
