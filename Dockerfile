@@ -6,13 +6,14 @@ FROM node:lts-alpine AS base
 WORKDIR /opt/volt
 
 COPY *.json ./
-# Copy the source code
-COPY src ./src
 
 #
 # Builder
 #
 FROM base AS builder
+
+# Copy the source code
+COPY src ./src
 
 # install node packages
 RUN npm set progress=false && npm config set depth 0 && \
