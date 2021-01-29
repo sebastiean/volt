@@ -4,19 +4,28 @@
 
 The following is a set of guidelines for contributing to Volt. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
-#### Table Of Contents
-
-[Code of Conduct](#code-of-conduct)
-
-[What should I know before I get started?](#what-should-i-know-before-i-get-started)
-  * [Project structure](#project-structure)
-  * [Debugging](#debugging)
-  * [AutoRest generated code](#autorest-generated-code)
-
-[How can I contribute?](#how-can-i-contribute)
-  * [Reporting cugs](#reporting-bugs)
-  * [Suggesting features](#suggesting-features)
-  * [Pull requests](#pull-requests)
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#code-of-conduct">Code of Conduct</a></li>
+    <li>
+      <a href="#what-should-i-know-before-i-get-started">What should I know before I get started?</a>
+      <ul>
+        <li><a href="#project-structure">Project structure</a></li>
+        <li><a href="#debugging">Debugging</a></li>
+        <li><a href="#autorest-generated-code">AutoRest generated code</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#how-can-i-contribute">How can I contribute?</a>
+      <ul>
+        <li><a href="#reporting-bugs">Reporting bugs</a></li>
+        <li><a href="#suggesting-features">Suggesting features</a></li>
+        <li><a href="#pull-requests">Pull requests</a></li>
+      </ul>
+    </li>
+  </ol>
+</details>
 
 ## Code of Conduct
 
