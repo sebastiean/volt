@@ -70,7 +70,7 @@ Please follow the official [debugging guide](https://code.visualstudio.com/docs/
 There is a predefined VSCode debugging configuration that will enable debugging and run the tests. This is extremely useful when encountering issues whilst adding new tests.   
 Select the `Mocha Tests` debugging configuration in VSCode.
 
-### AutoRest generated code
+### AutoRest generated code :robot:
 
 Like Azurite, Volt utilises [AutoRest](https://github.com/Azure/autorest) to generate code from Swagger / OpenAPI specifications. More commonly, this tool is used to generate Azure's client SDKs, however it is also possible to use a modified AutoRest extension to generate server-side code.
    
@@ -113,7 +113,7 @@ npm run build
 autorest ./swagger/README.md --typescript --use=/path/to/cloned/autorest.typescript.server
 ```
 
-## How can I contribute?
+## How can I contribute? :question:
 
 ### Reporting bugs
 
