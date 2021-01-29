@@ -12,8 +12,8 @@ The following is a set of guidelines for contributing to Volt. These are mostly 
       <a href="#what-should-i-know-before-i-get-started">What should I know before I get started?</a>
       <ul>
         <li><a href="#project-structure">Project structure</a></li>
-        <li><a href="#debugging">Debugging</a></li>
-        <li><a href="#autorest-generated-code">AutoRest generated code</a></li>
+        <li><a href="#debugging-ant">Debugging</a></li>
+        <li><a href="#autorest-generated-code-robot">AutoRest generated code</a></li>
       </ul>
     </li>
     <li>
@@ -113,7 +113,7 @@ npm run build
 autorest ./swagger/README.md --typescript --use=/path/to/cloned/autorest.typescript.server
 ```
 
-## How can I contribute? :question:
+## How can I contribute?
 
 ### Reporting bugs
 
