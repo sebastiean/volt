@@ -60,4 +60,38 @@ describe("Secrets HTTPS (OAuth)", () => {
     await secretClient.setSecret(secretName, secretValue);
     await secretClient.beginDeleteSecret(secretName);
   });
+  it(`Should work using HTTPS endpoint and return correct values @loki`, async () => {
+    const token = generateJWTToken(
+      new Date("2019/01/01"),
+      new Date("2019/01/01"),
+      new Date("2100/01/01"),
+      "https://sts.windows-ppe.net/ab1f708d-50f6-404c-a006-d71b2ac7a606/",
+      "https://vault.azure.net",
+      uuid()
+    );
+
+    const secretClient = new SecretClient(
+      baseURL,
+      new SimpleTokenCredential(token),
+      {
+        retryOptions: { maxRetries: 1 },
+        // Make sure socket is closed once the operation is done.
+        keepAliveOptions: { enable: false }
+      }
+    );
+
+    const secretName: string = "initialsecret";
+    const secretValue: string = "initialSecretValue";
+
+    await secretClient.setSecret(secretName, secretValue);
+    await secretClient.setSecret("secret", "secretValue");
+
+    
+    const result = await secretClient.getSecret("secret");
+
+    expect(result.name).to.not.equal(secretName);
+    expect(result.value).to.not.equal(secretValue);
+    
+    await secretClient.beginDeleteSecret(secretName);
+  });
 });
