@@ -12,6 +12,7 @@ import {
 } from "../testutils";
 
 import { v4 as uuid } from "uuid";
+import { expect } from "chai";
 
 // Set true to enable debug log
 configLogger(false);
