@@ -43,6 +43,7 @@ export default class LokiSecretsMetadataStore
   private initialized: boolean = false;
   private closed: boolean = true;
   private clearEnabled: boolean = false;
+  
 
   private readonly SECRETS_COLLECTION = "$SECRETS_COLLECTION$";
   private readonly SECRET_VERSIONS_COLLECTION = "$SECRET_VERSIONS_COLLECTION$";
@@ -219,9 +220,9 @@ export default class LokiSecretsMetadataStore
   public async setSecret(context: Context, secret: SecretModel): Promise<SecretModel> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
-
+      
     let secretDoc = coll.findOne({
-      'name': { '$regex': [secret.name, 'i'] } // case-insensitive search
+      'name': { '$regex': [`^${secret.name}$`, 'i'] } // case-insensitive search
     })
 
     if (!secretDoc) {
@@ -243,7 +244,7 @@ export default class LokiSecretsMetadataStore
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
 
     const doc = coll.findOne({
-      'name': { '$regex': [secretName, 'i'] } // case-insensitive search
+      'name': { '$regex': [`^${secretName}$`, 'i'] } // case-insensitive search
     });
 
     if (!doc) {
@@ -292,7 +293,7 @@ export default class LokiSecretsMetadataStore
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
 
     const doc = coll.findOne({
-      'name': { '$regex': [secret.name, 'i'] }, // case-insensitive search
+      'name': { '$regex': [`^${secret.name}$`, 'i'] }, // case-insensitive search
     });
 
     if (!doc) {
@@ -303,7 +304,7 @@ export default class LokiSecretsMetadataStore
 
     if (secret.version !== "") {
       result = versionsColl.findOne({
-        'version': { '$regex': [secret.version, 'i'] }, // case-insensitive search
+        'version': { '$regex': [`^${secret.version}$`, 'i'] }, // case-insensitive search
         'secretId': { '$eq': doc.$loki }
       });
 
@@ -353,8 +354,9 @@ export default class LokiSecretsMetadataStore
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
 
     const secretDoc = coll.findOne({
-      'name': { '$regex': [secretName, 'i'] } // case-insensitive search
+      'name': { '$regex': [`^${secretName}$`, 'i'] } // case-insensitive search
     });
+    
 
     if (!secretDoc) {
       throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName);
@@ -366,7 +368,7 @@ export default class LokiSecretsMetadataStore
 
     if (secretVersion) {
       result = versionsColl.findOne({
-        'version': { '$regex': [secretVersion, 'i'] }, // case-insensitive search
+        'version': { '$regex': [`^${secretVersion}$`, 'i'] }, // case-insensitive search
         'secretId': { '$eq': secretId }
       });
 
@@ -449,7 +451,7 @@ export default class LokiSecretsMetadataStore
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
 
     const secretDoc = coll.findOne({
-      'name': { '$regex': [secretName, 'i'] } // case-insensitive search
+      'name': { '$regex': [`^${secretName}$`, 'i'] } // case-insensitive search
     });
 
     if (!secretDoc) {
@@ -494,7 +496,7 @@ export default class LokiSecretsMetadataStore
     const versionsColl = this.db.getCollection(this.DELETEDSECRET_VERSIONS_COLLECTION);
 
     const deletedSecretDoc = coll.findOne({
-      'name': { '$regex': [secretName, 'i'] } // case-insensitive search
+      'name': { '$regex': [`^${secretName}$`, 'i'] } // case-insensitive search
     });
 
     if (!deletedSecretDoc) {
@@ -521,7 +523,7 @@ export default class LokiSecretsMetadataStore
     const coll = this.db.getCollection(this.DELETEDSECRETS_COLLECTION);
 
     const deletedSecretDoc = coll.findOne({
-      'name': { '$regex': [secretName, 'i'] } // case-insensitive search
+      'name': { '$regex': [`^${secretName}$`, 'i'] } // case-insensitive search
     });
 
     if (deletedSecretDoc) {
@@ -535,7 +537,7 @@ export default class LokiSecretsMetadataStore
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
 
     const secretDoc = coll.findOne({
-      'name': { '$regex': [secretName, 'i'] } // case-insensitive search
+      'name': { '$regex': [`^${secretName}$`, 'i'] } // case-insensitive search
     });
 
     if (secretDoc) {
