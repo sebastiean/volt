@@ -9,6 +9,8 @@
   "scripts": {
     "test": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 mocha -r ts-node/register -r tests/fixtures.ts --no-timeouts --grep \"@loki\" --recursive tests/**/*.test.ts tests/**/**/*.test.ts --exit",
     "build": "tsc",
+    "lint": "eslint '*/**/*.{js,ts}'",
+    "lint:fix": "eslint '*/**/*.{js,ts}' --quiet --fix",
     "docker:build": "cross-var docker build --no-cache --rm -f \"Dockerfile\" -t sebastiean/volt:$npm_package_version . && cross-var docker tag sebastiean/volt:$npm_package_version sebastiean/volt:latest",
     "docker:push": "cross-var docker push sebastiean/volt:$npm_package_version"
   },
@@ -44,12 +46,18 @@
     "@types/uri-templates": "^0.1.29",
     "@types/uuid": "^8.3.0",
     "@types/xml2js": "^0.4.3",
+    "@typescript-eslint/eslint-plugin": "^4.14.2",
+    "@typescript-eslint/parser": "^4.14.2",
     "chai": "^4.2.0",
     "chai-datetime": "^1.7.0",
     "chai-sorted": "^0.2.0",
     "cross-env": "^7.0.3",
     "cross-var": "^1.1.0",
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
     "mocha": "^8.2.1",
+    "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   }
