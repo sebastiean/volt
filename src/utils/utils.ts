@@ -5,7 +5,7 @@ import KeyVaultErrorFactory from "../errors/KeyVaultErrorFactory";
 import { HeaderConstants, HeaderValueConstants } from "./constants";
 
 // LokiFsStructuredAdapter
-// tslint:disable-next-line:no-var-requires
+// eslint-disable-next-line
 export const lfsa = require("lokijs/src/loki-fs-structured-adapter.js");
 
 export const rimrafAsync = promisify(rimraf);

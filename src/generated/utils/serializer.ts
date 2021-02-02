@@ -137,7 +137,7 @@ export async function deserialize(
     logger.debug(`deserialize(): Raw request body string is ${body}`, context.contextId);
 
     req.setBody(body);
-    let parsedBody: object = {};
+    let parsedBody: any = {};
     if (isRequestWithJSON) {
       // read body
       parsedBody = JSON.parse(body);

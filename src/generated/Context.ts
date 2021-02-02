@@ -38,9 +38,9 @@ export default class Context {
    * @param {IResponse} [res]
    * @memberof Context
    */
-  public constructor(holder: object, path: string, req?: IRequest, res?: IResponse);
+  public constructor(holder: any, path: string, req?: IRequest, res?: IResponse);
 
-  public constructor(holderOrContext: object | Context, path = "context", req?: IRequest, res?: IResponse) {
+  public constructor(holderOrContext: any | Context, path = "context", req?: IRequest, res?: IResponse) {
     if (holderOrContext instanceof Context) {
       this.context = holderOrContext.context;
       this.path = holderOrContext.path;
