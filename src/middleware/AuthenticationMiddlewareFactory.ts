@@ -8,39 +8,31 @@ import ExpressRequestAdapter from "../generated/ExpressRequestAdapter";
 import { DEFAULT_CONTEXT_PATH } from "../utils/constants";
 
 export default class AuthenticationMiddlewareFactory {
-  constructor(private readonly logger: ILogger) { }
+  constructor(private readonly logger: ILogger) {}
 
-  public createAuthenticationMiddleware(
-    authenticators: IAuthenticator[]
-  ): RequestHandler {
+  public createAuthenticationMiddleware(authenticators: IAuthenticator[]): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
       const context = new SecretsContext(res.locals, DEFAULT_CONTEXT_PATH);
       this.authenticate(req, res, authenticators)
-        .then(pass => {
+        .then((pass) => {
           // TODO: To support public access, we need to modify here to reject request later in handler
           if (pass) {
             next();
           } else {
-            next(
-              KeyVaultErrorFactory.getTokenValidationFailure(context.contextId!)
-            );
+            next(KeyVaultErrorFactory.getTokenValidationFailure(context.contextId!));
           }
         })
         .catch(next);
     };
   }
 
-  private async authenticate(
-    req: Request,
-    res: Response,
-    authenticators: IAuthenticator[]
-  ): Promise<boolean> {
+  private async authenticate(req: Request, res: Response, authenticators: IAuthenticator[]): Promise<boolean> {
     const request = new ExpressRequestAdapter(req);
     const context = new SecretsContext(res.locals, DEFAULT_CONTEXT_PATH);
 
     this.logger.verbose(
       `AuthenticationMiddlewareFactory:createAuthenticationMiddleware() Validating authentications.`,
-      context.contextId
+      context.contextId,
     );
 
     let pass: boolean | undefined = false;

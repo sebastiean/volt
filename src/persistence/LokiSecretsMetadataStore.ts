@@ -4,7 +4,11 @@ import Loki from "lokijs";
 import { rimrafAsync } from "../utils/utils";
 import * as Models from "../generated/artifacts/models";
 import Context from "../generated/Context";
-import ISecretsMetadataStore, { DeletedSecretModel, DeleteSecretProperties, SecretModel } from "./ISecretsMetadataStore";
+import ISecretsMetadataStore, {
+  DeletedSecretModel,
+  DeleteSecretProperties,
+  SecretModel,
+} from "./ISecretsMetadataStore";
 import KeyVaultErrorFactory from "../errors/KeyVaultErrorFactory";
 import { PaginationMarker } from "../utils/pagination";
 
@@ -17,17 +21,17 @@ import { PaginationMarker } from "../utils/pagination";
  *                                        // Default collection name is $SECRETS_COLLECTION$
  *                                        // Each document maps to a secret
  *                                        // Unique document properties: name
- * 
+ *
  * -- SECRET_VERSIONS_COLLECTION          // Collection contains all secret versions
  *                                        // Default collection name is $SECRET_VERSIONS_COLLECTION$
  *                                        // Each document maps to a secret version
  *                                        // Unique document properties: version
- * 
+ *
  * -- DELETEDSECRETS_COLLECTION           // Collection contains all deleted secrets
  *                                        // Default collection name is $DELETEDSECRETS_COLLECTION$
  *                                        // Each document maps to a deleted secret
  *                                        // Unique document properties: name
- * 
+ *
  * -- DELETEDSECRET_VERSIONS_COLLECTION   // Collection contains all deleted secret versions
  *                                        // Default collection name is $DELETEDSECRET_VERSIONS_COLLECTION$
  *                                        // Each document maps to a deleted secret version
@@ -36,14 +40,12 @@ import { PaginationMarker } from "../utils/pagination";
  * @export
  * @class LokiSecretsMetadataStore
  */
-export default class LokiSecretsMetadataStore
-  implements ISecretsMetadataStore {
+export default class LokiSecretsMetadataStore implements ISecretsMetadataStore {
   private readonly db: Loki;
 
-  private initialized: boolean = false;
-  private closed: boolean = true;
-  private clearEnabled: boolean = false;
-  
+  private initialized = false;
+  private closed = true;
+  private clearEnabled = false;
 
   private readonly SECRETS_COLLECTION = "$SECRETS_COLLECTION$";
   private readonly SECRET_VERSIONS_COLLECTION = "$SECRET_VERSIONS_COLLECTION$";
@@ -53,7 +55,7 @@ export default class LokiSecretsMetadataStore
   public constructor(public readonly lokiDBPath: string, private readonly runningTests: boolean = false) {
     this.db = new Loki(lokiDBPath, {
       autosave: true,
-      autosaveInterval: 5000
+      autosaveInterval: 5000,
     });
     this.clearEnabled = runningTests;
   }
@@ -70,7 +72,7 @@ export default class LokiSecretsMetadataStore
     await new Promise<void>((resolve, reject) => {
       stat(this.lokiDBPath, (statError, stats) => {
         if (!statError) {
-          this.db.loadDatabase({}, dbError => {
+          this.db.loadDatabase({}, (dbError) => {
             if (dbError) {
               reject(dbError);
             } else {
@@ -92,17 +94,17 @@ export default class LokiSecretsMetadataStore
       secretsColl = this.db.addCollection(this.SECRETS_COLLECTION, {
         unique: ["name"],
         // Optimization for indexing and searching
-        indices: ["name", "version"]
+        indices: ["name", "version"],
       });
     }
 
     // Create secret versions collection if not exists
-    let secretVersionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
+    const secretVersionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
     if (secretVersionsColl === null) {
       secretsColl = this.db.addCollection(this.SECRET_VERSIONS_COLLECTION, {
         unique: ["version"],
         // Optimization for indexing and searching
-        indices: ["secretId", "version"]
+        indices: ["secretId", "version"],
       });
     }
 
@@ -112,7 +114,7 @@ export default class LokiSecretsMetadataStore
       deletedSecretsColl = this.db.addCollection(this.DELETEDSECRETS_COLLECTION, {
         unique: ["name"],
         // Optimization for indexing and searching
-        indices: ["name"]
+        indices: ["name"],
       });
     }
 
@@ -122,12 +124,12 @@ export default class LokiSecretsMetadataStore
       deletedSecretVersionsColl = this.db.addCollection(this.DELETEDSECRET_VERSIONS_COLLECTION, {
         unique: ["version"],
         // Optimization for indexing and searching
-        indices: ["deletedSecretId", "version"]
+        indices: ["deletedSecretId", "version"],
       });
     }
 
     await new Promise<void>((resolve, reject) => {
-      this.db.saveDatabase(err => {
+      this.db.saveDatabase((err) => {
         if (err) {
           reject(err);
         } else {
@@ -148,7 +150,7 @@ export default class LokiSecretsMetadataStore
    */
   public async close(): Promise<void> {
     await new Promise<void>((resolve, reject) => {
-      this.db.close(err => {
+      this.db.close((err) => {
         if (err) {
           reject(err);
         } else {
@@ -189,14 +191,14 @@ export default class LokiSecretsMetadataStore
       this.SECRETS_COLLECTION,
       this.SECRET_VERSIONS_COLLECTION,
       this.DELETEDSECRETS_COLLECTION,
-      this.DELETEDSECRET_VERSIONS_COLLECTION
+      this.DELETEDSECRET_VERSIONS_COLLECTION,
     ]) {
       this.db.getCollection(collection).clear();
     }
   }
 
   private compareStringsIgnoreCase(a: string, b: string) {
-    return a.localeCompare(b, undefined, { sensitivity: 'accent' });
+    return a.localeCompare(b, undefined, { sensitivity: "accent" });
   }
 
   private sortByDate(a: any, b: any) {
@@ -220,10 +222,10 @@ export default class LokiSecretsMetadataStore
   public async setSecret(context: Context, secret: SecretModel): Promise<SecretModel> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
-      
+
     let secretDoc = coll.findOne({
       'name': { '$regex': [`^${secret.name}$`, 'i'] } // case-insensitive search
-    })
+    });
 
     if (!secretDoc) {
       secretDoc = coll.insert({ name: secret.name });
@@ -235,11 +237,16 @@ export default class LokiSecretsMetadataStore
     return versionsColl.insertOne({
       ...secret,
       name,
-      secretId
+      secretId,
     });
   }
 
-  public async deleteSecret(context: Context, secretName: string, properties: DeleteSecretProperties, disableSoftDelete: boolean): Promise<DeletedSecretModel> {
+  public async deleteSecret(
+    context: Context,
+    secretName: string,
+    properties: DeleteSecretProperties,
+    disableSoftDelete: boolean,
+  ): Promise<DeletedSecretModel> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
 
@@ -256,7 +263,7 @@ export default class LokiSecretsMetadataStore
     const versions = versionsColl
       .chain()
       .find({
-        'secretId': { '$eq': doc.$loki }
+        secretId: { $eq: doc.$loki },
       })
       .sort(this.sortByDate)
       .data();
@@ -269,7 +276,7 @@ export default class LokiSecretsMetadataStore
       deletedDoc = this.stripLokiMeta(deletedDoc);
       deletedDoc = deletedColl.insertOne(deletedDoc);
 
-      let deletedVersions = versions.map(v => {
+      const deletedVersions = versions.map((v) => {
         v = this.stripLokiMeta(v);
         v.deletedSecretId = deletedDoc.$loki;
         delete v.secretId;
@@ -281,7 +288,7 @@ export default class LokiSecretsMetadataStore
 
     // remove secret and versions
     coll.remove(doc);
-    for (let version of versions) {
+    for (const version of versions) {
       versionsColl.remove(version);
     }
 
@@ -316,7 +323,7 @@ export default class LokiSecretsMetadataStore
       const latest = versionsColl
         .chain()
         .find({
-          'secretId': { '$eq': doc.$loki }
+          secretId: { $eq: doc.$loki },
         })
         .sort(this.sortByDate)
         .limit(1)
@@ -340,10 +347,11 @@ export default class LokiSecretsMetadataStore
         updated: secret.attributes?.updated,
         enabled: secret.attributes?.enabled !== undefined ? secret.attributes?.enabled : result.attributes.enabled,
         expires: secret.attributes?.expires !== undefined ? secret.attributes?.expires : result.attributes.expires,
-        notBefore: secret.attributes?.notBefore !== undefined ? secret.attributes?.notBefore : result.attributes.notBefore,
+        notBefore:
+          secret.attributes?.notBefore !== undefined ? secret.attributes?.notBefore : result.attributes.notBefore,
       },
       $loki: result.$loki,
-      meta: result.meta
+      meta: result.meta,
     };
 
     return versionsColl.update(updatedDoc);
@@ -356,7 +364,7 @@ export default class LokiSecretsMetadataStore
     const secretDoc = coll.findOne({
       'name': { '$regex': [`^${secretName}$`, 'i'] } // case-insensitive search
     });
-    
+
 
     if (!secretDoc) {
       throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName);
@@ -374,19 +382,18 @@ export default class LokiSecretsMetadataStore
 
       if (!result) {
         throw KeyVaultErrorFactory.getSecretNotFound(context.contextId, secretName, secretVersion);
-      }
-      else if (result.attributes.enabled === false) {
+      } else if (result.attributes.enabled === false) {
         throw KeyVaultErrorFactory.getDisabledSecret(context.contextId);
       }
 
       return result as SecretModel;
     }
 
-    // Get latest version 
+    // Get latest version
     result = versionsColl
       .chain()
       .find({
-        'secretId': { '$eq': secretId }
+        secretId: { $eq: secretId },
       })
       .sort(this.sortByDate)
       .limit(1)
@@ -400,7 +407,11 @@ export default class LokiSecretsMetadataStore
     return result[0] as SecretModel;
   }
 
-  public async getSecrets(context: Context, maxResults: number, marker?: PaginationMarker): Promise<[SecretModel[], PaginationMarker?]> {
+  public async getSecrets(
+    context: Context,
+    maxResults: number,
+    marker?: PaginationMarker,
+  ): Promise<[SecretModel[], PaginationMarker?]> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
 
@@ -408,16 +419,16 @@ export default class LokiSecretsMetadataStore
 
     const docs = coll
       .chain()
-      .where(obj => this.compareStringsIgnoreCase(obj.name, nextItem) >= 0)
+      .where((obj) => this.compareStringsIgnoreCase(obj.name, nextItem) >= 0)
       .simplesort("name")
       .limit(maxResults + 1)
       .data();
 
-    let results = docs.map(doc => {
+    const results = docs.map((doc) => {
       const result = versionsColl
         .chain()
         .find({
-          'secretId': { '$eq': doc.$loki }
+          secretId: { $eq: doc.$loki },
         })
         .sort(this.sortByDate)
         .limit(1)
@@ -435,18 +446,20 @@ export default class LokiSecretsMetadataStore
         index: nextItem.$loki,
         itemIdentifier: {
           collection: "secret",
-          name: nextItem.name
-        }
+          name: nextItem.name,
+        },
       };
     }
 
-    return [
-      results,
-      nextPaginationMarker
-    ];
+    return [results, nextPaginationMarker];
   }
 
-  public async getSecretVersions(context: Context, secretName: string, maxResults: number, marker?: PaginationMarker): Promise<[SecretModel[], PaginationMarker?]> {
+  public async getSecretVersions(
+    context: Context,
+    secretName: string,
+    maxResults: number,
+    marker?: PaginationMarker,
+  ): Promise<[SecretModel[], PaginationMarker?]> {
     const coll = this.db.getCollection(this.SECRETS_COLLECTION);
     const versionsColl = this.db.getCollection(this.SECRET_VERSIONS_COLLECTION);
 
@@ -460,13 +473,13 @@ export default class LokiSecretsMetadataStore
 
     const nextItem = marker ? marker.itemIdentifier.version! : "";
 
-    let results = versionsColl
+    const results = versionsColl
       .chain()
       .find({
-        'secretId': { '$eq': secretDoc.$loki }
+        secretId: { $eq: secretDoc.$loki },
       })
-      .where(obj => this.compareStringsIgnoreCase(obj.version, nextItem) >= 0)
-      .simplesort('version')
+      .where((obj) => this.compareStringsIgnoreCase(obj.version, nextItem) >= 0)
+      .simplesort("version")
       .limit(maxResults + 1)
       .data();
 
@@ -481,14 +494,11 @@ export default class LokiSecretsMetadataStore
           collection: "secret",
           name: secretDoc.name,
           version: nextItem.version,
-        }
+        },
       };
     }
 
-    return [
-      results,
-      nextPaginationMarker
-    ];
+    return [results, nextPaginationMarker];
   }
 
   public async getDeletedSecret(context: Context, secretName: string): Promise<DeletedSecretModel> {
@@ -506,7 +516,7 @@ export default class LokiSecretsMetadataStore
     const result = versionsColl
       .chain()
       .find({
-        'secretId': { '$eq': deletedSecretDoc.$loki }
+        secretId: { $eq: deletedSecretDoc.$loki },
       })
       .sort(this.sortByDate)
       .limit(1)

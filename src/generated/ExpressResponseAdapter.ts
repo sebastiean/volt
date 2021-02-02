@@ -4,7 +4,7 @@ import { OutgoingHttpHeaders } from "http";
 import IResponse from "./IResponse";
 
 export default class ExpressResponseAdapter implements IResponse {
-  public constructor(private readonly res: Response) { }
+  public constructor(private readonly res: Response) {}
 
   public setStatusCode(code: number): IResponse {
     this.res.status(code);
@@ -24,10 +24,7 @@ export default class ExpressResponseAdapter implements IResponse {
     return this.res.statusMessage;
   }
 
-  public setHeader(
-    field: string,
-    value?: string | string[] | undefined | number | boolean
-  ): IResponse {
+  public setHeader(field: string, value?: string | string[] | undefined | number | boolean): IResponse {
     if (typeof value === "number") {
       value = `${value}`;
     }

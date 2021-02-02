@@ -8,11 +8,7 @@ import ILoggerStrategy, { LogLevels } from "./ILoggerStrategy";
  * @implements {ILoggerStrategy}
  */
 export default class NoLoggerStrategy implements ILoggerStrategy {
-  public log(
-    level: LogLevels,
-    message: string,
-    contextID?: string | undefined
-  ): void {
+  public log(level: LogLevels, message: string, contextID?: string | undefined): void {
     /** Doesn't handle log */
   }
 }

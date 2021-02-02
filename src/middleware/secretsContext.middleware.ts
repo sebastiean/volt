@@ -3,19 +3,12 @@ import { v4 as uuid } from "uuid";
 
 import logger from "../Logger";
 import SecretsContext from "../context/SecretsContext";
-import {
-  DEFAULT_CONTEXT_PATH,
-  ParameterConstants,
-  LatestStableAPIVersion,
-  ValidAPIVersions
-} from "../utils/constants";
+import { DEFAULT_CONTEXT_PATH, ParameterConstants, LatestStableAPIVersion, ValidAPIVersions } from "../utils/constants";
 import { checkApiVersion } from "../utils/utils";
 import { decodeSkipToken, SkipToken } from "../utils/pagination";
-import KeyVaultErrorFactory from '../errors/KeyVaultErrorFactory';
+import KeyVaultErrorFactory from "../errors/KeyVaultErrorFactory";
 
-export default function createSecretsContextMiddleware(
-  skipApiVersionCheck?: boolean
-): RequestHandler {
+export default function createSecretsContextMiddleware(skipApiVersionCheck?: boolean): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     return secretsContextMiddleware(req, res, next, skipApiVersionCheck);
   };
@@ -33,7 +26,7 @@ export function secretsContextMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,
-  skipApiVersionCheck?: boolean
+  skipApiVersionCheck?: boolean,
 ): void {
   const requestID = uuid();
   const apiVersion = req.query[ParameterConstants.API_VERSION] as string;
@@ -43,13 +36,10 @@ export function secretsContextMiddleware(
     if (apiVersion == undefined) {
       const handlerError = KeyVaultErrorFactory.getBadParameter(
         `${ParameterConstants.API_VERSION} must be specified`,
-        requestID
+        requestID,
       );
 
-      logger.error(
-        `SecretsContextMiddleware: ${handlerError.message}`,
-        requestID
-      );
+      logger.error(`SecretsContextMiddleware: ${handlerError.message}`, requestID);
 
       return next(handlerError);
     }
@@ -66,7 +56,7 @@ export function secretsContextMiddleware(
     } catch (err) {
       logger.warn(
         `SecretsContextMiddleware: Failed to decode $skiptoken '${$skipToken}' Error: ${err.message}`,
-        requestID
+        requestID,
       );
     }
   }
@@ -79,12 +69,12 @@ export function secretsContextMiddleware(
   secretsContext.nextMarker = nextMarker;
 
   logger.info(
-    `SecretsContextMiddleware: RequestMethod=${req.method} RequestURL=${req.protocol
-    }://${req.hostname}${req.url} RequestHeaders:${JSON.stringify(
-      req.headers
-    )} ClientIP=${req.ip} Protocol=${req.protocol} HTTPVersion=${req.httpVersion
+    `SecretsContextMiddleware: RequestMethod=${req.method} RequestURL=${req.protocol}://${req.hostname}${
+      req.url
+    } RequestHeaders:${JSON.stringify(req.headers)} ClientIP=${req.ip} Protocol=${req.protocol} HTTPVersion=${
+      req.httpVersion
     }`,
-    requestID
+    requestID,
   );
 
   next();

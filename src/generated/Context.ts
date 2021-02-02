@@ -38,19 +38,9 @@ export default class Context {
    * @param {IResponse} [res]
    * @memberof Context
    */
-  public constructor(
-    holder: object,
-    path: string,
-    req?: IRequest,
-    res?: IResponse
-  );
+  public constructor(holder: object, path: string, req?: IRequest, res?: IResponse);
 
-  public constructor(
-    holderOrContext: object | Context,
-    path: string = "context",
-    req?: IRequest,
-    res?: IResponse
-  ) {
+  public constructor(holderOrContext: object | Context, path = "context", req?: IRequest, res?: IResponse) {
     if (holderOrContext instanceof Context) {
       this.context = holderOrContext.context;
       this.path = holderOrContext.path;
@@ -63,11 +53,7 @@ export default class Context {
       }
 
       if (typeof context[this.path] !== "object") {
-        throw new TypeError(
-          `Initialize Context error because holder.${
-            this.path
-          } is not an object.`
-        );
+        throw new TypeError(`Initialize Context error because holder.${this.path} is not an object.`);
       }
 
       this.context = context[this.path];
@@ -113,9 +99,7 @@ export default class Context {
     return this.context.handlerParameters;
   }
 
-  public set handlerParameters(
-    handlerParameters: IHandlerParameters | undefined
-  ) {
+  public set handlerParameters(handlerParameters: IHandlerParameters | undefined) {
     this.context.handlerParameters = handlerParameters;
   }
 

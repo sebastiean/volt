@@ -23,32 +23,20 @@ import { isURITemplateMatch, numberOfPathKeyWords } from "../utils/utils";
  * @param {ILogger} logger A valid logger
  * @returns {void}
  */
-export default function dispatchMiddleware(
-  context: Context,
-  req: IRequest,
-  next: NextFunction,
-  logger: ILogger
-): void {
-  logger.verbose(
-    `DispatchMiddleware: Dispatching request...`,
-    context.contextId
-  );
+export default function dispatchMiddleware(context: Context, req: IRequest, next: NextFunction, logger: ILogger): void {
+  logger.verbose(`DispatchMiddleware: Dispatching request...`, context.contextId);
 
   // Sometimes, more than one operations specifications are all valid against current request
   // Such as a SetContainerMetadata request will fit both CreateContainer and SetContainerMetadata specifications
   // We need to avoid this kind of situation when define swagger
   // However, following code will try to find most suitable operation by selecting operation which
   // have most required conditions met
-  let conditionsMet: number = -1;
+  let conditionsMet = -1;
 
   for (const key in Operation) {
     if (Operation.hasOwnProperty(key)) {
       const operation = parseInt(key, 10);
-      const res = isRequestAgainstOperation(
-        req,
-        Specifications[operation],
-        context.dispatchPattern
-      );
+      const res = isRequestAgainstOperation(req, Specifications[operation], context.dispatchPattern);
       if (res[0] && res[1] > conditionsMet) {
         context.operation = operation;
         conditionsMet = res[1];
@@ -58,17 +46,11 @@ export default function dispatchMiddleware(
 
   if (context.operation === undefined) {
     const handlerError = new UnsupportedRequestError();
-    logger.error(
-      `DispatchMiddleware: ${handlerError.message}`,
-      context.contextId
-    );
+    logger.error(`DispatchMiddleware: ${handlerError.message}`, context.contextId);
     return next(handlerError);
   }
 
-  logger.info(
-    `DispatchMiddleware: Operation=${Operation[context.operation]}`,
-    context.contextId
-  );
+  logger.info(`DispatchMiddleware: Operation=${Operation[context.operation]}`, context.contextId);
 
   next();
 }
@@ -83,7 +65,7 @@ export default function dispatchMiddleware(
 function isRequestAgainstOperation(
   req: IRequest,
   spec: coreHttp.OperationSpec,
-  dispatchPathPattern?: string
+  dispatchPathPattern?: string,
 ): [boolean, number] {
   let metConditionsNum = 0;
   if (req === undefined || spec === undefined) {
@@ -99,16 +81,12 @@ function isRequestAgainstOperation(
   const reqPath = req.getPath().endsWith("/") ? req.getPath().substring(0, req.getPath().length - 1) : req.getPath();
 
   // Validate URL path
-  const path = spec.path
-    ? spec.path.startsWith("/")
-      ? spec.path
-      : `/${spec.path}`
-    : "/";
+  const path = spec.path ? (spec.path.startsWith("/") ? spec.path : `/${spec.path}`) : "/";
   if (
     !isURITemplateMatch(
       // Use dispatch path with priority
       dispatchPathPattern !== undefined ? dispatchPathPattern : reqPath,
-      path
+      path,
     )
   ) {
     return [false, metConditionsNum++];
@@ -118,7 +96,7 @@ function isRequestAgainstOperation(
   const numberKeywordMatches = numberOfPathKeyWords(
     // Use dispatch path with priority
     dispatchPathPattern !== undefined ? dispatchPathPattern : reqPath,
-    path
+    path,
   );
 
   metConditionsNum = metConditionsNum + numberKeywordMatches;
@@ -126,26 +104,21 @@ function isRequestAgainstOperation(
   // Validate required queryParameters
   for (const queryParameter of spec.queryParameters || []) {
     if (queryParameter.mapper.required) {
-      const queryValue = req.getQuery(
-        queryParameter.mapper.serializedName || ""
-      );
+      const queryValue = req.getQuery(queryParameter.mapper.serializedName || "");
       if (queryValue === undefined) {
         return [false, metConditionsNum];
       }
 
       if (
         queryParameter.mapper.type.name === "Enum" &&
-        queryParameter.mapper.type.allowedValues.findIndex(val => {
+        queryParameter.mapper.type.allowedValues.findIndex((val) => {
           return val === queryValue;
         }) < 0
       ) {
         return [false, metConditionsNum];
       }
 
-      if (
-        queryParameter.mapper.isConstant &&
-        queryParameter.mapper.defaultValue !== queryValue
-      ) {
+      if (queryParameter.mapper.isConstant && queryParameter.mapper.defaultValue !== queryValue) {
         return [false, metConditionsNum];
       }
 
@@ -156,16 +129,14 @@ function isRequestAgainstOperation(
   // Validate required header parameters
   for (const headerParameter of spec.headerParameters || []) {
     if (headerParameter.mapper.required) {
-      const headerValue = req.getHeader(
-        headerParameter.mapper.serializedName || ""
-      );
+      const headerValue = req.getHeader(headerParameter.mapper.serializedName || "");
       if (headerValue === undefined) {
         return [false, metConditionsNum];
       }
 
       if (
         headerParameter.mapper.type.name === "Enum" &&
-        headerParameter.mapper.type.allowedValues.findIndex(val => {
+        headerParameter.mapper.type.allowedValues.findIndex((val) => {
           return val === headerValue;
         }) < 0
       ) {
@@ -174,8 +145,7 @@ function isRequestAgainstOperation(
 
       if (
         headerParameter.mapper.isConstant &&
-        `${headerParameter.mapper.defaultValue || ""}`.toLowerCase() !==
-        headerValue.toLowerCase()
+        `${headerParameter.mapper.defaultValue || ""}`.toLowerCase() !== headerValue.toLowerCase()
       ) {
         return [false, metConditionsNum];
       }

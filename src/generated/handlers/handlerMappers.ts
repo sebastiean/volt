@@ -8,112 +8,72 @@ export interface IHandlerPath {
   arguments: string[];
 }
 
-const operationHandlerMapping: {[key: number]: IHandlerPath} = {};
+const operationHandlerMapping: { [key: number]: IHandlerPath } = {};
 
 operationHandlerMapping[Operation.SetSecret] = {
-  arguments: [
-    "secretName",
-    "value",
-    "options"
-  ],
+  arguments: ["secretName", "value", "options"],
   handler: "voltServerSecretsHandler",
-  method: "setSecret"
+  method: "setSecret",
 };
 operationHandlerMapping[Operation.UpdateSecretLatestVersion] = {
-  arguments: [
-    "secretName",
-    "options"
-  ],
+  arguments: ["secretName", "options"],
   handler: "voltServerSecretsHandler",
-  method: "updateSecretLatestVersion"
+  method: "updateSecretLatestVersion",
 };
 operationHandlerMapping[Operation.DeleteSecret] = {
-  arguments: [
-    "secretName",
-    "options"
-  ],
+  arguments: ["secretName", "options"],
   handler: "voltServerSecretsHandler",
-  method: "deleteSecret"
+  method: "deleteSecret",
 };
 operationHandlerMapping[Operation.GetSecretLatestVersion] = {
-  arguments: [
-    "secretName",
-    "options"
-  ],
+  arguments: ["secretName", "options"],
   handler: "voltServerSecretsHandler",
-  method: "getSecretLatestVersion"
+  method: "getSecretLatestVersion",
 };
 operationHandlerMapping[Operation.UpdateSecret] = {
-  arguments: [
-    "secretName",
-    "secretVersion",
-    "options"
-  ],
+  arguments: ["secretName", "secretVersion", "options"],
   handler: "voltServerSecretsHandler",
-  method: "updateSecret"
+  method: "updateSecret",
 };
 operationHandlerMapping[Operation.GetSecret] = {
-  arguments: [
-    "secretName",
-    "secretVersion",
-    "options"
-  ],
+  arguments: ["secretName", "secretVersion", "options"],
   handler: "voltServerSecretsHandler",
-  method: "getSecret"
+  method: "getSecret",
 };
 operationHandlerMapping[Operation.GetSecrets] = {
-  arguments: [
-    "options"
-  ],
+  arguments: ["options"],
   handler: "voltServerSecretsHandler",
-  method: "getSecrets"
+  method: "getSecrets",
 };
 operationHandlerMapping[Operation.GetSecretVersions] = {
-  arguments: [
-    "secretName",
-    "options"
-  ],
+  arguments: ["secretName", "options"],
   handler: "voltServerSecretsHandler",
-  method: "getSecretVersions"
+  method: "getSecretVersions",
 };
 operationHandlerMapping[Operation.GetDeletedSecrets] = {
-  arguments: [
-    "options"
-  ],
+  arguments: ["options"],
   handler: "voltServerSecretsHandler",
-  method: "getDeletedSecrets"
+  method: "getDeletedSecrets",
 };
 operationHandlerMapping[Operation.GetDeletedSecret] = {
-  arguments: [
-    "secretName",
-    "options"
-  ],
+  arguments: ["secretName", "options"],
   handler: "voltServerSecretsHandler",
-  method: "getDeletedSecret"
+  method: "getDeletedSecret",
 };
 operationHandlerMapping[Operation.RecoverDeletedSecret] = {
-  arguments: [
-    "secretName",
-    "options"
-  ],
+  arguments: ["secretName", "options"],
   handler: "voltServerSecretsHandler",
-  method: "recoverDeletedSecret"
+  method: "recoverDeletedSecret",
 };
 operationHandlerMapping[Operation.BackupSecret] = {
-  arguments: [
-    "secretName",
-    "options"
-  ],
+  arguments: ["secretName", "options"],
   handler: "voltServerSecretsHandler",
-  method: "backupSecret"
+  method: "backupSecret",
 };
 operationHandlerMapping[Operation.RestoreSecret] = {
-  arguments: [
-    "secretBundleBackup",
-    "options"
-  ],
+  arguments: ["secretBundleBackup", "options"],
   handler: "voltServerSecretsHandler",
-  method: "restoreSecret"
+  method: "restoreSecret",
 };
 function getHandlerByOperation(operation: Operation): IHandlerPath | undefined {
   return operationHandlerMapping[operation];

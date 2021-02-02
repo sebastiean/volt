@@ -7,54 +7,46 @@ import IResponse from "../IResponse";
 import ILogger from "../../ILogger";
 import { parseXML, stringifyXML } from "./xml";
 import { pathParameterRegExp } from "./utils";
-import { json } from 'express';
+import { json } from "express";
 
 export declare type ParameterPath =
   | string
   | string[]
   | {
-    [propertyName: string]: ParameterPath;
-  };
+      [propertyName: string]: ParameterPath;
+    };
 
 export async function deserialize(
   context: Context,
   req: IRequest,
   spec: coreHttp.OperationSpec,
-  logger: ILogger
+  logger: ILogger,
 ): Promise<IHandlerParameters> {
   const parameters: IHandlerParameters = {};
 
   const decodedPath = decodeURIComponent(req.getPath());
-  const normalizedPath = decodedPath.startsWith("/")
-    ? decodedPath.substr(1)
-    : decodedPath; // Remove starting "/"
+  const normalizedPath = decodedPath.startsWith("/") ? decodedPath.substr(1) : decodedPath; // Remove starting "/"
   // Deserialize url parameters
   const specPath = spec.path as string;
 
-  let urlParamNames: string[] = [];
+  const urlParamNames: string[] = [];
   const pathPattern = specPath.replace(pathParameterRegExp, (match, paramName) => {
     urlParamNames.push(paramName);
-    return "([^\/]+)";
+    return "([^/]+)";
   });
 
-  const values = new RegExp(pathPattern + "\/?$", "i").exec(normalizedPath);
+  const values = new RegExp(pathPattern + "/?$", "i").exec(normalizedPath);
 
   for (const [index, urlParameter] of spec.urlParameters?.entries() || []) {
     if (!urlParameter.mapper.serializedName) {
-      throw new TypeError(
-        `UrlParameter mapper doesn't include valid "serializedName"`
-      );
+      throw new TypeError(`UrlParameter mapper doesn't include valid "serializedName"`);
     }
 
     const urlKey = urlParameter.mapper.serializedName;
 
     const urlValueOriginal = values![index] || undefined;
 
-    const urlValue = spec.serializer.deserialize(
-      urlParameter.mapper,
-      urlValueOriginal,
-      urlKey
-    );
+    const urlValue = spec.serializer.deserialize(urlParameter.mapper, urlValueOriginal, urlKey);
 
     // TODO: Currently validation is only in serialize method,
     // remove when adding validateConstraints to deserialize()
@@ -67,30 +59,20 @@ export async function deserialize(
   // Deserialize query parameters
   for (const queryParameter of spec.queryParameters || []) {
     if (!queryParameter.mapper.serializedName) {
-      throw new TypeError(
-        `QueryParameter mapper doesn't include valid "serializedName"`
-      );
+      throw new TypeError(`QueryParameter mapper doesn't include valid "serializedName"`);
     }
     const queryKey = queryParameter.mapper.serializedName;
-    let queryValueOriginal: string | string[] | undefined = req.getQuery(
-      queryKey
-    );
+    let queryValueOriginal: string | string[] | undefined = req.getQuery(queryKey);
 
     if (
       queryValueOriginal !== undefined &&
       queryParameter.collectionFormat !== undefined &&
       queryParameter.mapper.type.name === "Sequence"
     ) {
-      queryValueOriginal = `${queryValueOriginal}`.split(
-        queryParameter.collectionFormat
-      );
+      queryValueOriginal = `${queryValueOriginal}`.split(queryParameter.collectionFormat);
     }
 
-    const queryValue = spec.serializer.deserialize(
-      queryParameter.mapper,
-      queryValueOriginal,
-      queryKey
-    );
+    const queryValue = spec.serializer.deserialize(queryParameter.mapper, queryValueOriginal, queryKey);
 
     // TODO: Currently validation is only in serialize method,
     // remove when adding validateConstraints to deserialize()
@@ -103,31 +85,21 @@ export async function deserialize(
   // Deserialize header parameters
   for (const headerParameter of spec.headerParameters || []) {
     if (!headerParameter.mapper.serializedName) {
-      throw new TypeError(
-        `HeaderParameter mapper doesn't include valid "serializedName"`
-      );
+      throw new TypeError(`HeaderParameter mapper doesn't include valid "serializedName"`);
     }
 
-    const headerCollectionPrefix:
-      | string
-      | undefined = (headerParameter.mapper as coreHttp.DictionaryMapper)
-        .headerCollectionPrefix;
+    const headerCollectionPrefix: string | undefined = (headerParameter.mapper as coreHttp.DictionaryMapper)
+      .headerCollectionPrefix;
     if (headerCollectionPrefix) {
       const dictionary: any = {};
       const headers = req.getHeaders();
       for (const headerKey of Object.keys(headers)) {
-        if (
-          headerKey
-            .toLowerCase()
-            .startsWith(headerCollectionPrefix.toLocaleLowerCase())
-        ) {
+        if (headerKey.toLowerCase().startsWith(headerCollectionPrefix.toLocaleLowerCase())) {
           // TODO: Validate collection type by serializer
-          dictionary[
-            headerKey.substring(headerCollectionPrefix.length)
-          ] = spec.serializer.serialize(
+          dictionary[headerKey.substring(headerCollectionPrefix.length)] = spec.serializer.serialize(
             (headerParameter.mapper as coreHttp.DictionaryMapper).type.value,
             headers[headerKey],
-            headerKey
+            headerKey,
           );
         }
       }
@@ -135,21 +107,13 @@ export async function deserialize(
     } else {
       const headerKey = headerParameter.mapper.serializedName;
       const headerValueOriginal = req.getHeader(headerKey);
-      const headerValue = spec.serializer.deserialize(
-        headerParameter.mapper,
-        headerValueOriginal,
-        headerKey
-      );
+      const headerValue = spec.serializer.deserialize(headerParameter.mapper, headerValueOriginal, headerKey);
 
       // TODO: Currently validation is only in serialize method,
       // remove when adding validateConstraints to deserialize()
       spec.serializer.serialize(headerParameter.mapper, headerValue);
 
-      setParametersValue(
-        parameters,
-        headerParameter.parameterPath,
-        headerValue
-      );
+      setParametersValue(parameters, headerParameter.parameterPath, headerValue);
     }
   }
 
@@ -162,25 +126,15 @@ export async function deserialize(
     const jsonContentTypes = ["application/json", "text/json"];
     const xmlContentTypes = ["application/xml", "application/atom+xml"];
     const contentType = req.getHeader("content-type") || "";
-    const contentComponents = !contentType
-      ? []
-      : contentType.split(";").map(component => component.toLowerCase());
+    const contentComponents = !contentType ? [] : contentType.split(";").map((component) => component.toLowerCase());
 
-    const isRequestWithJSON = contentComponents.some(
-      component => jsonContentTypes.indexOf(component) !== -1
-    ); // TODO
+    const isRequestWithJSON = contentComponents.some((component) => jsonContentTypes.indexOf(component) !== -1); // TODO
     const isRequestWithXML =
-      spec.isXML ||
-      contentComponents.some(
-        component => xmlContentTypes.indexOf(component) !== -1
-      );
+      spec.isXML || contentComponents.some((component) => xmlContentTypes.indexOf(component) !== -1);
     // const isRequestWithStream = false;
 
     const body = await readRequestIntoText(req);
-    logger.debug(
-      `deserialize(): Raw request body string is ${body}`,
-      context.contextId
-    );
+    logger.debug(`deserialize(): Raw request body string is ${body}`, context.contextId);
 
     req.setBody(body);
     let parsedBody: object = {};
@@ -192,20 +146,15 @@ export async function deserialize(
     }
 
     let valueToDeserialize: any = parsedBody;
-    if (
-      spec.isXML &&
-      bodyParameter.mapper.type.name === coreHttp.MapperType.Sequence
-    ) {
+    if (spec.isXML && bodyParameter.mapper.type.name === coreHttp.MapperType.Sequence) {
       valueToDeserialize =
-        typeof valueToDeserialize === "object"
-          ? valueToDeserialize[bodyParameter.mapper.xmlElementName!]
-          : [];
+        typeof valueToDeserialize === "object" ? valueToDeserialize[bodyParameter.mapper.xmlElementName!] : [];
     }
 
     parsedBody = spec.serializer.deserialize(
       bodyParameter.mapper,
       valueToDeserialize,
-      bodyParameter.mapper.serializedName!
+      bodyParameter.mapper.serializedName!,
     );
 
     // Validation purpose only, because only serialize supports validation
@@ -223,7 +172,7 @@ async function readRequestIntoText(req: IRequest): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const segments: string[] = [];
     const bodyStream = req.getBodyStream();
-    bodyStream.on("data", buffer => {
+    bodyStream.on("data", (buffer) => {
       segments.push(buffer);
     });
     bodyStream.on("error", reject);
@@ -234,11 +183,7 @@ async function readRequestIntoText(req: IRequest): Promise<string> {
   });
 }
 
-function setParametersValue(
-  parameters: IHandlerParameters,
-  parameterPath: ParameterPath,
-  parameterValue: any
-) {
+function setParametersValue(parameters: IHandlerParameters, parameterPath: ParameterPath, parameterValue: any) {
   if (typeof parameterPath === "string") {
     parameters[parameterPath] = parameterValue;
   } else if (Array.isArray(parameterPath)) {
@@ -254,8 +199,8 @@ function setParametersValue(
     const lastPropertyName = parameterPath[parameterPath.length - 1];
     leafParent[lastPropertyName] = parameterValue;
   } else {
-    for (let [key, value] of Object.entries(parameterPath)) {
-      const retrievedValue = parameterValue[key] as string || undefined;
+    for (const [key, value] of Object.entries(parameterPath)) {
+      const retrievedValue = (parameterValue[key] as string) || undefined;
       if (typeof value === "string") {
         setParametersValue(parameters, key, retrievedValue);
       } else {
@@ -270,16 +215,14 @@ export async function serialize(
   res: IResponse,
   spec: coreHttp.OperationSpec,
   handlerResponse: any,
-  logger: ILogger
+  logger: ILogger,
 ): Promise<void> {
   const statusCodeInResponse: number = handlerResponse.statusCode;
   res.setStatusCode(statusCodeInResponse);
 
   const responseSpec = spec.responses[statusCodeInResponse];
   if (!responseSpec) {
-    throw new TypeError(
-      `Request specification doesn't include provided response status code`
-    );
+    throw new TypeError(`Request specification doesn't include provided response status code`);
   }
 
   // Serialize headers
@@ -294,33 +237,17 @@ export async function serialize(
         const headerMapper = mappersForAllHeaders[key];
         const headerName = headerMapper.serializedName;
         const headerValueOriginal = handlerResponse[key];
-        const headerValueSerialized = headerSerializer.serialize(
-          headerMapper,
-          headerValueOriginal
-        );
+        const headerValueSerialized = headerSerializer.serialize(headerMapper, headerValueOriginal);
 
         // Handle collection of headers starting with same prefix, such as x-ms-meta prefix
-        const headerCollectionPrefix = (headerMapper as coreHttp.DictionaryMapper)
-          .headerCollectionPrefix;
-        if (
-          headerCollectionPrefix !== undefined &&
-          headerValueOriginal !== undefined
-        ) {
+        const headerCollectionPrefix = (headerMapper as coreHttp.DictionaryMapper).headerCollectionPrefix;
+        if (headerCollectionPrefix !== undefined && headerValueOriginal !== undefined) {
           for (const collectionHeaderPartialName in headerValueSerialized) {
-            if (
-              headerValueSerialized.hasOwnProperty(collectionHeaderPartialName)
-            ) {
-              const collectionHeaderValueSerialized =
-                headerValueSerialized[collectionHeaderPartialName];
+            if (headerValueSerialized.hasOwnProperty(collectionHeaderPartialName)) {
+              const collectionHeaderValueSerialized = headerValueSerialized[collectionHeaderPartialName];
               const collectionHeaderName = `${headerCollectionPrefix}${collectionHeaderPartialName}`;
-              if (
-                collectionHeaderName &&
-                collectionHeaderValueSerialized !== undefined
-              ) {
-                res.setHeader(
-                  collectionHeaderName,
-                  collectionHeaderValueSerialized
-                );
+              if (collectionHeaderName && collectionHeaderValueSerialized !== undefined) {
+                res.setHeader(collectionHeaderName, collectionHeaderValueSerialized);
               }
             }
           }
@@ -334,15 +261,8 @@ export async function serialize(
   }
 
   // Serialize JSON bodies
-  if (
-    !spec.isXML &&
-    responseSpec.bodyMapper &&
-    responseSpec.bodyMapper.type.name !== "Stream"
-  ) {
-    let body = spec.serializer.serialize(
-      responseSpec.bodyMapper!,
-      handlerResponse
-    );
+  if (!spec.isXML && responseSpec.bodyMapper && responseSpec.bodyMapper.type.name !== "Stream") {
+    let body = spec.serializer.serialize(responseSpec.bodyMapper!, handlerResponse);
 
     // When root element is sequence type, should wrap with because serialize() doesn't do that
     if (responseSpec.bodyMapper!.type.name === "Sequence") {
@@ -359,23 +279,13 @@ export async function serialize(
 
     // TODO: Should send response in a serializer?
     res.getBodyStream().write(jsonBody);
-    logger.debug(
-      `Serializer: Raw response body string is ${jsonBody}`,
-      context.contextId
-    );
+    logger.debug(`Serializer: Raw response body string is ${jsonBody}`, context.contextId);
     logger.info(`Serializer: Start returning stream body.`, context.contextId);
   }
 
   // Serialize XML bodies
-  if (
-    spec.isXML &&
-    responseSpec.bodyMapper &&
-    responseSpec.bodyMapper.type.name !== "Stream"
-  ) {
-    let body = spec.serializer.serialize(
-      responseSpec.bodyMapper!,
-      handlerResponse
-    );
+  if (spec.isXML && responseSpec.bodyMapper && responseSpec.bodyMapper.type.name !== "Stream") {
+    let body = spec.serializer.serialize(responseSpec.bodyMapper!, handlerResponse);
 
     // When root element is sequence type, should wrap with because serialize() doesn't do that
     if (responseSpec.bodyMapper!.type.name === "Sequence") {
@@ -388,28 +298,19 @@ export async function serialize(
     }
 
     const xmlBody = stringifyXML(body, {
-      rootName:
-        responseSpec.bodyMapper!.xmlName ||
-        responseSpec.bodyMapper!.serializedName
+      rootName: responseSpec.bodyMapper!.xmlName || responseSpec.bodyMapper!.serializedName,
     });
     res.setContentType(`application/xml`);
 
     // TODO: Should send response in a serializer?
     res.getBodyStream().write(xmlBody);
-    logger.debug(
-      `Serializer: Raw response body string is ${xmlBody}`,
-      context.contextId
-    );
+    logger.debug(`Serializer: Raw response body string is ${xmlBody}`, context.contextId);
     logger.info(`Serializer: Start returning stream body.`, context.contextId);
   }
 
   // Serialize stream body
   // TODO: Move to end middleware for end tracking
-  if (
-    handlerResponse.body &&
-    responseSpec.bodyMapper &&
-    responseSpec.bodyMapper.type.name === "Stream"
-  ) {
+  if (handlerResponse.body && responseSpec.bodyMapper && responseSpec.bodyMapper.type.name === "Stream") {
     logger.info(`Serializer: Start returning stream body.`, context.contextId);
 
     await new Promise((resolve, reject) => {

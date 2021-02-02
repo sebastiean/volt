@@ -4,7 +4,7 @@ import {
   DEFAULT_SECRETS_LOKI_DB_PATH,
   DEFAULT_SECRETS_SERVER_HOST_NAME,
   DEFAULT_ENABLE_ACCESS_LOG,
-  DEFAULT_ENABLE_DEBUG_LOG
+  DEFAULT_ENABLE_DEBUG_LOG,
 } from "./utils/constants";
 
 /**
@@ -28,16 +28,16 @@ export default class SecretsConfiguration extends ConfigurationBase {
     accessLogWriteStream?: NodeJS.WritableStream,
     enableDebugLog: boolean = DEFAULT_ENABLE_DEBUG_LOG,
     debugLogFilePath?: string,
-    loose: boolean = false,
-    skipApiVersionCheck: boolean = false,
-    cert: string = "",
-    key: string = "",
-    pwd: string = "",
+    loose = false,
+    skipApiVersionCheck = false,
+    cert = "",
+    key = "",
+    pwd = "",
     oauth?: string,
-    recoverableDays: number = 90,
-    disableSoftDelete: boolean = false, // soft-delete enable by default https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-change
-    purgeProtection: boolean = false,
-    protectedSubscription: boolean = false
+    recoverableDays = 90,
+    disableSoftDelete = false, // soft-delete enable by default https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-change
+    purgeProtection = false,
+    protectedSubscription = false,
   ) {
     super(
       host,
@@ -55,7 +55,7 @@ export default class SecretsConfiguration extends ConfigurationBase {
       recoverableDays,
       disableSoftDelete,
       purgeProtection,
-      protectedSubscription
+      protectedSubscription,
     );
   }
 }

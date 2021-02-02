@@ -9,14 +9,7 @@ import ServerError from "./ServerError";
  * @extends {KeyVaultError}
  */
 export default class NotImplementedError extends ServerError {
-  public constructor(requestID: string = "") {
-    super(
-      500,
-      requestID,
-      new KeyVaultError(
-        "APINotImplemented",
-        "Current API is not implemented yet."
-      ),
-    );
+  public constructor(requestID = "") {
+    super(500, requestID, new KeyVaultError("APINotImplemented", "Current API is not implemented yet."));
   }
 }

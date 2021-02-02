@@ -14,18 +14,75 @@ import * as Models from "../artifacts/models";
 import Context from "../Context";
 
 export default interface IVoltServerSecretsHandler {
-  setSecret(secretName: string, value: string, options: Models.VoltServerSecretsSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse>;
-  updateSecretLatestVersion(secretName: string, options: Models.VoltServerSecretsUpdateSecretLatestVersionOptionalParams, context: Context): Promise<Models.UpdateSecretLatestVersionResponse>;
-  deleteSecret(secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.DeleteSecretResponse>;
-  getSecretLatestVersion(secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.GetSecretLatestVersionResponse>;
-  updateSecret(secretName: string, secretVersion: string, options: Models.VoltServerSecretsUpdateSecretOptionalParams, context: Context): Promise<Models.UpdateSecretResponse>;
-  getSecret(secretName: string, secretVersion: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.GetSecretResponse>;
-  getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse>;
-  getSecretVersions(secretName: string, options: Models.VoltServerSecretsGetSecretVersionsOptionalParams, context: Context): Promise<Models.GetSecretVersionsResponse>;
-  getDeletedSecrets(options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams, context: Context): Promise<Models.GetDeletedSecretsResponse>;
-  getDeletedSecret(secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.GetDeletedSecretResponse>;
-  purgeDeletedSecret(secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<coreHttp.RestResponse>;
-  recoverDeletedSecret(secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.RecoverDeletedSecretResponse>;
-  backupSecret(secretName: string, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.BackupSecretResponse>;
-  restoreSecret(secretBundleBackup: Uint8Array, options: coreHttp.RequestOptionsBase, context: Context): Promise<Models.RestoreSecretResponse>;
+  setSecret(
+    secretName: string,
+    value: string,
+    options: Models.VoltServerSecretsSetSecretOptionalParams,
+    context: Context,
+  ): Promise<Models.SetSecretResponse>;
+  updateSecretLatestVersion(
+    secretName: string,
+    options: Models.VoltServerSecretsUpdateSecretLatestVersionOptionalParams,
+    context: Context,
+  ): Promise<Models.UpdateSecretLatestVersionResponse>;
+  deleteSecret(
+    secretName: string,
+    options: coreHttp.RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.DeleteSecretResponse>;
+  getSecretLatestVersion(
+    secretName: string,
+    options: coreHttp.RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.GetSecretLatestVersionResponse>;
+  updateSecret(
+    secretName: string,
+    secretVersion: string,
+    options: Models.VoltServerSecretsUpdateSecretOptionalParams,
+    context: Context,
+  ): Promise<Models.UpdateSecretResponse>;
+  getSecret(
+    secretName: string,
+    secretVersion: string,
+    options: coreHttp.RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.GetSecretResponse>;
+  getSecrets(
+    options: Models.VoltServerSecretsGetSecretsOptionalParams,
+    context: Context,
+  ): Promise<Models.GetSecretsResponse>;
+  getSecretVersions(
+    secretName: string,
+    options: Models.VoltServerSecretsGetSecretVersionsOptionalParams,
+    context: Context,
+  ): Promise<Models.GetSecretVersionsResponse>;
+  getDeletedSecrets(
+    options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams,
+    context: Context,
+  ): Promise<Models.GetDeletedSecretsResponse>;
+  getDeletedSecret(
+    secretName: string,
+    options: coreHttp.RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.GetDeletedSecretResponse>;
+  purgeDeletedSecret(
+    secretName: string,
+    options: coreHttp.RequestOptionsBase,
+    context: Context,
+  ): Promise<coreHttp.RestResponse>;
+  recoverDeletedSecret(
+    secretName: string,
+    options: coreHttp.RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.RecoverDeletedSecretResponse>;
+  backupSecret(
+    secretName: string,
+    options: coreHttp.RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.BackupSecretResponse>;
+  restoreSecret(
+    secretBundleBackup: Uint8Array,
+    options: coreHttp.RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.RestoreSecretResponse>;
 }

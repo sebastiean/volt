@@ -18,35 +18,35 @@ export const Attributes: coreHttp.CompositeMapper = {
       enabled: {
         serializedName: "enabled",
         type: {
-          name: "Boolean"
-        }
+          name: "Boolean",
+        },
       },
       notBefore: {
         serializedName: "nbf",
         type: {
-          name: "UnixTime"
-        }
+          name: "UnixTime",
+        },
       },
       expires: {
         serializedName: "exp",
         type: {
-          name: "UnixTime"
-        }
+          name: "UnixTime",
+        },
       },
       created: {
         serializedName: "created",
         type: {
-          name: "UnixTime"
-        }
+          name: "UnixTime",
+        },
       },
       updated: {
         serializedName: "updated",
         type: {
-          name: "UnixTime"
-        }
-      }
-    }
-  }
+          name: "UnixTime",
+        },
+      },
+    },
+  },
 };
 
 export const SecretAttributes: coreHttp.CompositeMapper = {
@@ -59,18 +59,18 @@ export const SecretAttributes: coreHttp.CompositeMapper = {
       recoverableDays: {
         serializedName: "recoverableDays",
         type: {
-          name: "Number"
-        }
+          name: "Number",
+        },
       },
       recoveryLevel: {
         nullable: false,
         serializedName: "recoveryLevel",
         type: {
-          name: "String"
-        }
-      }
-    }
-  }
+          name: "String",
+        },
+      },
+    },
+  },
 };
 
 export const SecretBundle: coreHttp.CompositeMapper = {
@@ -82,27 +82,27 @@ export const SecretBundle: coreHttp.CompositeMapper = {
       value: {
         serializedName: "value",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       id: {
         serializedName: "id",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       contentType: {
         serializedName: "contentType",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       attributes: {
         serializedName: "attributes",
         type: {
           name: "Composite",
-          className: "SecretAttributes"
-        }
+          className: "SecretAttributes",
+        },
       },
       tags: {
         serializedName: "tags",
@@ -110,25 +110,25 @@ export const SecretBundle: coreHttp.CompositeMapper = {
           name: "Dictionary",
           value: {
             type: {
-              name: "String"
-            }
-          }
-        }
+              name: "String",
+            },
+          },
+        },
       },
       kid: {
         serializedName: "kid",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       managed: {
         serializedName: "managed",
         type: {
-          name: "Boolean"
-        }
-      }
-    }
-  }
+          name: "Boolean",
+        },
+      },
+    },
+  },
 };
 
 export const SecretItem: coreHttp.CompositeMapper = {
@@ -140,15 +140,15 @@ export const SecretItem: coreHttp.CompositeMapper = {
       id: {
         serializedName: "id",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       attributes: {
         serializedName: "attributes",
         type: {
           name: "Composite",
-          className: "SecretAttributes"
-        }
+          className: "SecretAttributes",
+        },
       },
       tags: {
         serializedName: "tags",
@@ -156,25 +156,25 @@ export const SecretItem: coreHttp.CompositeMapper = {
           name: "Dictionary",
           value: {
             type: {
-              name: "String"
-            }
-          }
-        }
+              name: "String",
+            },
+          },
+        },
       },
       contentType: {
         serializedName: "contentType",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       managed: {
         serializedName: "managed",
         type: {
-          name: "Boolean"
-        }
-      }
-    }
-  }
+          name: "Boolean",
+        },
+      },
+    },
+  },
 };
 
 export const DeletedSecretBundle: coreHttp.CompositeMapper = {
@@ -187,23 +187,23 @@ export const DeletedSecretBundle: coreHttp.CompositeMapper = {
       recoveryId: {
         serializedName: "recoveryId",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       scheduledPurgeDate: {
         serializedName: "scheduledPurgeDate",
         type: {
-          name: "UnixTime"
-        }
+          name: "UnixTime",
+        },
       },
       deletedDate: {
         serializedName: "deletedDate",
         type: {
-          name: "UnixTime"
-        }
-      }
-    }
-  }
+          name: "UnixTime",
+        },
+      },
+    },
+  },
 };
 
 export const DeletedSecretItem: coreHttp.CompositeMapper = {
@@ -216,23 +216,23 @@ export const DeletedSecretItem: coreHttp.CompositeMapper = {
       recoveryId: {
         serializedName: "recoveryId",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       scheduledPurgeDate: {
         serializedName: "scheduledPurgeDate",
         type: {
-          name: "UnixTime"
-        }
+          name: "UnixTime",
+        },
       },
       deletedDate: {
         serializedName: "deletedDate",
         type: {
-          name: "UnixTime"
-        }
-      }
-    }
-  }
+          name: "UnixTime",
+        },
+      },
+    },
+  },
 };
 
 export const SecretRestoreParameters: coreHttp.CompositeMapper = {
@@ -245,11 +245,11 @@ export const SecretRestoreParameters: coreHttp.CompositeMapper = {
         required: true,
         serializedName: "value",
         type: {
-          name: "Base64Url"
-        }
-      }
-    }
-  }
+          name: "Base64Url",
+        },
+      },
+    },
+  },
 };
 
 export const SecretProperties: coreHttp.CompositeMapper = {
@@ -261,11 +261,11 @@ export const SecretProperties: coreHttp.CompositeMapper = {
       contentType: {
         serializedName: "contentType",
         type: {
-          name: "String"
-        }
-      }
-    }
-  }
+          name: "String",
+        },
+      },
+    },
+  },
 };
 
 export const SecretSetParameters: coreHttp.CompositeMapper = {
@@ -278,8 +278,8 @@ export const SecretSetParameters: coreHttp.CompositeMapper = {
         required: true,
         serializedName: "value",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       tags: {
         serializedName: "tags",
@@ -287,26 +287,26 @@ export const SecretSetParameters: coreHttp.CompositeMapper = {
           name: "Dictionary",
           value: {
             type: {
-              name: "String"
-            }
-          }
-        }
+              name: "String",
+            },
+          },
+        },
       },
       contentType: {
         serializedName: "contentType",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       secretAttributes: {
         serializedName: "attributes",
         type: {
           name: "Composite",
-          className: "SecretAttributes"
-        }
-      }
-    }
-  }
+          className: "SecretAttributes",
+        },
+      },
+    },
+  },
 };
 
 export const SecretUpdateParameters: coreHttp.CompositeMapper = {
@@ -318,15 +318,15 @@ export const SecretUpdateParameters: coreHttp.CompositeMapper = {
       contentType: {
         serializedName: "contentType",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       secretAttributes: {
         serializedName: "attributes",
         type: {
           name: "Composite",
-          className: "SecretAttributes"
-        }
+          className: "SecretAttributes",
+        },
       },
       tags: {
         serializedName: "tags",
@@ -334,13 +334,13 @@ export const SecretUpdateParameters: coreHttp.CompositeMapper = {
           name: "Dictionary",
           value: {
             type: {
-              name: "String"
-            }
-          }
-        }
-      }
-    }
-  }
+              name: "String",
+            },
+          },
+        },
+      },
+    },
+  },
 };
 
 export const SecretListResult: coreHttp.CompositeMapper = {
@@ -356,20 +356,20 @@ export const SecretListResult: coreHttp.CompositeMapper = {
           element: {
             type: {
               name: "Composite",
-              className: "SecretItem"
-            }
-          }
-        }
+              className: "SecretItem",
+            },
+          },
+        },
       },
       nextLink: {
         nullable: true,
         serializedName: "nextLink",
         type: {
-          name: "String"
-        }
-      }
-    }
-  }
+          name: "String",
+        },
+      },
+    },
+  },
 };
 
 export const DeletedSecretListResult: coreHttp.CompositeMapper = {
@@ -385,20 +385,20 @@ export const DeletedSecretListResult: coreHttp.CompositeMapper = {
           element: {
             type: {
               name: "Composite",
-              className: "DeletedSecretItem"
-            }
-          }
-        }
+              className: "DeletedSecretItem",
+            },
+          },
+        },
       },
       nextLink: {
         nullable: true,
         serializedName: "nextLink",
         type: {
-          name: "String"
-        }
-      }
-    }
-  }
+          name: "String",
+        },
+      },
+    },
+  },
 };
 
 export const BackupSecretResult: coreHttp.CompositeMapper = {
@@ -410,11 +410,11 @@ export const BackupSecretResult: coreHttp.CompositeMapper = {
       value: {
         serializedName: "value",
         type: {
-          name: "Base64Url"
-        }
-      }
-    }
-  }
+          name: "Base64Url",
+        },
+      },
+    },
+  },
 };
 
 export const ErrorModel: coreHttp.CompositeMapper = {
@@ -426,24 +426,24 @@ export const ErrorModel: coreHttp.CompositeMapper = {
       code: {
         serializedName: "code",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       message: {
         serializedName: "message",
         type: {
-          name: "String"
-        }
+          name: "String",
+        },
       },
       innerError: {
         serializedName: "innererror",
         type: {
           name: "Composite",
-          className: "ErrorModel"
-        }
-      }
-    }
-  }
+          className: "ErrorModel",
+        },
+      },
+    },
+  },
 };
 
 export const KeyVaultError: coreHttp.CompositeMapper = {
@@ -456,9 +456,9 @@ export const KeyVaultError: coreHttp.CompositeMapper = {
         serializedName: "error",
         type: {
           name: "Composite",
-          className: "ErrorModel"
-        }
-      }
-    }
-  }
+          className: "ErrorModel",
+        },
+      },
+    },
+  },
 };

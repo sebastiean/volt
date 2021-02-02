@@ -6,8 +6,7 @@ import IResponse from "../IResponse";
 import { NextFunction } from "../MiddlewareFactory";
 import ILogger from "../../ILogger";
 import { serialize } from "../utils/serializer";
-import { getDefaultHeaders } from '../../utils/utils';
-
+import { getDefaultHeaders } from "../../utils/utils";
 
 /**
  * SerializerMiddleware will serialize models into HTTP responses.
@@ -22,27 +21,20 @@ export default function serializerMiddleware(
   context: Context,
   res: IResponse,
   next: NextFunction,
-  logger: ILogger
+  logger: ILogger,
 ): void {
-  logger.verbose(
-    `SerializerMiddleware: Start serializing...`,
-    context.contextId
-  );
+  logger.verbose(`SerializerMiddleware: Start serializing...`, context.contextId);
 
   if (context.operation === undefined) {
     const handlerError = new OperationMismatchError();
-    logger.error(
-      `SerializerMiddleware: ${handlerError.message}`,
-      context.contextId
-    );
+    logger.error(`SerializerMiddleware: ${handlerError.message}`, context.contextId);
     return next(handlerError);
   }
 
   if (Specifications[context.operation] === undefined) {
     logger.warn(
-      `SerializerMiddleware: Cannot find serializer for operation ${Operation[context.operation]
-      }`,
-      context.contextId
+      `SerializerMiddleware: Cannot find serializer for operation ${Operation[context.operation]}`,
+      context.contextId,
     );
   }
 
@@ -54,22 +46,11 @@ export default function serializerMiddleware(
     if (headers.hasOwnProperty(key)) {
       const value = headers[key];
       if (value) {
-        logger.error(
-          `SerializerMiddleware: Set HTTP Header: ${key}=${value}`,
-          context.contextId
-        );
+        logger.error(`SerializerMiddleware: Set HTTP Header: ${key}=${value}`, context.contextId);
         res.setHeader(key, value);
       }
     }
   }
 
-  serialize(
-    context,
-    res,
-    Specifications[context.operation],
-    context.handlerResponses,
-    logger
-  )
-    .then(next)
-    .catch(next);
+  serialize(context, res, Specifications[context.operation], context.handlerResponses, logger).then(next).catch(next);
 }

@@ -1,58 +1,39 @@
 import { decode } from "jsonwebtoken";
 import ILogger from "../ILogger";
 import { OAuthLevel } from "../models";
-import {
-  BEARER_TOKEN_PREFIX,
-  HTTPS,
-  VALID_ISSUE_PREFIXES
-} from "../utils/constants";
+import { BEARER_TOKEN_PREFIX, HTTPS, VALID_ISSUE_PREFIXES } from "../utils/constants";
 import SecretsContext from "../context/SecretsContext";
 import KeyVaultErrorFactory from "../errors/KeyVaultErrorFactory";
 import Context from "../generated/Context";
 import IRequest from "../generated/IRequest";
 import { HeaderConstants, VALID_KEY_VAULT_AUDIENCES } from "../utils/constants";
 import IAuthenticator from "./IAuthenticator";
-import ServerError from '../errors/ServerError';
-import KeyVaultError from '../errors/KeyVaultError';
+import ServerError from "../errors/ServerError";
+import KeyVaultError from "../errors/KeyVaultError";
 
 export default class OAuthAuthenticator implements IAuthenticator {
-  public constructor(
-    private readonly oauth: OAuthLevel,
-    private readonly logger: ILogger
-  ) { }
+  public constructor(private readonly oauth: OAuthLevel, private readonly logger: ILogger) {}
 
-  public async validate(
-    req: IRequest,
-    context: Context
-  ): Promise<boolean | undefined> {
+  public async validate(req: IRequest, context: Context): Promise<boolean | undefined> {
     const secretsContext = new SecretsContext(context);
 
     this.logger.info(
       `OAuthAuthenticator:validate() Start validation against token authentication.`,
-      secretsContext.contextId
+      secretsContext.contextId,
     );
 
     if (req.getProtocol().toLowerCase() !== HTTPS) {
-      const message = "Request is not using HTTPS protocol. Volt Server will not respond. Please enable HTTPS to use OAuth.";
-      this.logger.error(
-        `OAuthAuthenticator:validate() ${message}`,
-        secretsContext.contextId
-      );
-      throw new ServerError(
-        503,
-        secretsContext.contextId!,
-        new KeyVaultError(
-          "VoltError",
-          message
-        )
-      );
+      const message =
+        "Request is not using HTTPS protocol. Volt Server will not respond. Please enable HTTPS to use OAuth.";
+      this.logger.error(`OAuthAuthenticator:validate() ${message}`, secretsContext.contextId);
+      throw new ServerError(503, secretsContext.contextId!, new KeyVaultError("VoltError", message));
     }
 
     const authHeaderValue = req.getHeader(HeaderConstants.AUTHORIZATION);
     if (authHeaderValue === undefined) {
       this.logger.info(
         `OAuthAuthenticator:validate() Request doesn't include valid authentication header.`,
-        secretsContext.contextId
+        secretsContext.contextId,
       );
       throw KeyVaultErrorFactory.getUnauthorized(secretsContext.contextId);
     }
@@ -69,16 +50,13 @@ export default class OAuthAuthenticator implements IAuthenticator {
       default:
         this.logger.warn(
           `OAuthAuthenticator:validate() Unknown OAuth level ${this.oauth}. Skip token authentication.`,
-          secretsContext.contextId
+          secretsContext.contextId,
         );
         return;
     }
   }
 
-  public async authenticateBasic(
-    token: string,
-    context: Context
-  ): Promise<boolean> {
+  public async authenticateBasic(token: string, context: Context): Promise<boolean> {
     // tslint:disable: max-line-length
     /**
      * Example OAuth Bearer Token:
@@ -108,28 +86,22 @@ export default class OAuthAuthenticator implements IAuthenticator {
     } catch {
       throw KeyVaultErrorFactory.getAuthenticationFailure(
         context.contextId,
-        "AKV10003: Unable to parse JWT token: bad JSON content."
+        "AKV10003: Unable to parse JWT token: bad JSON content.",
       );
     }
 
     if (!decoded) {
       throw KeyVaultErrorFactory.getAuthenticationFailure(
         context.contextId,
-        "AKV10003: Unable to parse JWT token: bad JSON content."
+        "AKV10003: Unable to parse JWT token: bad JSON content.",
       );
     }
 
     // Validate signature, skip in basic check
 
     // Validate nbf & exp
-    if (
-      decoded.nbf === undefined ||
-      decoded.exp === undefined ||
-      decoded.iat === undefined
-    ) {
-      throw KeyVaultErrorFactory.getTokenValidationFailure(
-        context.contextId
-      );
+    if (decoded.nbf === undefined || decoded.exp === undefined || decoded.iat === undefined) {
+      throw KeyVaultErrorFactory.getTokenValidationFailure(context.contextId);
     }
 
     const now = context.startTime!.getTime();
@@ -137,23 +109,16 @@ export default class OAuthAuthenticator implements IAuthenticator {
     const exp = (decoded.exp as number) * 1000;
 
     if (now < nbf) {
-      throw KeyVaultErrorFactory.getTokenValidationFailure(
-        context.contextId
-      );
+      throw KeyVaultErrorFactory.getTokenValidationFailure(context.contextId);
     }
 
     if (now > exp) {
-      throw KeyVaultErrorFactory.getTokenValidationFailure(
-        context.contextId,
-        "IDX10223"
-      );
+      throw KeyVaultErrorFactory.getTokenValidationFailure(context.contextId, "IDX10223");
     }
 
     const iss = decoded.iss as string;
     if (!iss) {
-      throw KeyVaultErrorFactory.getTokenValidationFailure(
-        context.contextId
-      );
+      throw KeyVaultErrorFactory.getTokenValidationFailure(context.contextId);
     }
 
     let issMatch = false;
@@ -165,16 +130,12 @@ export default class OAuthAuthenticator implements IAuthenticator {
     }
 
     if (!issMatch) {
-      throw KeyVaultErrorFactory.getTokenValidationFailure(
-        context.contextId
-      );
+      throw KeyVaultErrorFactory.getTokenValidationFailure(context.contextId);
     }
 
     const aud = decoded.aud as string;
     if (!aud) {
-      throw KeyVaultErrorFactory.getTokenValidationFailure(
-        context.contextId
-      );
+      throw KeyVaultErrorFactory.getTokenValidationFailure(context.contextId);
     }
 
     let audMatch = false;
@@ -190,14 +151,12 @@ export default class OAuthAuthenticator implements IAuthenticator {
     }
 
     if (!audMatch) {
-      throw KeyVaultErrorFactory.getTokenValidationFailure(
-        context.contextId
-      );
+      throw KeyVaultErrorFactory.getTokenValidationFailure(context.contextId);
     }
 
     this.logger.info(
       `OAuthAuthenticator:authenticateBasic() Validation against token authentication successfully.`,
-      context.contextId
+      context.contextId,
     );
     return true;
   }

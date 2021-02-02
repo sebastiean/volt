@@ -3,7 +3,7 @@ export enum LogLevels {
   Warn = "warn",
   Info = "info",
   Verbose = "verbose",
-  Debug = "debug"
+  Debug = "debug",
 }
 
 export default interface ILoggerStrategy {

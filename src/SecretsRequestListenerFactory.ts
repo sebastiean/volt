@@ -10,12 +10,12 @@ import MiddlewareFactory from "./generated/MiddlewareFactory";
 import SecretsHandler from "./handlers/SecretsHandler";
 import ISecretsMetadataStore from "./persistence/ISecretsMetadataStore";
 import { DEFAULT_CONTEXT_PATH } from "./utils/constants";
-import createSecretsContextMiddleware from './middleware/secretsContext.middleware';
-import { DeletionRecoveryLevel } from './generated/artifacts/models';
-import AuthenticationMiddlewareFactory from './middleware/AuthenticationMiddlewareFactory';
-import IAuthenticator from './authentication/IAuthenticator';
-import OAuthAuthenticator from './authentication/OAuthAuthenticator';
-import { OAuthLevel } from './models';
+import createSecretsContextMiddleware from "./middleware/secretsContext.middleware";
+import { DeletionRecoveryLevel } from "./generated/artifacts/models";
+import AuthenticationMiddlewareFactory from "./middleware/AuthenticationMiddlewareFactory";
+import IAuthenticator from "./authentication/IAuthenticator";
+import OAuthAuthenticator from "./authentication/OAuthAuthenticator";
+import { OAuthLevel } from "./models";
 
 /**
  * Default RequestListenerFactory based on express framework.
@@ -27,8 +27,7 @@ import { OAuthLevel } from './models';
  * @class SecretsRequestListenerFactory
  * @implements {IRequestListenerFactory}
  */
-export default class SecretsRequestListenerFactory
-  implements IRequestListenerFactory {
+export default class SecretsRequestListenerFactory implements IRequestListenerFactory {
   public constructor(
     private readonly metadataStore: ISecretsMetadataStore,
     private readonly enableAccessLog: boolean,
@@ -38,17 +37,14 @@ export default class SecretsRequestListenerFactory
     private readonly oauth?: OAuthLevel,
     private readonly recoveryLevel?: DeletionRecoveryLevel,
     private readonly recoverableDays?: number,
-    private readonly disableSoftDelete?: boolean
-  ) { }
+    private readonly disableSoftDelete?: boolean,
+  ) {}
 
   public createRequestListener(): RequestListener {
     const app = express().disable("x-powered-by");
 
     // MiddlewareFactory is a factory to create auto-generated middleware
-    const middlewareFactory: MiddlewareFactory = new ExpressMiddlewareFactory(
-      logger,
-      DEFAULT_CONTEXT_PATH
-    );
+    const middlewareFactory: MiddlewareFactory = new ExpressMiddlewareFactory(logger, DEFAULT_CONTEXT_PATH);
 
     // Create handlers into handler middleware factory
     const handlers: IHandlers = {
@@ -57,8 +53,8 @@ export default class SecretsRequestListenerFactory
         logger,
         this.recoveryLevel,
         this.recoverableDays,
-        this.disableSoftDelete
-      )
+        this.disableSoftDelete,
+      ),
     };
 
     /*
@@ -78,24 +74,16 @@ export default class SecretsRequestListenerFactory
     app.use(middlewareFactory.createDispatchMiddleware());
 
     // AuthN middleware, like shared key auth or SAS auth
-    const authenticationMiddlewareFactory = new AuthenticationMiddlewareFactory(
-      logger
-    );
+    const authenticationMiddlewareFactory = new AuthenticationMiddlewareFactory(logger);
     const authenticators: IAuthenticator[] = [];
 
     if (this.oauth !== undefined) {
-      authenticators.push(
-        new OAuthAuthenticator(this.oauth, logger)
-      );
+      authenticators.push(new OAuthAuthenticator(this.oauth, logger));
     }
 
     // Only add authentication middleware if we have authenticators
     if (authenticators.length > 0) {
-      app.use(
-        authenticationMiddlewareFactory.createAuthenticationMiddleware(
-          authenticators
-        )
-      );
+      app.use(authenticationMiddlewareFactory.createAuthenticationMiddleware(authenticators));
     }
 
     // Generated, will do basic validation defined in swagger

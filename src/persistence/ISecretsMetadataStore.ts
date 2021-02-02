@@ -2,7 +2,7 @@ import ICleaner from "../ICleaner";
 import IDataStore from "../IDataStore";
 import * as Models from "../generated/artifacts/models";
 import Context from "../generated/Context";
-import { PaginationMarker } from '../utils/pagination';
+import { PaginationMarker } from "../utils/pagination";
 
 interface ISecretAdditionalProperties {
   name: string;
@@ -22,10 +22,7 @@ export type DeleteSecretProperties = Omit<Models.DeletedSecretBundle, keyof Mode
  * @interface ISecretsMetadataStore
  * @extends {IDataStore}
  */
-export interface ISecretsMetadataStore
-  extends IDataStore,
-  ICleaner {
-
+export interface ISecretsMetadataStore extends IDataStore, ICleaner {
   /**
    * Helper function to check whether secret exists.
    *
@@ -54,10 +51,7 @@ export interface ISecretsMetadataStore
    * @returns {Promise<SecretModel>}
    * @memberof ISecretsMetadataStore
    */
-  setSecret(
-    context: Context,
-    secret: SecretModel
-  ): Promise<SecretModel>;
+  setSecret(context: Context, secret: SecretModel): Promise<SecretModel>;
 
   /**
    * Delete secret.
@@ -72,7 +66,7 @@ export interface ISecretsMetadataStore
     context: Context,
     secretName: string,
     properties: DeleteSecretProperties,
-    disableSoftDelete: boolean
+    disableSoftDelete: boolean,
   ): Promise<DeletedSecretModel>;
 
   /**
@@ -85,10 +79,7 @@ export interface ISecretsMetadataStore
    * @returns {Promise<Models.UpdateSecretResponse>}
    * @memberof ISecretsMetadataStore
    */
-  updateSecret(
-    context: Context,
-    model: SecretModel
-  ): Promise<SecretModel>;
+  updateSecret(context: Context, model: SecretModel): Promise<SecretModel>;
 
   /**
    * Get secret. If version not provided, get the latest version.
@@ -99,11 +90,7 @@ export interface ISecretsMetadataStore
    * @returns {Promise<Models.GetSecretResponse>}
    * @memberof ISecretsMetadataStore
    */
-  getSecret(
-    context: Context,
-    secretName: string,
-    secretVersion?: string
-  ): Promise<SecretModel>;
+  getSecret(context: Context, secretName: string, secretVersion?: string): Promise<SecretModel>;
 
   /**
    * Get secrets.
@@ -117,7 +104,7 @@ export interface ISecretsMetadataStore
   getSecrets(
     context: Context,
     maxResults: number,
-    marker?: PaginationMarker
+    marker?: PaginationMarker,
   ): Promise<[SecretModel[], PaginationMarker?]>;
 
   /**
@@ -134,7 +121,7 @@ export interface ISecretsMetadataStore
     context: Context,
     secretName: string,
     maxResults: number,
-    marker?: PaginationMarker
+    marker?: PaginationMarker,
   ): Promise<[SecretModel[], PaginationMarker?]>;
 
   // TODO: implement the following methods
@@ -157,10 +144,7 @@ export interface ISecretsMetadataStore
    * @returns {Promise<DeletedSecretModel>}
    * @memberof ISecretsMetadataStore
    */
-  getDeletedSecret(
-    context: Context,
-    secretName: string
-  ): Promise<DeletedSecretModel>;
+  getDeletedSecret(context: Context, secretName: string): Promise<DeletedSecretModel>;
 
   // /**
   //  * Recover deleted secret.

@@ -19,25 +19,22 @@ export const apiVersion: coreHttp.OperationQueryParameter = {
     required: true,
     serializedName: "api-version",
     type: {
-      name: "String"
-    }
-  }
+      name: "String",
+    },
+  },
 };
 export const maxresults: coreHttp.OperationQueryParameter = {
-  parameterPath: [
-    "options",
-    "maxresults"
-  ],
+  parameterPath: ["options", "maxresults"],
   mapper: {
     serializedName: "maxresults",
     constraints: {
       InclusiveMaximum: 25,
-      InclusiveMinimum: 1
+      InclusiveMinimum: 1,
     },
     type: {
-      name: "Number"
-    }
-  }
+      name: "Number",
+    },
+  },
 };
 export const secretName: coreHttp.OperationURLParameter = {
   parameterPath: "secretName",
@@ -45,12 +42,12 @@ export const secretName: coreHttp.OperationURLParameter = {
     required: true,
     serializedName: "secret-name",
     constraints: {
-      Pattern: /^[0-9a-zA-Z-]+$/
+      Pattern: /^[0-9a-zA-Z-]+$/,
     },
     type: {
-      name: "String"
-    }
-  }
+      name: "String",
+    },
+  },
 };
 export const secretVersion: coreHttp.OperationURLParameter = {
   parameterPath: "secretVersion",
@@ -58,22 +55,22 @@ export const secretVersion: coreHttp.OperationURLParameter = {
     required: true,
     serializedName: "secret-version",
     constraints: {
-      Pattern: /^[a-f0-9]{32}$/
+      Pattern: /^[a-f0-9]{32}$/,
     },
     type: {
-      name: "String"
-    }
-  }
+      name: "String",
+    },
+  },
 };
 export const vaultBaseUrl: coreHttp.OperationURLParameter = {
   parameterPath: "vaultBaseUrl",
   mapper: {
     required: true,
     serializedName: "vaultBaseUrl",
-    defaultValue: '',
+    defaultValue: "",
     type: {
-      name: "String"
-    }
+      name: "String",
+    },
   },
-  skipEncoding: true
+  skipEncoding: true,
 };

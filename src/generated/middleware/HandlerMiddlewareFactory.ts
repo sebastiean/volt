@@ -22,49 +22,33 @@ export default class HandlerMiddlewareFactory {
    * @param {ILogger} logger A valid logger
    * @memberof HandlerMiddlewareFactory
    */
-  constructor(
-    private readonly handlers: IHandlers,
-    private readonly logger: ILogger
-  ) {}
+  constructor(private readonly handlers: IHandlers, private readonly logger: ILogger) {}
 
   /**
    * Creates a handler middleware from input handlers.
    *
    * @memberof HandlerMiddlewareFactory
    */
-  public createHandlerMiddleware(): (
-    context: Context,
-    next: NextFunction
-  ) => void {
+  public createHandlerMiddleware(): (context: Context, next: NextFunction) => void {
     return (context: Context, next: NextFunction) => {
       this.logger.info(
-        `HandlerMiddleware: DeserializedParameters=${JSON.stringify(
-          context.handlerParameters,
-          (key, value) => {
-            if (key === "body") {
-              return "ReadableStream";
-            }
-            return value;
+        `HandlerMiddleware: DeserializedParameters=${JSON.stringify(context.handlerParameters, (key, value) => {
+          if (key === "body") {
+            return "ReadableStream";
           }
-        )}`,
-        context.contextId
+          return value;
+        })}`,
+        context.contextId,
       );
 
       if (context.operation === undefined) {
         const handlerError = new OperationMismatchError();
-        this.logger.error(
-          `HandlerMiddleware: ${handlerError.message}`,
-          context.contextId
-        );
+        this.logger.error(`HandlerMiddleware: ${handlerError.message}`, context.contextId);
         return next(handlerError);
       }
 
       if (Specifications[context.operation] === undefined) {
-        this.logger.warn(
-          `HandlerMiddleware: cannot find handler for operation ${
-            Operation[context.operation]
-          }`
-        );
+        this.logger.warn(`HandlerMiddleware: cannot find handler for operation ${Operation[context.operation]}`);
       }
 
       // We assume handlerPath always exists for every generated operation in generated code

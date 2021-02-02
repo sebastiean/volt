@@ -20,365 +20,266 @@ const serializer = new coreHttp.Serializer(Mappers);
 const setSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "PUT",
   path: "secrets/{secret-name}",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.apiVersion],
   requestBody: {
     parameterPath: {
       value: "value",
-      tags: [
-        "options",
-        "tags"
-      ],
-      contentType: [
-        "options",
-        "contentType"
-      ],
-      secretAttributes: [
-        "options",
-        "secretAttributes"
-      ]
+      tags: ["options", "tags"],
+      contentType: ["options", "contentType"],
+      secretAttributes: ["options", "secretAttributes"],
     },
     mapper: {
       ...Mappers.SecretSetParameters,
-      required: true
-    }
+      required: true,
+    },
   },
   responses: {
     200: {
-      bodyMapper: Mappers.SecretBundle
+      bodyMapper: Mappers.SecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const updateSecretLatestVersionOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "PATCH",
   path: "secrets/{secret-name}",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.apiVersion],
   requestBody: {
     parameterPath: {
-      contentType: [
-        "options",
-        "contentType"
-      ],
-      secretAttributes: [
-        "options",
-        "secretAttributes"
-      ],
-      tags: [
-        "options",
-        "tags"
-      ]
+      contentType: ["options", "contentType"],
+      secretAttributes: ["options", "secretAttributes"],
+      tags: ["options", "tags"],
     },
     mapper: {
       ...Mappers.SecretUpdateParameters,
-      required: true
-    }
+      required: true,
+    },
   },
   responses: {
     200: {
-      bodyMapper: Mappers.SecretBundle
+      bodyMapper: Mappers.SecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const deleteSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "DELETE",
   path: "secrets/{secret-name}",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.DeletedSecretBundle
+      bodyMapper: Mappers.DeletedSecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const getSecretLatestVersionOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "GET",
   path: "secrets/{secret-name}",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.SecretBundle
+      bodyMapper: Mappers.SecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const updateSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "PATCH",
   path: "secrets/{secret-name}/{secret-version}",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName,
-    Parameters.secretVersion
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName, Parameters.secretVersion],
+  queryParameters: [Parameters.apiVersion],
   requestBody: {
     parameterPath: {
-      contentType: [
-        "options",
-        "contentType"
-      ],
-      secretAttributes: [
-        "options",
-        "secretAttributes"
-      ],
-      tags: [
-        "options",
-        "tags"
-      ]
+      contentType: ["options", "contentType"],
+      secretAttributes: ["options", "secretAttributes"],
+      tags: ["options", "tags"],
     },
     mapper: {
       ...Mappers.SecretUpdateParameters,
-      required: true
-    }
+      required: true,
+    },
   },
   responses: {
     200: {
-      bodyMapper: Mappers.SecretBundle
+      bodyMapper: Mappers.SecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const getSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "GET",
   path: "secrets/{secret-name}/{secret-version}",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName,
-    Parameters.secretVersion
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName, Parameters.secretVersion],
+  queryParameters: [Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.SecretBundle
+      bodyMapper: Mappers.SecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const getSecretsOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "GET",
   path: "secrets",
-  urlParameters: [
-    Parameters.vaultBaseUrl
-  ],
-  queryParameters: [
-    Parameters.maxresults,
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl],
+  queryParameters: [Parameters.maxresults, Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.SecretListResult
+      bodyMapper: Mappers.SecretListResult,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const getSecretVersionsOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "GET",
   path: "secrets/{secret-name}/versions",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.maxresults,
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.maxresults, Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.SecretListResult
+      bodyMapper: Mappers.SecretListResult,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const getDeletedSecretsOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "GET",
   path: "deletedsecrets",
-  urlParameters: [
-    Parameters.vaultBaseUrl
-  ],
-  queryParameters: [
-    Parameters.maxresults,
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl],
+  queryParameters: [Parameters.maxresults, Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.DeletedSecretListResult
+      bodyMapper: Mappers.DeletedSecretListResult,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const getDeletedSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "GET",
   path: "deletedsecrets/{secret-name}",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.DeletedSecretBundle
+      bodyMapper: Mappers.DeletedSecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const purgeDeletedSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "DELETE",
   path: "deletedsecrets/{secret-name}",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.apiVersion],
   responses: {
     204: {},
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const recoverDeletedSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "POST",
   path: "deletedsecrets/{secret-name}/recover",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.SecretBundle
+      bodyMapper: Mappers.SecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const backupSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "POST",
   path: "secrets/{secret-name}/backup",
-  urlParameters: [
-    Parameters.vaultBaseUrl,
-    Parameters.secretName
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl, Parameters.secretName],
+  queryParameters: [Parameters.apiVersion],
   responses: {
     200: {
-      bodyMapper: Mappers.BackupSecretResult
+      bodyMapper: Mappers.BackupSecretResult,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const restoreSecretOperationSpec: coreHttp.OperationSpec = {
   httpMethod: "POST",
   path: "secrets/restore",
-  urlParameters: [
-    Parameters.vaultBaseUrl
-  ],
-  queryParameters: [
-    Parameters.apiVersion
-  ],
+  urlParameters: [Parameters.vaultBaseUrl],
+  queryParameters: [Parameters.apiVersion],
   requestBody: {
     parameterPath: {
-      secretBundleBackup: "secretBundleBackup"
+      secretBundleBackup: "secretBundleBackup",
     },
     mapper: {
       ...Mappers.SecretRestoreParameters,
-      required: true
-    }
+      required: true,
+    },
   },
   responses: {
     200: {
-      bodyMapper: Mappers.SecretBundle
+      bodyMapper: Mappers.SecretBundle,
     },
     default: {
-      bodyMapper: Mappers.KeyVaultError
-    }
+      bodyMapper: Mappers.KeyVaultError,
+    },
   },
-  serializer
+  serializer,
 };
 
 const Specifications: { [key: number]: coreHttp.OperationSpec } = {};

@@ -55,35 +55,26 @@ export const HeaderConstants = {
 };
 
 export const HeaderValueConstants = {
-  [HeaderConstants.WWW_AUTHENTICATE]: "Bearer authorization=\"https://login.windows.net/ab1f708d-50f6-404c-a006-d71b2ac7a606\", resource=\"https://vault.azure.net\"",
+  [HeaderConstants.WWW_AUTHENTICATE]:
+    'Bearer authorization="https://login.windows.net/ab1f708d-50f6-404c-a006-d71b2ac7a606", resource="https://vault.azure.net"',
   [HeaderConstants.X_MS_KEYVAULT_SERVICE_VERSION]: "1.2.99.0",
   [HeaderConstants.X_MS_KEYVAULT_REGION]: "westeurope",
-  [HeaderConstants.X_MS_KEYVAULT_NETWORK_INFO]: "conn_type=Ipv4;addr=127.0.0.1;act_addr_fam=InterNetwork;"
+  [HeaderConstants.X_MS_KEYVAULT_NETWORK_INFO]: "conn_type=Ipv4;addr=127.0.0.1;act_addr_fam=InterNetwork;",
 };
 
 export const ParameterConstants = {
   API_VERSION: "api-version",
-  SKIP_TOKEN: "$skiptoken"
+  SKIP_TOKEN: "$skiptoken",
 };
 
 export const LatestStableAPIVersion = "7.1";
 
-export const ValidAPIVersions = [
-  "7.3-preview",
-  "7.2-preview",
-  "7.2",
-  "7.1",
-  "7.0",
-  "2016-10-01",
-  "2015-06-01"
-];
+export const ValidAPIVersions = ["7.3-preview", "7.2-preview", "7.2", "7.1", "7.0", "2016-10-01", "2015-06-01"];
 
 // Validate audience, accept following audience patterns
 // https://vault.azure.net
 // https://vault.azure.net/
-export const VALID_KEY_VAULT_AUDIENCES = [
-  /^https:\/\/vault\.azure\.net[\/]?$/,
-];
+export const VALID_KEY_VAULT_AUDIENCES = [/^https:\/\/vault\.azure\.net[\/]?$/];
 
 export const BEARER_TOKEN_PREFIX = "Bearer";
 export const HTTPS = "https";
@@ -99,5 +90,5 @@ export const VALID_ISSUE_PREFIXES = [
   "https://sts.windows.net/",
   "https://sts.microsoftonline.de/",
   "https://sts.chinacloudapi.cn/",
-  "https://sts.windows-ppe.net"
+  "https://sts.windows-ppe.net",
 ];

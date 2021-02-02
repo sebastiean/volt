@@ -9,23 +9,11 @@ import NotImplementedError from "../errors/NotImplementedError";
 import KeyVaultErrorFactory from "../errors/KeyVaultErrorFactory";
 import ISecretsMetadataStore, { DeleteSecretProperties } from "../persistence/ISecretsMetadataStore";
 import BaseHandler from "./BaseHandler";
-import SecretsContext from '../context/SecretsContext';
+import SecretsContext from "../context/SecretsContext";
 import { SecretModel, DeletedSecretModel } from "../persistence/ISecretsMetadataStore";
-import {
-  buildKeyvaultIdentifier,
-  buildRecoveryIdentifier,
-  getScheduledPurgeDate,
-} from "../utils/utils";
-import {
-  parseNextMarker,
-  buildNextMarker,
-  buildSkipToken,
-  PaginationMarker
-} from "../utils/pagination";
-import {
-  DEFAULT_GET_SECRETS_MAX_RESULTS,
-  DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS
-} from "../utils/constants";
+import { buildKeyvaultIdentifier, buildRecoveryIdentifier, getScheduledPurgeDate } from "../utils/utils";
+import { parseNextMarker, buildNextMarker, buildSkipToken, PaginationMarker } from "../utils/pagination";
+import { DEFAULT_GET_SECRETS_MAX_RESULTS, DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS } from "../utils/constants";
 
 /**
  * SecretsHandler handles Azure Storage Blob related requests.
@@ -45,7 +33,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
     logger: ILogger,
     recoveryLevel?: Models.DeletionRecoveryLevel,
     recoverableDays?: number,
-    disableSoftDelete?: boolean
+    disableSoftDelete?: boolean,
   ) {
     super(metadataStore, logger);
     this.recoveryLevel = recoveryLevel!;
@@ -53,7 +41,12 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
     this.disableSoftDelete = disableSoftDelete!;
   }
 
-  public async setSecret(secretName: string, value: string, options: Models.VoltServerSecretsSetSecretOptionalParams, context: Context): Promise<Models.SetSecretResponse> {
+  public async setSecret(
+    secretName: string,
+    value: string,
+    options: Models.VoltServerSecretsSetSecretOptionalParams,
+    context: Context,
+  ): Promise<Models.SetSecretResponse> {
     const secretsCtx = new SecretsContext(context);
     const request = secretsCtx.request!;
     const date = context.startTime!;
@@ -75,13 +68,10 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       },
       tags: options.tags,
       kid: undefined,
-      managed: undefined
+      managed: undefined,
     };
 
-    const result = await this.metadataStore.setSecret(
-      context,
-      secret
-    );
+    const result = await this.metadataStore.setSecret(context, secret);
 
     const response: Models.SetSecretResponse = {
       statusCode: 200,
@@ -99,13 +89,17 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       },
       tags: result.tags,
       managed: result.managed,
-      kid: result.kid
+      kid: result.kid,
     };
 
     return response;
   }
 
-  public async deleteSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.DeleteSecretResponse> {
+  public async deleteSecret(
+    secretName: string,
+    options: RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.DeleteSecretResponse> {
     const secretsCtx = new SecretsContext(context);
     const request = secretsCtx.request!;
     const deletedDate = secretsCtx.startTime!;
@@ -119,7 +113,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       context,
       secretName,
       properties,
-      this.disableSoftDelete
+      this.disableSoftDelete,
     );
 
     const response: Models.DeleteSecretResponse = {
@@ -140,24 +134,33 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       },
       tags: deletedSecret.tags,
       managed: deletedSecret.managed,
-      kid: deletedSecret.kid
+      kid: deletedSecret.kid,
     };
 
     return response;
   }
 
-  public async updateSecretLatestVersion(secretName: string, options: Models.VoltServerSecretsUpdateSecretLatestVersionOptionalParams, context: Context): Promise<Models.UpdateSecretLatestVersionResponse> {
+  public async updateSecretLatestVersion(
+    secretName: string,
+    options: Models.VoltServerSecretsUpdateSecretLatestVersionOptionalParams,
+    context: Context,
+  ): Promise<Models.UpdateSecretLatestVersionResponse> {
     return await this.updateSecret(secretName, "", options, context);
   }
 
-  public async updateSecret(secretName: string, secretVersion: string, options: Models.VoltServerSecretsUpdateSecretOptionalParams, context: Context): Promise<Models.UpdateSecretResponse> {
+  public async updateSecret(
+    secretName: string,
+    secretVersion: string,
+    options: Models.VoltServerSecretsUpdateSecretOptionalParams,
+    context: Context,
+  ): Promise<Models.UpdateSecretResponse> {
     const secretsContext = new SecretsContext(context);
     const date = secretsContext.startTime!;
     const request = secretsContext.request!;
 
     await this.checkSecretIsDeleted(secretName, context);
 
-    let attributes = options.secretAttributes;
+    const attributes = options.secretAttributes;
 
     if (attributes?.created) {
       delete attributes.created;
@@ -169,17 +172,14 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       contentType: options.contentType,
       attributes: {
         ...attributes,
-        updated: date
+        updated: date,
       },
       tags: options.tags,
       kid: undefined,
-      managed: undefined
+      managed: undefined,
     };
 
-    const result = await this.metadataStore.updateSecret(
-      context,
-      secret
-    );
+    const result = await this.metadataStore.updateSecret(context, secret);
 
     const response: Models.UpdateSecretResponse = {
       statusCode: 200,
@@ -196,21 +196,22 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       },
       tags: result.tags,
       managed: result.managed,
-      kid: result.kid
+      kid: result.kid,
     };
 
     return response;
   }
 
-  public async getSecret(secretName: string, secretVersion: string, options: RequestOptionsBase, context: Context): Promise<Models.GetSecretResponse> {
+  public async getSecret(
+    secretName: string,
+    secretVersion: string,
+    options: RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.GetSecretResponse> {
     const secretsContext = new SecretsContext(context);
     const request = secretsContext.request!;
 
-    const secret = await this.metadataStore.getSecret(
-      context,
-      secretName,
-      secretVersion
-    );
+    const secret = await this.metadataStore.getSecret(context, secretName, secretVersion);
 
     const response: Models.GetSecretResponse = {
       statusCode: 200,
@@ -228,17 +229,24 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       },
       tags: secret.tags,
       managed: secret.managed,
-      kid: secret.kid
+      kid: secret.kid,
     };
 
     return response;
   }
 
-  public async getSecretLatestVersion(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.GetSecretLatestVersionResponse> {
+  public async getSecretLatestVersion(
+    secretName: string,
+    options: RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.GetSecretLatestVersionResponse> {
     return await this.getSecret(secretName, "", options, context);
   }
 
-  public async getSecrets(options: Models.VoltServerSecretsGetSecretsOptionalParams, context: Context): Promise<Models.GetSecretsResponse> {
+  public async getSecrets(
+    options: Models.VoltServerSecretsGetSecretsOptionalParams,
+    context: Context,
+  ): Promise<Models.GetSecretsResponse> {
     const secretsContext = new SecretsContext(context);
     const request = secretsContext.request!;
 
@@ -253,16 +261,12 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       throw KeyVaultErrorFactory.getBadParameter(context.contextId, "invalid maxresults");
     }
 
-    const [secrets, nextMarker] = await this.metadataStore.getSecrets(
-      context,
-      options.maxresults,
-      marker
-    );
+    const [secrets, nextMarker] = await this.metadataStore.getSecrets(context, options.maxresults, marker);
 
     let nextLink = null;
     if (nextMarker !== undefined) {
       const $skiptoken = buildSkipToken(buildNextMarker(nextMarker));
-      nextLink = `${request.getEndpoint()}/secrets?api-version=${context.context.apiVersion}&$skiptoken=${$skiptoken}`
+      nextLink = `${request.getEndpoint()}/secrets?api-version=${context.context.apiVersion}&$skiptoken=${$skiptoken}`;
 
       if (options.maxresults < DEFAULT_GET_SECRETS_MAX_RESULTS) {
         nextLink += `&maxresults=${options.maxresults}`;
@@ -271,7 +275,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
 
     const response: Models.GetSecretsResponse = {
       statusCode: 200,
-      value: secrets.map(secret => {
+      value: secrets.map((secret) => {
         return {
           id: buildKeyvaultIdentifier(request.getEndpoint(), secret.name, secret.version),
           contentType: secret.contentType,
@@ -286,16 +290,20 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
           },
           tags: secret.tags,
           managed: secret.managed,
-          kid: secret.kid
+          kid: secret.kid,
         };
       }),
-      nextLink
+      nextLink,
     };
 
     return response;
   }
 
-  public async getSecretVersions(secretName: string, options: Models.VoltServerSecretsGetSecretVersionsOptionalParams, context: Context): Promise<Models.GetSecretVersionsResponse> {
+  public async getSecretVersions(
+    secretName: string,
+    options: Models.VoltServerSecretsGetSecretVersionsOptionalParams,
+    context: Context,
+  ): Promise<Models.GetSecretVersionsResponse> {
     const secretsContext = new SecretsContext(context);
     const request = secretsContext.request!;
 
@@ -314,13 +322,15 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       context,
       secretName,
       options.maxresults,
-      marker
+      marker,
     );
 
     let nextLink = null;
     if (nextMarker !== undefined) {
       const $skiptoken = buildSkipToken(buildNextMarker(nextMarker));
-      nextLink = `${request.getEndpoint()}/secrets/${secretName}/versions?api-version=${context.context.apiVersion}&$skiptoken=${$skiptoken}`
+      nextLink = `${request.getEndpoint()}/secrets/${secretName}/versions?api-version=${
+        context.context.apiVersion
+      }&$skiptoken=${$skiptoken}`;
 
       if (options.maxresults < DEFAULT_GET_SECRET_VERSIONS_MAX_RESULTS) {
         nextLink += `&maxresults=${options.maxresults}`;
@@ -329,7 +339,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
 
     const response: Models.GetSecretVersionsResponse = {
       statusCode: 200,
-      value: secrets.map(secret => {
+      value: secrets.map((secret) => {
         return {
           id: buildKeyvaultIdentifier(request.getEndpoint(), secret.name, secret.version),
           contentType: secret.contentType,
@@ -344,27 +354,31 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
           },
           tags: secret.tags,
           managed: secret.managed,
-          kid: secret.kid
+          kid: secret.kid,
         };
       }),
-      nextLink
+      nextLink,
     };
 
     return response;
   }
 
-  getDeletedSecrets(options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams, context: Context): Promise<Models.GetDeletedSecretsResponse> {
+  getDeletedSecrets(
+    options: Models.VoltServerSecretsGetDeletedSecretsOptionalParams,
+    context: Context,
+  ): Promise<Models.GetDeletedSecretsResponse> {
     throw new NotImplementedError();
   }
 
-  public async getDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.GetDeletedSecretResponse> {
+  public async getDeletedSecret(
+    secretName: string,
+    options: RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.GetDeletedSecretResponse> {
     const secretsContext = new SecretsContext(context);
     const request = secretsContext.request!;
 
-    const deletedSecret = await this.metadataStore.getDeletedSecret(
-      context,
-      secretName,
-    );
+    const deletedSecret = await this.metadataStore.getDeletedSecret(context, secretName);
 
     const response: Models.DeleteSecretResponse = {
       statusCode: 200,
@@ -384,7 +398,7 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
       },
       tags: deletedSecret.tags,
       managed: deletedSecret.managed,
-      kid: deletedSecret.kid
+      kid: deletedSecret.kid,
     };
 
     return response;
@@ -393,21 +407,30 @@ export default class SecretsHandler extends BaseHandler implements IVoltServerSe
   purgeDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<RestResponse> {
     throw new NotImplementedError();
   }
-  recoverDeletedSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.RecoverDeletedSecretResponse> {
+  recoverDeletedSecret(
+    secretName: string,
+    options: RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.RecoverDeletedSecretResponse> {
     throw new NotImplementedError();
   }
-  backupSecret(secretName: string, options: RequestOptionsBase, context: Context): Promise<Models.BackupSecretResponse> {
+  backupSecret(
+    secretName: string,
+    options: RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.BackupSecretResponse> {
     throw new NotImplementedError();
   }
-  restoreSecret(secretBundleBackup: Uint8Array, options: RequestOptionsBase, context: Context): Promise<Models.RestoreSecretResponse> {
+  restoreSecret(
+    secretBundleBackup: Uint8Array,
+    options: RequestOptionsBase,
+    context: Context,
+  ): Promise<Models.RestoreSecretResponse> {
     throw new NotImplementedError();
   }
 
   private async checkSecretIsDeleted(secretName: string, context: Context): Promise<void> {
-    const deleted = await this.metadataStore.deletedSecretExists(
-      context,
-      secretName,
-    );
+    const deleted = await this.metadataStore.deletedSecretExists(context, secretName);
 
     if (deleted) {
       // if secret exists but is deleted, throw error

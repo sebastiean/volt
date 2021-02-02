@@ -373,7 +373,14 @@ export interface VoltServerSecretsGetDeletedSecretsOptionalParams {
  * @readonly
  * @enum {string}
  */
-export type DeletionRecoveryLevel = 'Purgeable' | 'Recoverable+Purgeable' | 'Recoverable' | 'Recoverable+ProtectedSubscription' | 'CustomizedRecoverable+Purgeable' | 'CustomizedRecoverable' | 'CustomizedRecoverable+ProtectedSubscription';
+export type DeletionRecoveryLevel =
+  | "Purgeable"
+  | "Recoverable+Purgeable"
+  | "Recoverable"
+  | "Recoverable+ProtectedSubscription"
+  | "CustomizedRecoverable+Purgeable"
+  | "CustomizedRecoverable"
+  | "CustomizedRecoverable+ProtectedSubscription";
 
 /**
  * Contains response data for the setSecret operation.

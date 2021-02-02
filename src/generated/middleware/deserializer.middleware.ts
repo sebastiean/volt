@@ -7,7 +7,7 @@ import IRequest from "../IRequest";
 import { NextFunction } from "../MiddlewareFactory";
 import ILogger from "../../ILogger";
 import { deserialize } from "../utils/serializer";
-import KeyVaultErrorFactory from '../../errors/KeyVaultErrorFactory';
+import KeyVaultErrorFactory from "../../errors/KeyVaultErrorFactory";
 
 /**
  * Deserializer Middleware. Deserialize incoming HTTP request into models.
@@ -23,35 +23,26 @@ export default function deserializerMiddleware(
   context: Context,
   req: IRequest,
   next: NextFunction,
-  logger: ILogger
+  logger: ILogger,
 ): void {
-  logger.verbose(
-    `DeserializerMiddleware: Start deserializing...`,
-    context.contextId
-  );
+  logger.verbose(`DeserializerMiddleware: Start deserializing...`, context.contextId);
 
   if (context.operation === undefined) {
     const handlerError = new OperationMismatchError();
-    logger.error(
-      `DeserializerMiddleware: ${handlerError.message}`,
-      context.contextId
-    );
+    logger.error(`DeserializerMiddleware: ${handlerError.message}`, context.contextId);
     return next(handlerError);
   }
 
   if (Specifications[context.operation] === undefined) {
-    logger.warn(
-      `DeserializerMiddleware: Cannot find deserializer for operation ${Operation[context.operation]
-      }`
-    );
+    logger.warn(`DeserializerMiddleware: Cannot find deserializer for operation ${Operation[context.operation]}`);
   }
 
   deserialize(context, req, Specifications[context.operation], logger)
-    .then(parameters => {
+    .then((parameters) => {
       context.handlerParameters = parameters;
     })
     .then(next)
-    .catch(err => {
+    .catch((err) => {
       const deserializationError = new DeserializationError(err.message);
       deserializationError.stack = err.stack;
       next(deserializationError);

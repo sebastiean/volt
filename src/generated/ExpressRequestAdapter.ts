@@ -14,8 +14,7 @@ export default class ExpressRequestAdapter implements IRequest {
   }
 
   public getEndpoint(): string {
-    return `${this.req.protocol}://${this.getHeader("host") ||
-      this.req.hostname}`;
+    return `${this.req.protocol}://${this.getHeader("host") || this.req.hostname}`;
   }
 
   public getPath(): string {

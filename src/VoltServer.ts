@@ -32,12 +32,12 @@ export default class VoltServer extends ServerBase implements ICleaner {
   private readonly runningTests: boolean;
 
   /**
-     * Creates an instance of Server.
-     *
-     * @param {SecretsConfiguration} configuration
-     * @memberof Server
-     */
-  constructor(configuration?: SecretsConfiguration, runningTests: boolean = false) {
+   * Creates an instance of Server.
+   *
+   * @param {SecretsConfiguration} configuration
+   * @memberof Server
+   */
+  constructor(configuration?: SecretsConfiguration, runningTests = false) {
     if (configuration === undefined) {
       configuration = new SecretsConfiguration();
     }
@@ -62,7 +62,7 @@ export default class VoltServer extends ServerBase implements ICleaner {
     // and replace the default LokiSecretsMetadataStore
     const metadataStore: ISecretsMetadataStore = new LokiSecretsMetadataStore(
       configuration.metadataDBPath,
-      runningTests
+      runningTests,
       // logger
     );
 
@@ -78,7 +78,7 @@ export default class VoltServer extends ServerBase implements ICleaner {
       configuration.getOAuthLevel(),
       configuration.getRecoveryLevel(),
       configuration.recoverableDays,
-      configuration.disableSoftDelete
+      configuration.disableSoftDelete,
     );
 
     super(host, port, httpServer, requestListenerFactory, configuration);

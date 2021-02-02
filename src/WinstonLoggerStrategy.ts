@@ -25,12 +25,9 @@ export default class WinstonLoggerStrategy implements ILoggerStrategy {
     this.winstonLogger = createLogger({
       format: format.combine(
         format.timestamp(),
-        format.printf(
-          info =>
-            `${info.timestamp} ${info.contextID} ${info.level}: ${info.message}`
-        )
+        format.printf((info) => `${info.timestamp} ${info.contextID} ${info.level}: ${info.message}`),
       ),
-      level
+      level,
     });
 
     if (logfile) {
@@ -42,11 +39,7 @@ export default class WinstonLoggerStrategy implements ILoggerStrategy {
     }
   }
 
-  public log(
-    level: LogLevels,
-    message: string,
-    contextID: string = "\t"
-  ): void {
+  public log(level: LogLevels, message: string, contextID = "\t"): void {
     this.winstonLogger.log({ level, message, contextID });
   }
 }

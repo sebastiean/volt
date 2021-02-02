@@ -1,11 +1,11 @@
 import * as fs from "fs";
-import { DeletionRecoveryLevel } from './generated/artifacts/models';
-import { OAuthLevel } from './models';
+import { DeletionRecoveryLevel } from "./generated/artifacts/models";
+import { OAuthLevel } from "./models";
 
 export enum CertOptions {
   Default,
   PEM,
-  PFX
+  PFX,
 }
 
 export default abstract class ConfigurationBase {
@@ -25,8 +25,8 @@ export default abstract class ConfigurationBase {
     public readonly recoverableDays: number = 90,
     public readonly disableSoftDelete: boolean = false, // soft-delete enable by default https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-change
     public readonly purgeProtection: boolean = false,
-    public readonly protectedSubscription: boolean = false
-  ) { }
+    public readonly protectedSubscription: boolean = false,
+  ) {}
 
   public hasCert() {
     if (this.cert.length > 0 && this.key.length > 0) {
@@ -44,12 +44,12 @@ export default abstract class ConfigurationBase {
       case CertOptions.PEM:
         return {
           cert: fs.readFileSync(this.cert),
-          key: fs.readFileSync(this.key)
+          key: fs.readFileSync(this.key),
         };
       case CertOptions.PFX:
         return {
           pfx: fs.readFileSync(this.cert),
-          passphrase: this.pwd.toString()
+          passphrase: this.pwd.toString(),
         };
       default:
         return null;
@@ -67,7 +67,12 @@ export default abstract class ConfigurationBase {
   }
 
   public getRecoveryLevel(): DeletionRecoveryLevel {
-    if (this.recoverableDays >= 7 && this.recoverableDays < 90 && !this.protectedSubscription && !this.purgeProtection) {
+    if (
+      this.recoverableDays >= 7 &&
+      this.recoverableDays < 90 &&
+      !this.protectedSubscription &&
+      !this.purgeProtection
+    ) {
       return "CustomizedRecoverable";
     }
     if (this.recoverableDays >= 7 && this.recoverableDays < 90 && this.protectedSubscription && !this.purgeProtection) {
@@ -92,7 +97,6 @@ export default abstract class ConfigurationBase {
   }
 
   public getHttpServerAddress(): string {
-    return `http${this.hasCert() === CertOptions.Default ? "" : "s"}://${this.host
-      }:${this.port}`;
+    return `http${this.hasCert() === CertOptions.Default ? "" : "s"}://${this.host}:${this.port}`;
   }
 }

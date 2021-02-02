@@ -20,11 +20,7 @@ export default class KeyVaultError {
    * @param {KeyVaultError} [innerError] The Key Vault Server error.
    * @memberof KeyVaultError
    */
-  constructor(
-    keyVaultErrorCode: string,
-    keyVaultErrorMessage?: string,
-    innerError?: KeyVaultError,
-  ) {
+  constructor(keyVaultErrorCode: string, keyVaultErrorMessage?: string, innerError?: KeyVaultError) {
     this.keyVaultErrorCode = keyVaultErrorCode;
     this.keyVaultErrorMessage = keyVaultErrorMessage;
     this.innerError = innerError;
@@ -33,7 +29,7 @@ export default class KeyVaultError {
   public getBody(): any {
     let body: any = {
       code: this.keyVaultErrorCode,
-      message: this.keyVaultErrorMessage
+      message: this.keyVaultErrorMessage,
     };
 
     if (this.innerError) {

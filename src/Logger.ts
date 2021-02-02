@@ -4,7 +4,7 @@ import NoLoggerStrategy from "./NoLoggerStrategy";
 import WinstonLoggerStrategy from "./WinstonLoggerStrategy";
 
 export class Logger implements ILogger {
-  public constructor(public strategy: ILoggerStrategy) { }
+  public constructor(public strategy: ILoggerStrategy) {}
 
   public error(message: string, contextID?: string) {
     this.strategy.log(LogLevels.Error, message, contextID);

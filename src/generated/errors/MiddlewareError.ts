@@ -18,7 +18,7 @@ export default class MiddlewareError extends Error {
     public readonly statusMessage?: string,
     public readonly headers?: OutgoingHttpHeaders,
     public readonly body?: string,
-    public readonly contentType?: string
+    public readonly contentType?: string,
   ) {
     super(message);
     // https://stackoverflow.com/questions/31626231/custom-error-class-in-typescript

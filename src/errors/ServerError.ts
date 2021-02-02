@@ -30,23 +30,15 @@ export default class ServerError extends MiddlewareError {
     requestID: string,
     error: KeyVaultError,
     headers?: OutgoingHttpHeaders,
-    statusMessage?: string
+    statusMessage?: string,
   ) {
-
     const body: any = {
-      error: error.getBody()
+      error: error.getBody(),
     };
 
     const jsonBody = JSON.stringify(body);
 
-    super(
-      statusCode,
-      error.keyVaultErrorMessage || "",
-      statusMessage,
-      headers,
-      jsonBody,
-      "application/json"
-    );
+    super(statusCode, error.keyVaultErrorMessage || "", statusMessage, headers, jsonBody, "application/json");
 
     this.name = "KeyVaultError";
     this.statusCode = statusCode;

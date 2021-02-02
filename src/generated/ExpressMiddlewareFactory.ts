@@ -34,10 +34,7 @@ export default class ExpressMiddlewareFactory extends MiddlewareFactory {
    * @param {string} [contextPath="default_context"] Optional. res.locals[contextPath] will be used to hold context
    * @memberof MiddlewareFactory
    */
-  public constructor(
-    logger: ILogger,
-    private readonly contextPath: string = "default_context"
-  ) {
+  public constructor(logger: ILogger, private readonly contextPath: string = "default_context") {
     super(logger);
   }
 
@@ -51,12 +48,7 @@ export default class ExpressMiddlewareFactory extends MiddlewareFactory {
     return (req: Request, res: Response, next: NextFunction) => {
       const request = new ExpressRequestAdapter(req);
       const response = new ExpressResponseAdapter(res);
-      dispatchMiddleware(
-        new Context(res.locals, this.contextPath, request, response),
-        request,
-        next,
-        this.logger
-      );
+      dispatchMiddleware(new Context(res.locals, this.contextPath, request, response), request, next, this.logger);
     };
   }
 
@@ -70,12 +62,7 @@ export default class ExpressMiddlewareFactory extends MiddlewareFactory {
     return (req: Request, res: Response, next: NextFunction) => {
       const request = new ExpressRequestAdapter(req);
       const response = new ExpressResponseAdapter(res);
-      deserializerMiddleware(
-        new Context(res.locals, this.contextPath, request, response),
-        request,
-        next,
-        this.logger
-      );
+      deserializerMiddleware(new Context(res.locals, this.contextPath, request, response), request, next, this.logger);
     };
   }
 
@@ -87,16 +74,13 @@ export default class ExpressMiddlewareFactory extends MiddlewareFactory {
    * @memberof MiddlewareFactory
    */
   public createHandlerMiddleware(handlers: IHandlers): RequestHandler {
-    const handlerMiddlewareFactory = new HandlerMiddlewareFactory(
-      handlers,
-      this.logger
-    );
+    const handlerMiddlewareFactory = new HandlerMiddlewareFactory(handlers, this.logger);
     return (req: Request, res: Response, next: NextFunction) => {
       const request = new ExpressRequestAdapter(req);
       const response = new ExpressResponseAdapter(res);
       handlerMiddlewareFactory.createHandlerMiddleware()(
         new Context(res.locals, this.contextPath, request, response),
-        next
+        next,
       );
     };
   }
@@ -115,7 +99,7 @@ export default class ExpressMiddlewareFactory extends MiddlewareFactory {
         new Context(res.locals, this.contextPath, request, response),
         new ExpressResponseAdapter(res),
         next,
-        this.logger
+        this.logger,
       );
     };
   }
@@ -136,7 +120,7 @@ export default class ExpressMiddlewareFactory extends MiddlewareFactory {
         new ExpressRequestAdapter(req),
         new ExpressResponseAdapter(res),
         next,
-        this.logger
+        this.logger,
       );
     };
   }
@@ -154,7 +138,7 @@ export default class ExpressMiddlewareFactory extends MiddlewareFactory {
       endMiddleware(
         new Context(res.locals, this.contextPath, request, response),
         new ExpressResponseAdapter(res),
-        this.logger
+        this.logger,
       );
     };
   }

@@ -8,13 +8,11 @@ import SecretsConfiguration from "./SecretsConfiguration";
 import IEnvironment from "./IEnvironment";
 import Environment from "./Environment";
 import { DEFAULT_SECRETS_LOKI_DB_PATH } from "./utils/constants";
-import * as Logger from './Logger';
+import * as Logger from "./Logger";
 
 const accessAsync = promisify(access);
 
-function shutdown(
-  secretsServer: VoltServer
-) {
+function shutdown(secretsServer: VoltServer) {
   const secretsBeforeCloseMessage = `Volt Secrets service is closing...`;
   const secretsAfterCloseMessage = `Volt Secrets service successfully closed`;
 
@@ -56,7 +54,7 @@ async function main() {
     env.recoverableDays(),
     env.disableSoftDelete(),
     env.purgeProtection(),
-    env.protectedSubscription()
+    env.protectedSubscription(),
   );
 
   // Create server instance
@@ -65,13 +63,9 @@ async function main() {
   Logger.configLogger(config.enableDebugLog, config.debugLogFilePath);
 
   // Start server
-  console.log(
-    `Volt Secrets service is starting at ${config.getHttpServerAddress()}`
-  );
+  console.log(`Volt Secrets service is starting at ${config.getHttpServerAddress()}`);
   await secretsServer.start();
-  console.log(
-    `Volt Secrets service is successfully listening at ${secretsServer.getHttpServerAddress()}`
-  );
+  console.log(`Volt Secrets service is successfully listening at ${secretsServer.getHttpServerAddress()}`);
 
   // Handle close event
 

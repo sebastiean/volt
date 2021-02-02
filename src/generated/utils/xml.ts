@@ -3,24 +3,21 @@ import * as xml2js from "xml2js";
 export function stringifyXML(obj: any, opts?: { rootName?: string }) {
   const builder = new xml2js.Builder({
     renderOpts: {
-      pretty: false
+      pretty: false,
     },
-    rootName: (opts || {}).rootName
+    rootName: (opts || {}).rootName,
   });
   return builder.buildObject(obj);
 }
 
-export function parseXML(
-  str: string,
-  explicitChildrenWithOrder: boolean = false
-): Promise<any> {
+export function parseXML(str: string, explicitChildrenWithOrder = false): Promise<any> {
   const xmlParser = new xml2js.Parser({
     explicitArray: false,
     explicitCharkey: false,
     explicitRoot: false,
     preserveChildrenOrder: explicitChildrenWithOrder,
     explicitChildren: explicitChildrenWithOrder,
-    emptyTag: undefined
+    emptyTag: undefined,
   });
   return new Promise((resolve, reject) => {
     xmlParser.parseString(str, (err?: Error, res?: any) => {

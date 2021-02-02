@@ -5,16 +5,13 @@ import ConfigurationBase from "./ConfigurationBase";
 import ICleaner from "./ICleaner";
 import IRequestListenerFactory from "./IRequestListenerFactory";
 
-export type RequestListener = (
-  request: http.IncomingMessage,
-  response: http.ServerResponse
-) => void;
+export type RequestListener = (request: http.IncomingMessage, response: http.ServerResponse) => void;
 
 export enum ServerStatus {
   Closed = "Closed",
   Starting = "Starting",
   Running = "Running",
-  Closing = "Closing"
+  Closing = "Closing",
 }
 
 /**
@@ -41,14 +38,11 @@ export default abstract class ServerBase implements ICleaner {
     public readonly port: number,
     public readonly httpServer: http.Server | https.Server,
     requestListenerFactory: IRequestListenerFactory,
-    public readonly config: ConfigurationBase
+    public readonly config: ConfigurationBase,
   ) {
     // Remove predefined request listeners to avoid double request handling
     this.httpServer.removeAllListeners("request");
-    this.httpServer.on(
-      "request",
-      requestListenerFactory.createRequestListener()
-    );
+    this.httpServer.on("request", requestListenerFactory.createRequestListener());
   }
 
   /**
@@ -95,9 +89,7 @@ export default abstract class ServerBase implements ICleaner {
     try {
       await this.beforeStart();
       await new Promise<void>((resolve, reject) => {
-        this.httpServer
-          .listen(this.port, this.host, resolve)
-          .on("error", reject);
+        this.httpServer.listen(this.port, this.host, resolve).on("error", reject);
       });
 
       this.status = ServerStatus.Running;
@@ -140,7 +132,7 @@ export default abstract class ServerBase implements ICleaner {
     // Default keep-alive timeout is 5 seconds defined by httpServer.keepAliveTimeout
     // TODO: Add a middleware to reject incoming request over existing keep-alive connections
     // https://github.com/nodejs/node/issues/2642
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       this.httpServer.close(resolve);
     });
 

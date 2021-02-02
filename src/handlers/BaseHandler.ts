@@ -9,8 +9,5 @@ import ISecretsMetadataStore from "../persistence/ISecretsMetadataStore";
  * @class BaseHandler
  */
 export default class BaseHandler {
-  constructor(
-    protected readonly metadataStore: ISecretsMetadataStore,
-    protected readonly logger: ILogger
-  ) {}
+  constructor(protected readonly metadataStore: ISecretsMetadataStore, protected readonly logger: ILogger) {}
 }
