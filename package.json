@@ -9,8 +9,8 @@
   "scripts": {
     "test": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 mocha -r ts-node/register -r tests/fixtures.ts --no-timeouts --grep \"@loki\" --recursive tests/**/*.test.ts tests/**/**/*.test.ts --exit",
     "build": "tsc",
-    "lint": "eslint '*/**/*.{js,ts}'",
-    "lint:fix": "eslint '*/**/*.{js,ts}' --quiet --fix",
+    "lint": "eslint 'src/**/*.{js,ts}'",
+    "lint:fix": "eslint 'src/**/*.{js,ts}' --quiet --fix",
     "docker:build": "cross-var docker build --no-cache --rm -f \"Dockerfile\" -t sebastiean/volt:$npm_package_version . && cross-var docker tag sebastiean/volt:$npm_package_version sebastiean/volt:latest",
     "docker:push": "cross-var docker push sebastiean/volt:$npm_package_version"
   },
