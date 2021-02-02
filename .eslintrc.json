@@ -12,5 +12,8 @@
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
-  "rules": {}
+  "rules": {
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-explicit-any": "off"
+  }
 }
