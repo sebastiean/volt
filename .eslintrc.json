@@ -12,7 +12,5 @@
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
-  "rules": {
-    "semi": 2
-  }
+  "rules": {}
 }
