@@ -12,7 +12,6 @@ import {
 } from "../testutils";
 
 import { v4 as uuid } from "uuid";
-import { expect } from "chai";
 
 // Set true to enable debug log
 configLogger(false);
@@ -60,5 +59,5 @@ describe("Secrets HTTPS (OAuth)", () => {
 
     await secretClient.setSecret(secretName, secretValue);
     await secretClient.beginDeleteSecret(secretName);
-  });  
+  });
 });
