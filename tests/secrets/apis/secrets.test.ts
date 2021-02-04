@@ -418,4 +418,18 @@ describe("Secrets API", () => {
     await secretClient.setSecret(secretName, secretValue);
     await secretClient.beginDeleteSecret(secretName);
   });
+
+  it("getSecret returns corresponding secret @loki", async () => {
+    // setup
+    const secretName: string = "testname";
+    const secretValue: string = "testvalue";
+
+    await secretClient.setSecret(secretName, secretValue);
+    await secretClient.setSecret("test", "value");
+
+    const result = await secretClient.getSecret("test");
+
+    expect(result.name).to.not.equal(secretName);
+    expect(result.value).to.not.equal(secretValue);
+  });
 });
