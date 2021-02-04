@@ -1,9 +1,9 @@
 name: publish
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types:
+      - created
 
 jobs:
   docker_build:
