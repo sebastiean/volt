@@ -1,4 +1,4 @@
-[![Build][build-badge]][build-url]
+[![Build][build-shield]][build-url]
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
