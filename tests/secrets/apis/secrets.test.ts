@@ -392,4 +392,18 @@ describe("Secrets API", () => {
     expect(result[0].id).to.be.a('string').and.satisfy((id: string) => id.startsWith(`${baseURL}/secrets/${secretName}/`));
     expect(result[0].version).to.be.a('string').and.match(MD5_REGEX);
   });
+
+  it("getSecret returns corresponding secret @loki", async () => {
+    // setup
+    const secretName: string = "testname";
+    const secretValue: string = "testvalue";
+
+    await secretClient.setSecret(secretName, secretValue);
+    await secretClient.setSecret("test", "value");
+
+    const result = await secretClient.getSecret("test");
+
+    expect(result.name).to.not.equal(secretName);
+    expect(result.value).to.not.equal(secretValue);
+  });
 });
