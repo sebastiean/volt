@@ -392,32 +392,6 @@ describe("Secrets API", () => {
     expect(result[0].id).to.be.a('string').and.satisfy((id: string) => id.startsWith(`${baseURL}/secrets/${secretName}/`));
     expect(result[0].version).to.be.a('string').and.match(MD5_REGEX);
   });
-   it(`Should work using HTTPS endpoint @loki`, async () => {
-    const token = generateJWTToken(
-      new Date("2019/01/01"),
-      new Date("2019/01/01"),
-      new Date("2100/01/01"),
-      "https://sts.windows-ppe.net/ab1f708d-50f6-404c-a006-d71b2ac7a606/",
-      "https://vault.azure.net",
-      uuid()
-    );
-
-    const secretClient = new SecretClient(
-      baseURL,
-      new SimpleTokenCredential(token),
-      {
-        retryOptions: { maxRetries: 1 },
-        // Make sure socket is closed once the operation is done.
-        keepAliveOptions: { enable: false },
-      }
-    );
-
-    const secretName: string = getUniqueName("1-secret-");
-    const secretValue: string = getUniqueName("1-value-");
-
-    await secretClient.setSecret(secretName, secretValue);
-    await secretClient.beginDeleteSecret(secretName);
-  });
 
   it("getSecret returns corresponding secret @loki", async () => {
     // setup
