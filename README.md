@@ -1,3 +1,4 @@
+[![Build][build-badge][build-url]]
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
@@ -307,7 +308,8 @@ Project Link: [https://github.com/sebastiean/volt](https://github.com/sebastiean
 * Logo design by [ch.iordanis](https://iordanisch.github.io/ch.iordanis) :star_struck:
 
 
-
+[build-shield]: https://github.com/sebastiean/volt/workflows/build/badge.svg
+[build-url]: https://github.com/sebastiean/volt/workflows/build/badge.svg
 [contributors-shield]: https://img.shields.io/github/contributors/sebastiean/volt.svg
 [contributors-url]: https://github.com/sebastiean/volt/graphs/contributors
 [stars-shield]: https://img.shields.io/github/stars/sebastiean/volt.svg
