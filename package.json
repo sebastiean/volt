@@ -12,7 +12,7 @@
     "lint": "eslint \"src/**/*.{js,ts}\" --quiet",
     "lint:fix": "eslint \"src/**/*.{js,ts}\" --quiet --fix",
     "docker:build": "cross-var docker build --no-cache --rm -f \"Dockerfile\" -t sebastiean/volt:$npm_package_version . && cross-var docker tag sebastiean/volt:$npm_package_version sebastiean/volt:latest",
-    "docker:push": "cross-var docker push sebastiean/volt:$npm_package_version"
+    "docker:push": "cross-var docker push sebastiean/volt:$npm_package_version && cross-var docker push sebastiean/volt:latest"
   },
   "author": "",
   "license": "ISC",
